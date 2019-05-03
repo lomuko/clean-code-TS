@@ -1,0 +1,16 @@
+{
+  "name": "clean-code",
+  "description": "Taller práctico para crear y rehacer aplicaciones limpias",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/AtomicBuilders/clean-code.git",
+  "author": "Alberto Basalo <albertobasalo@hotmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.7.1",
+    "prettier": "^1.17.0"
+  }
+}

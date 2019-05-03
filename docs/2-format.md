@@ -1,0 +1,86 @@
+title: 2- Format
+class: animation-fade
+layout: true
+
+.bottom-bar[
+
+{{title}}
+
+]
+
+---
+
+class: impact
+
+# {{title}}
+
+## Código bonito
+
+> "Deja siempre el campamento más limpio de lo que estaba."
+>
+> -- **The Boy Scout Rule**
+
+---
+
+- Belleza **horizontal**
+
+  - Sangría en **bloques**
+  - Espaciado en **expresiones**
+  - Tamaño de las **líneas**
+
+--
+
+- Belleza **vertical**
+
+  - **Orden** de las funciones
+
+        - público -> privado
+
+        - newsletter
+
+  - **Tamaño** del fichero
+
+--
+
+    > ¿Cuántas líneas en blanco seguidas **realmente** necesitas?
+
+---
+
+## Código con Reglas de Estilo
+
+- **Decisión**: vamos a establecer reglas.
+- **Opción**: vamos a fijar valores razonables.
+- **Sentido**: vamos a incumplirlas... pero a sabiendas.
+
+---
+
+![Tabs vs Spaces](./assets/tabs_vs_spaces.png)
+
+--
+
+- Evita conflictos trasladando la decisión a otros:
+
+  - [eslint-recommended](https://github.com/eslint/eslint/blob/master/conf/eslint-recommended.js)
+
+---
+
+- Herramientas de limpieza, según IDE y lenguaje:
+
+  - [Prettier](https://prettier.io/)
+  - [Beautify](https://www.npmjs.com/package/js-beautify)
+
+---
+
+> "El código limpio parece escrito por alguien a quien le importa"
+>
+> -- **Robert C. Martin**
+
+- [Siguiente ->](./3-names.html)
+
+- [<- Vuelta al índice ](./)
+
+- [Repo](https://github.com/AcademiaBinaria/CleanCode)
+
+- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/2-format)
+
+- [Game Of Life](./2-format/)
