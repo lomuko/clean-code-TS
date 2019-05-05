@@ -18,7 +18,18 @@ export class ShoppingCart {
     this.items = this.items.filter(i => i.product !== p);
   }
 
-  public checkOut( payment: string, id: string, address: string, billing?: string ) {
+
+
+  // save to read later
+  public save() {
+
+  }
+  // read from file
+  public read() {
+
+  }
+
+  public calculate( payment: string, id: string, address: string, billing?: string ) {
     this.shippingAddress = address;
     this.billingAddress = billing || address;
     this.payment = payment;
@@ -27,27 +38,7 @@ export class ShoppingCart {
     // calculate total price
     this.items.forEach(line => {
       this.totalImport += line.price * line.q;
-    });
-
-    if ( payment == "PayPal" ) {
-      this.totalImport = this.totalImport * 0.05;
-    }
-
-    // apply discount
-    if (this.isVip) {
-      this.totalImport *= 0.9;
-    }
-
-    // add ports
-    if (this.totalImport < 100) {
-      this.ports = this.totalImport * 0.1;
-    } else if (this.totalImport < 1000)
-      this.ports = 10;
-      else
-      this.ports = 0;
-
-
-    // add taxes
+          // add taxes by product
     let countryVAT = 0;
     switch (this.country) {
       case 'Spain':
@@ -70,15 +61,60 @@ export class ShoppingCart {
       default:
         break;
     }
-    this.taxes = this.student || this.region == 'St Pierre' ? 0  : ((this.totalImport + this.ports) * countryVAT) / 100;
+    line.taxes = this.student || this.region == 'St Pierre' ? 0  : line.totalImport  * countryVAT / 100;
+    });
 
-    // save to warehouse
 
-    // send packing list to courier
-      // create document
-      // send by email
+
+    // add ports
+    if (this.totalImport < 100) {
+      this.ports = this.totalImport * 0.1;
+    } else if (this.totalImport < 1000)
+      this.ports = 10;
+      else
+      this.ports = 0;
+
+      if ( payment == "PayPal" ) {
+        this.totalImport = this.totalImport * 0.05;
+      }
+
+      // apply discount
+      if (this.isVip) {
+        this.totalImport *= 0.9;
+      }
+
+
+
+
+
+  }
+
+  private savetoWarehouse() {
+    // save to process at the warehouse
+      // send packing list to courier
+        // create document
+        // send by email
+
+  }
+  private invoice() {
     // send invoice to customer
       // create document
       // print to pdf
   }
+}
+
+export class Printer{
+  public print() {
+
+  }
+  public printConsole() {
+
+  }
+}
+
+export class Document{
+  print() {
+
+  }
+  email(){}
 }
