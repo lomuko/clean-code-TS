@@ -12,7 +12,7 @@ export class ShoppingCart {
   public invoiceNumber: number;
   public doc = new Document();
 
-  constructor(public clientName: string, private student: boolean, private region: string, private country: string, private isVip: boolean, public taxNumber?: string, ) {}
+  constructor(public clientName: string, private student: boolean, public region: string, public country: string, private isVip: boolean, public taxNumber?: string, ) {}
 
   public addProduct(product: string, price: number, q: number) {
     this.items.push({ product, price, q });
@@ -77,7 +77,7 @@ export class ShoppingCart {
 
     this.taxes +=   Tax.calculate( this.totalImport, this.country, this.region, this.student );
 
-    this.invoiceNumber = Math.random() * 100;
+    this.invoiceNumber = 1 + Math.round((Math.random() * 100));
     this.savetoWarehouse();
   }
 
@@ -87,7 +87,7 @@ export class ShoppingCart {
       // send packing list to courier
       const order = this.doc.order( this );
         // send by email
-    this.doc.print( order );
+    this.doc.email( order );
 
   }
   // send invoice to customer
@@ -103,14 +103,15 @@ export class Document{
 
   sendInvoice(shoppingCart:ShoppingCart) {
     const invoice = `
-    Invoice Number: ${shoppingCart.invoiceNumber}
+    Invoice Number: ${shoppingCart.invoiceNumber}#
     ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
     ${shoppingCart.billingAddress}
+    ${shoppingCart.country} - ${shoppingCart.region}
     Items purchased:
     ${this.lines( shoppingCart )}
-    Base: ${shoppingCart.totalImport + shoppingCart.ports} Euros
-    Tax: ${shoppingCart.taxes}
-    Total: ${shoppingCart.totalImport + shoppingCart.ports + shoppingCart.taxes} Euros
+    Base: #${shoppingCart.totalImport + shoppingCart.ports}Euros
+    Tax: #${shoppingCart.taxes}Euros
+    Total: #${shoppingCart.totalImport + shoppingCart.ports + shoppingCart.taxes}Euros
     `;
     this.print( invoice );
   }
@@ -131,11 +132,26 @@ export class Document{
   }
 
   print( doc ) {
+    if(doc)
     Printer.print( doc );
   }
   email( doc ) {
-    console.log( 'Sending email to warehouse@acme.com' );
-    console.log( JSON.stringify( doc ) );
+    const warehouse = this.getAddress(doc.country);
+    console.log( 'Sending email to ' + warehouse );
+    const message = `
+    ---
+    Serve this order ASAP.
+    ---
+    ${doc}
+    ---
+    Regards, the shop.com`;
+    console.table( message );
+  }
+  private getAddress(country) {
+    if ( country == "Spain" ) {
+      return 'warehouse@acme.es'
+    }
+    return 'warehouse@acme.com';
   }
 }
 
