@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 export class ShoppingCart {
   public items: any[] = [];
   public totalImport: number = 0;
@@ -7,8 +9,10 @@ export class ShoppingCart {
   public paymentId: string;
   public shippingAddress: string;
   public billingAddress: string;
+  public invoiceNumber: number;
+  public doc = new Document();
 
-  constructor(private clientName: string, private student: boolean, private region: string, private country: string, private isVip: boolean, private taxNumber?: string, ) {}
+  constructor(public clientName: string, private student: boolean, private region: string, private country: string, private isVip: boolean, public taxNumber?: string, ) {}
 
   public addProduct(product: string, price: number, q: number) {
     this.items.push({ product, price, q });
@@ -22,11 +26,16 @@ export class ShoppingCart {
 
   // save to read later
   public save() {
-
+    if ( ! fs.existsSync( `${this.clientName}.json` ) ) {
+      fs.writeFileSync( `${this.clientName}.json`, JSON.stringify( this.items ) );
+    }
   }
   // read from file
   public read() {
-
+    if ( fs.existsSync( `${this.clientName}.json` ) ) {
+      const file = fs.readFileSync( `${this.clientName}.json`, 'utf8' );
+      this.items = JSON.parse( file );
+    }
   }
 
   public calculate( payment: string, id: string, address: string, billing?: string ) {
@@ -37,20 +46,127 @@ export class ShoppingCart {
 
     // calculate total price
     this.items.forEach(line => {
-      this.totalImport += line.price * line.q;
+      line.totalImport =line.price * line.q;
+      this.totalImport += line.totalImport;
+      console.log( this.totalImport );
           // add taxes by product
+
+      line.taxes = Tax.calculateLine( line, this.country, this.region, this.student );
+      this.taxes += line.taxes;
+      console.log( this.totalImport  );
+    });
+
+
+    console.log( this.totalImport  );
+    // add ports
+    if (this.totalImport < 100) {
+      this.ports = this.totalImport * 0.1;
+    } else if (this.totalImport < 1000)
+      this.ports = 10;
+      else
+      this.ports = 0;
+
+      if ( payment == "PayPal" ) {
+        this.totalImport = this.totalImport * 1.05;
+      }
+
+      // apply discount
+      if (this.isVip || (this.totalImport>3000 && this.country=='Portugal') || (this.totalImport>2000 && this.country=='France' ) || (this.totalImport>1000 && this.country=='France' )) {
+        this.totalImport *= 0.9;
+      }
+
+    this.taxes +=   Tax.calculate( this.totalImport, this.country, this.region, this.student );
+
+    this.invoiceNumber = Math.random() * 100;
+    this.savetoWarehouse();
+  }
+
+  // save to process at the warehouse
+  private savetoWarehouse() {
+
+      // send packing list to courier
+      const order = this.doc.order( this );
+        // send by email
+    this.doc.print( order );
+
+  }
+  // send invoice to customer
+  public invoice() {
+
+    // create document
+    this.doc.sendInvoice( this );
+
+  }
+}
+
+export class Document{
+
+  sendInvoice(shoppingCart:ShoppingCart) {
+    const invoice = `
+    Invoice Number: ${shoppingCart.invoiceNumber}
+    ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
+    ${shoppingCart.billingAddress}
+    Items purchased:
+    ${this.lines( shoppingCart )}
+    Base: ${shoppingCart.totalImport + shoppingCart.ports} Euros
+    Tax: ${shoppingCart.taxes}
+    Total: ${shoppingCart.totalImport + shoppingCart.ports + shoppingCart.taxes} Euros
+    `;
+    this.print( invoice );
+  }
+
+  private lines(shoppingCart:ShoppingCart) {
+    return JSON.stringify( shoppingCart.items );
+  }
+
+
+  order(shoppingCart:ShoppingCart) {
+    return `
+    Invoice Number: ${shoppingCart.invoiceNumber}
+    ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
+    ${shoppingCart.shippingAddress}
+    Items purchased:
+    ${this.lines(shoppingCart)}
+    `
+  }
+
+  print( doc ) {
+    Printer.print( doc );
+  }
+  email( doc ) {
+    console.log( 'Sending email to warehouse@acme.com' );
+    console.log( JSON.stringify( doc ) );
+  }
+}
+
+export class Printer{
+  public static print(text) {
+    console.log( text );
+  }
+}
+
+export class Tax {
+  static calculateLine(line, country, region, student) {
+      return student || region == 'St Pierre' ? 0 : line.totalImport * Tax.coutryTax(country,region) / 100;
+  }
+  static calculate(base, country, region, student) {
+
+      return student || region == 'St Pierre' ? 0 : base * Tax.coutryTax(country,region) / 100;
+  }
+
+  private static coutryTax(country, region) {
     let countryVAT = 0;
-    switch (this.country) {
+    switch (country) {
       case 'Spain':
-        if ( this.region == "Canary Islands" ) {
+        if ( region == "Canary Islands" ) {
           countryVAT = 7;
         } else
         countryVAT = 21;
         break;
       case 'Portugal':
-      if ( this.region == "Madeira" ) {
+      if ( region == "Madeira" ) {
         countryVAT = 22;
-      } else if ( this.region == "Azores" ) {
+      } else if ( region == "Azores" ) {
         countryVAT = 18;
       }
         countryVAT = 23;
@@ -61,60 +177,17 @@ export class ShoppingCart {
       default:
         break;
     }
-    line.taxes = this.student || this.region == 'St Pierre' ? 0  : line.totalImport  * countryVAT / 100;
-    });
-
-
-
-    // add ports
-    if (this.totalImport < 100) {
-      this.ports = this.totalImport * 0.1;
-    } else if (this.totalImport < 1000)
-      this.ports = 10;
-      else
-      this.ports = 0;
-
-      if ( payment == "PayPal" ) {
-        this.totalImport = this.totalImport * 0.05;
-      }
-
-      // apply discount
-      if (this.isVip) {
-        this.totalImport *= 0.9;
-      }
-
-
-
-
-
-  }
-
-  private savetoWarehouse() {
-    // save to process at the warehouse
-      // send packing list to courier
-        // create document
-        // send by email
-
-  }
-  private invoice() {
-    // send invoice to customer
-      // create document
-      // print to pdf
+    return countryVAT;
   }
 }
 
-export class Printer{
-  public print() {
 
-  }
-  public printConsole() {
-
-  }
-}
-
-export class Document{
-  print() {
-
-  }
-  email(){}
-}
+const mySC = new ShoppingCart( 'Alberto', false, "Galicia", "Spain", true, 'A12345678' );
+mySC.doc.print( 'START' );
+mySC.read();
+mySC.addProduct( 'computer', 1000, 1 );
+mySC.addProduct( 'monitor', 200, 2 );
+mySC.save();
+mySC.calculate( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
+mySC.invoice();
+mySC.doc.print( 'END' );
