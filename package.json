@@ -7,8 +7,7 @@
   "author": "Alberto Basalo <albertobasalo@hotmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node ./0-jelou/0-jelou.ts",
-    "lint": "tslint ./0-jelou/*.ts"
+    "start-0": "ts-node ./0-jelou/0-jelou.ts"
   },
   "devDependencies": {
     "@types/node": "^12.0.0",
