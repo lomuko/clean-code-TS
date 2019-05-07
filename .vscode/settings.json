@@ -1,5 +1,6 @@
 {
   "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.iconTheme": "vs-seti",
   "spellright.language": ["en", "es"],
   "spellright.documentTypes": ["markdown", "latex", "plaintext", "typescript"],
   "workbench.colorCustomizations": {
