@@ -1,0 +1,17 @@
+{
+  "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.iconTheme": "vs-seti",
+  "spellright.language": ["en", "es"],
+  "spellright.documentTypes": ["markdown", "latex", "plaintext", "typescript"],
+  "workbench.colorCustomizations": {
+    "editorError.foreground": "#ff9900",
+    "editorWarning.foreground": "#ffff99",
+    "titleBar.activeBackground": "#f9e64f",
+    "titleBar.inactiveBackground": "#f9e64f99",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "editor.formatOnSave": true,
+  "tslint.alwaysShowRuleFailuresAsWarnings": false,
+  "tslint.exclude": ["0-*/*.*", "1-*/*.*"]
+}
