@@ -11,16 +11,6 @@
     "titleBar.inactiveForeground": "#15202b99"
   },
   "editor.formatOnSave": true,
-  "[javascript]": {
-    "editor.formatOnSave": false
-  },
-  "[javascriptreact]": {
-    "editor.formatOnSave": false
-  },
-  "[typescript]": {
-    "editor.formatOnSave": false
-  },
-  "[typescriptreact]": {
-    "editor.formatOnSave": false
-  }
+  "tslint.alwaysShowRuleFailuresAsWarnings": false,
+  "tslint.exclude": ["0-*/*.*", "1-*/*.*"]
 }
