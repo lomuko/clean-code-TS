@@ -32,7 +32,7 @@ export class Warehouse {
     if (fs.existsSync(ordersFolder)) {
       fs.readdirSync(ordersFolder).forEach(file => {
         if ( path.basename( file ).startsWith( 'order-' ) ) {
-          const shippment = file.replace( 'order-', 'shippment' );
+          const shippment = file.replace( 'order-', 'shipment' );
           fs.renameSync( path.join( __dirname, 'data', 'email', file), path.join( __dirname, 'data', 'email', shippment) );
           const fileName = `log.txt`;
           Printer.print(fileName, 'processed: ' + file );
