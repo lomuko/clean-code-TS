@@ -39,7 +39,9 @@ export class ShoppingCart {
     if (!fs.existsSync(path.join(__dirname, '..' , 'data'))) {
       fs.mkdirSync(path.join(__dirname, '..' , 'data'));
     }
-    const fileName = `shooping-${this.clientName}.json`;
+    // FIX:
+    // const fileName = `shooping-${this.clientName}.json`;
+    const fileName = `shopping-${this.clientName}.json`;
     if (!fs.existsSync(path.join(__dirname, '..' , 'data', fileName))) {
       fs.writeFileSync(path.join(__dirname, '..' , 'data', fileName), JSON.stringify(this.items));
     }
@@ -47,7 +49,9 @@ export class ShoppingCart {
 
   // read from file
   public read() {
-    const fileName = path.join(__dirname, '..' , 'data', `shooping-${this.clientName}.json`);
+    // FIX:
+    // const fileName = path.join( __dirname, '..', 'data', `shooping-${this.clientName}.json` );
+    const fileName = path.join(__dirname, '..' , 'data', `shopping-${this.clientName}.json`);
     if (fs.existsSync(fileName)) {
       const file = fs.readFileSync(fileName, 'utf8');
       this.items = JSON.parse(file);
@@ -55,7 +59,9 @@ export class ShoppingCart {
   }
   // read from file
   public delete() {
-    const fileName = path.join(__dirname, '..' , 'data', `shooping-${this.clientName}.json`);
+    // FIX:
+    // const fileName = path.join( __dirname, '..', 'data', `shooping-${this.clientName}.json` );
+    const fileName = path.join(__dirname, '..' , 'data', `shopping-${this.clientName}.json`);
     if (fs.existsSync(fileName)) {
       fs.unlinkSync( fileName );
     }
@@ -72,6 +78,7 @@ export class ShoppingCart {
       w.buyProduct( line.product, line.q );
       line.totalAmount = line.price * line.q;
       this.totalAmount += line.totalAmount;
+      // FIX:
       // console.log(this.totalAmount);
       // add taxes by product
       if ( !line.taxFree ) {
@@ -82,6 +89,7 @@ export class ShoppingCart {
       // console.log(this.totalAmount);
     });
 
+    // FIX:
     // console.log(this.totalAmount);
     // add shipping costs
     if ( this.totalAmount < 100 ) {

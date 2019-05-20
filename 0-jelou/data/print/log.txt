@@ -3,3 +3,8 @@ Sent Order: 1
 Sent Invoice: 1
 END
 processed: order-1_warehouse@acme.es.txt
+START
+Sent Order: 2
+Sent Invoice: 2
+END
+processed: order-2_warehouse@acme.es.txt

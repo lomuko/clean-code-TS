@@ -32,7 +32,9 @@ export class Warehouse {
     if (fs.existsSync(ordersFolder)) {
       fs.readdirSync(ordersFolder).forEach(file => {
         if ( path.basename( file ).startsWith( 'order-' ) ) {
-          const shippment = file.replace( 'order-', 'shipment' );
+          // FIX:
+          // const shippment = file.replace( 'order-', 'shipment' );
+          const shippment = file.replace( 'order-', 'shipment-' );
           fs.renameSync( path.join( __dirname, '..', 'data', 'email', file), path.join( __dirname, '..', 'data', 'email', shippment) );
           const fileName = `log.txt`;
           Printer.print(fileName, 'processed: ' + file );
@@ -55,10 +57,14 @@ export class Warehouse {
     } else {
       p.stock = p.stock - quantity;
     }
+    // FIX:
+    this.restock( name );
   }
 
   restock(name:string) {
     const p = Warehouse.catalog.find( p => p.name == name );
+    // FIX:
+    p.stock = p.minimun;
     Printer.print('restock-' + name + '.json' , JSON.stringify(p));
   }
 

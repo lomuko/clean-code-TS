@@ -45,7 +45,8 @@ export class Document {
     if (doc) Printer.print(fileName, doc);
   }
   emailOrder(shoppingCart: ShoppingCart, doc: string, country: string) {
-    const warehouse = this.getAddress(country);
+    const warehouse = this.getAddress( country );
+    // FIX:
     // console.log('Sending email to ' + warehouse);
     const message = `
     ---
@@ -54,6 +55,7 @@ export class Document {
     ${doc}
     Regards, the shop.acme.com
     ---`;
+    // FIX:
     // console.table(message);
     const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
     if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email'))) {
@@ -79,6 +81,7 @@ export class Document {
 
     Thanks for your purchasing, the shop.acme.com
     ---`;
+    // FIX:
     // console.table(message);
     const fileName = `invoice-${address}.txt`;
     if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email'))) {
