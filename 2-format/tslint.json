@@ -10,6 +10,7 @@
         "order": ["static-field", "instance-field", "static-method", "instance-method"]
       }
     ],
+    "no-console": true,
     "no-multi-spaces": true,
     "no-multiple-empty-lines": [
       "error",
