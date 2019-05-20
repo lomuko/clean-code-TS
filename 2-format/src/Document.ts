@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Printer } from './Printer';
 import { ShoppingCart } from './shoppingcart';
 export class Document {
-  sendInvoice(shoppingCart: ShoppingCart) {
+  public sendInvoice(shoppingCart: ShoppingCart) {
     const invoice = `
     LEGAL INVOICE FROM acme!
     ========================
@@ -13,7 +13,7 @@ export class Document {
     ${shoppingCart.billingAddress}
     ${shoppingCart.country} - ${shoppingCart.region}
     Items purchased:
-    ${this.lines( shoppingCart )}
+    ${this.lines(shoppingCart)}
     Amount: #${shoppingCart.totalAmount - shoppingCart.shipping_cost}Euros
     Shipping Cost: #${shoppingCart.shipping_cost}Euros
     Base Amount: #${shoppingCart.totalAmount}Euros
@@ -21,13 +21,13 @@ export class Document {
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxes}Euros
     `;
     this.print(shoppingCart, invoice);
-    this.emailInvoice( shoppingCart.email, invoice );
-    this.printLog('Sent Invoice: ' + shoppingCart.invoiceNumber );
+    this.emailInvoice(shoppingCart.email, invoice);
+    this.printLog('Sent Invoice: ' + shoppingCart.invoiceNumber);
   }
   private lines(shoppingCart: ShoppingCart) {
     return JSON.stringify(shoppingCart.items);
   }
-  order(shoppingCart: ShoppingCart) {
+  public order(shoppingCart: ShoppingCart) {
     return `
     Invoice Number: ${shoppingCart.invoiceNumber}
     ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
@@ -36,18 +36,16 @@ export class Document {
     ${this.lines(shoppingCart)}
     `;
   }
-  print(shoppingCart: ShoppingCart, doc: string) {
+  public print(shoppingCart: ShoppingCart, doc: string) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
-    if (doc) Printer.print(fileName, doc);
+    if (doc) { Printer.print(fileName, doc); }
   }
-  printLog(doc: string) {
+  public printLog(doc: string) {
     const fileName = `log.txt`;
-    if (doc) Printer.print(fileName, doc);
+    if (doc) { Printer.print(fileName, doc); }
   }
-  emailOrder(shoppingCart: ShoppingCart, doc: string, country: string) {
-    const warehouse = this.getAddress( country );
-    // FIX:
-    // console.log('Sending email to ' + warehouse);
+  public emailOrder(shoppingCart: ShoppingCart, doc: string, country: string) {
+    const warehouse = this.getAddress(country);
     const message = `
     ---
     Serve this order ASAP.
@@ -55,16 +53,14 @@ export class Document {
     ${doc}
     Regards, the shop.acme.com
     ---`;
-    // FIX:
-    // console.table(message);
     const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
-    if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email'))) {
-      fs.mkdirSync(path.join(__dirname,'..', 'data', 'email'));
+    if (!fs.existsSync(path.join(__dirname, '..', 'data', 'email'))) {
+      fs.mkdirSync(path.join(__dirname, '..', 'data', 'email'));
     }
-    if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email', fileName))) {
-      fs.writeFileSync(path.join(__dirname,'..', 'data', 'email', fileName), message);
+    if (!fs.existsSync(path.join(__dirname, '..', 'data', 'email', fileName))) {
+      fs.writeFileSync(path.join(__dirname, '..', 'data', 'email', fileName), message);
     }
-    this.printLog('Sent Order: ' + shoppingCart.invoiceNumber );
+    this.printLog('Sent Order: ' + shoppingCart.invoiceNumber);
   }
   private getAddress(country: string) {
     if (country == 'Spain') {
@@ -81,14 +77,12 @@ export class Document {
 
     Thanks for your purchasing, the shop.acme.com
     ---`;
-    // FIX:
-    // console.table(message);
     const fileName = `invoice-${address}.txt`;
-    if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email'))) {
-      fs.mkdirSync(path.join(__dirname, '..','data', 'email'));
+    if (!fs.existsSync(path.join(__dirname, '..', 'data', 'email'))) {
+      fs.mkdirSync(path.join(__dirname, '..', 'data', 'email'));
     }
-    if (!fs.existsSync(path.join(__dirname, '..','data', 'email', fileName))) {
-      fs.writeFileSync(path.join(__dirname, '..','data', 'email', fileName), message);
+    if (!fs.existsSync(path.join(__dirname, '..', 'data', 'email', fileName))) {
+      fs.writeFileSync(path.join(__dirname, '..', 'data', 'email', fileName), message);
     }
   }
 }

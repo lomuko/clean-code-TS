@@ -26,7 +26,13 @@ export class ShoppingCart {
     public taxNumber?: string
   ) {}
 
-  public addProduct(product: string, price: number, q: number, country?: string, taxFree? : boolean) {
+  public addProduct(
+    product: string,
+    price: number,
+    q: number,
+    country?: string,
+    taxFree?: boolean
+  ) {
     this.items.push({ product, price, q });
   }
 
@@ -36,22 +42,21 @@ export class ShoppingCart {
 
   // save to read later
   public save() {
-    if (!fs.existsSync(path.join(__dirname, '..' , 'data'))) {
-      fs.mkdirSync(path.join(__dirname, '..' , 'data'));
+    if (!fs.existsSync(path.join(__dirname, '..', 'data'))) {
+      fs.mkdirSync(path.join(__dirname, '..', 'data'));
     }
-    // FIX:
-    // const fileName = `shooping-${this.clientName}.json`;
     const fileName = `shopping-${this.clientName}.json`;
-    if (!fs.existsSync(path.join(__dirname, '..' , 'data', fileName))) {
-      fs.writeFileSync(path.join(__dirname, '..' , 'data', fileName), JSON.stringify(this.items));
+    if (!fs.existsSync(path.join(__dirname, '..', 'data', fileName))) {
+      fs.writeFileSync(
+        path.join(__dirname, '..', 'data', fileName),
+        JSON.stringify(this.items)
+      );
     }
   }
 
   // read from file
   public read() {
-    // FIX:
-    // const fileName = path.join( __dirname, '..', 'data', `shooping-${this.clientName}.json` );
-    const fileName = path.join(__dirname, '..' , 'data', `shopping-${this.clientName}.json`);
+    const fileName = path.join(__dirname, '..', 'data', `shopping-${this.clientName}.json`);
     if (fs.existsSync(fileName)) {
       const file = fs.readFileSync(fileName, 'utf8');
       this.items = JSON.parse(file);
@@ -59,11 +64,9 @@ export class ShoppingCart {
   }
   // read from file
   public delete() {
-    // FIX:
-    // const fileName = path.join( __dirname, '..', 'data', `shooping-${this.clientName}.json` );
-    const fileName = path.join(__dirname, '..' , 'data', `shopping-${this.clientName}.json`);
+    const fileName = path.join(__dirname, '..', 'data', `shopping-${this.clientName}.json`);
     if (fs.existsSync(fileName)) {
-      fs.unlinkSync( fileName );
+      fs.unlinkSync(fileName);
     }
   }
 
@@ -74,72 +77,65 @@ export class ShoppingCart {
     this.paymentId = id;
     const w = new Warehouse();
     // calculate total price
-    this.items.forEach( line => {
-      w.buyProduct( line.product, line.q );
+    this.items.forEach(line => {
+      w.buyProduct(line.product, line.q);
       line.totalAmount = line.price * line.q;
       this.totalAmount += line.totalAmount;
-      // FIX:
-      // console.log(this.totalAmount);
       // add taxes by product
-      if ( !line.taxFree ) {
-        line.taxes = Tax.calculateLine( line, this.country, this.region, this.student );
+      if (!line.taxFree) {
+        line.taxes = Tax.calculateLine(line, this.country, this.region, this.student);
         this.taxes += line.taxes;
         let lineTotal = line.totalAmount + line.taxes;
       }
-      // console.log(this.totalAmount);
     });
 
-    // FIX:
-    // console.log(this.totalAmount);
     // add shipping costs
-    if ( this.totalAmount < 100 ) {
+    if (this.totalAmount < 100) {
       switch (this.country) {
         case 'Spain':
-        this.shipping_cost = this.totalAmount * 0.1;
+          this.shipping_cost = this.totalAmount * 0.1;
           break;
-          case 'Portugal':
+        case 'Portugal':
           this.shipping_cost = this.totalAmount * 0.15;
           break;
-          case 'France':
+        case 'France':
           this.shipping_cost = this.totalAmount * 0.2;
           break;
 
         default:
-        this.shipping_cost = this.totalAmount * 0.25;
+          this.shipping_cost = this.totalAmount * 0.25;
           break;
       }
-
-    } else if ( this.totalAmount < 1000 ) {
+    } else if (this.totalAmount < 1000) {
       switch (this.country) {
         case 'Spain':
-        this.shipping_cost = 10;
+          this.shipping_cost = 10;
           break;
-          case 'Portugal':
+        case 'Portugal':
           this.shipping_cost = 15;
           break;
-          case 'France':
+        case 'France':
           this.shipping_cost = 20;
           break;
 
         default:
-        this.shipping_cost = 25;
+          this.shipping_cost = 25;
           break;
       }
-    }
-    else {
+    } else {
       switch (this.country) {
         case 'Spain':
-        this.shipping_cost = 0;
+          this.shipping_cost = 0;
           break;
-          case 'Portugal':
+        case 'Portugal':
           this.shipping_cost = 10;
           break;
-          case 'France':
+        case 'France':
           this.shipping_cost = 15;
           break;
 
         default:
-        this.shipping_cost = 20;
+          this.shipping_cost = 20;
           break;
       }
     }
@@ -160,7 +156,7 @@ export class ShoppingCart {
 
     this.taxes += Tax.calculate(this.totalAmount, this.country, this.region, this.student);
 
-    const lastInvoice = path.join(__dirname, '..' , 'data', `lastinvoice.txt`);
+    const lastInvoice = path.join(__dirname, '..', 'data', `lastinvoice.txt`);
     let number = 0;
     if (fs.existsSync(lastInvoice)) {
       number = Number.parseInt(fs.readFileSync(lastInvoice, 'utf8'));
