@@ -7,7 +7,7 @@ import { Warehouse } from './warehouse';
 export class ShoppingCart {
   public items: any[] = [];
   public totalAmount: number = 0;
-  public ports = 0;
+  public shipping_cost = 0;
   public taxes: number = 0;
   public payment: string = '';
   public paymentId: string = '';
@@ -83,59 +83,59 @@ export class ShoppingCart {
     });
 
     console.log(this.totalAmount);
-    // add ports
+    // add shipping costs
     if ( this.totalAmount < 100 ) {
       switch (this.country) {
         case 'Spain':
-        this.ports = this.totalAmount * 0.1;
+        this.shipping_cost = this.totalAmount * 0.1;
           break;
           case 'Portugal':
-          this.ports = this.totalAmount * 0.15;
+          this.shipping_cost = this.totalAmount * 0.15;
           break;
           case 'France':
-          this.ports = this.totalAmount * 0.2;
+          this.shipping_cost = this.totalAmount * 0.2;
           break;
 
         default:
-        this.ports = this.totalAmount * 0.25;
+        this.shipping_cost = this.totalAmount * 0.25;
           break;
       }
 
     } else if ( this.totalAmount < 1000 ) {
       switch (this.country) {
         case 'Spain':
-        this.ports = 10;
+        this.shipping_cost = 10;
           break;
           case 'Portugal':
-          this.ports = 15;
+          this.shipping_cost = 15;
           break;
           case 'France':
-          this.ports = 20;
+          this.shipping_cost = 20;
           break;
 
         default:
-        this.ports = 25;
+        this.shipping_cost = 25;
           break;
       }
     }
     else {
       switch (this.country) {
         case 'Spain':
-        this.ports = 0;
+        this.shipping_cost = 0;
           break;
           case 'Portugal':
-          this.ports = 10;
+          this.shipping_cost = 10;
           break;
           case 'France':
-          this.ports = 15;
+          this.shipping_cost = 15;
           break;
 
         default:
-        this.ports = 20;
+        this.shipping_cost = 20;
           break;
       }
     }
-    this.totalAmount += this.ports;
+    this.totalAmount += this.shipping_cost;
     if (payment == 'PayPal') {
       this.totalAmount = this.totalAmount * 1.05;
     }

@@ -14,8 +14,8 @@ export class Document {
     ${shoppingCart.country} - ${shoppingCart.region}
     Items purchased:
     ${this.lines( shoppingCart )}
-    Amount: #${shoppingCart.totalAmount - shoppingCart.ports}Euros
-    Ports: #${shoppingCart.ports}Euros
+    Amount: #${shoppingCart.totalAmount - shoppingCart.shipping_cost}Euros
+    Shipping Cost: #${shoppingCart.shipping_cost}Euros
     Base Amount: #${shoppingCart.totalAmount}Euros
     Tax: #${shoppingCart.taxes}Euros
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxes}Euros
