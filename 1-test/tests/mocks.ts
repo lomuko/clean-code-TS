@@ -13,7 +13,10 @@ export const shoopingCart = {
 }
 
 export const shoppingCartFilePath =
-    path.join(__dirname, '..' , 'data', `shooping-${shoopingCart.clientName}.json`);
+    path.join( __dirname, '..', 'data', `shooping-${shoopingCart.clientName}.json` );
+
+export const orderFilePath = (invoiceNumber:number) =>
+    path.join(__dirname, '..' , 'data', 'email', `order-${invoiceNumber}_warehouse@acme.es.txt`);
 
 
     export function cleanShoopingCart(){
@@ -39,7 +42,12 @@ function rimraf(dir_path:string) {
             } else {
                 fs.unlinkSync(entry_path);
             }
-        });
-        fs.rmdirSync(dir_path);
+        } );
+        try {
+            fs.rmdirSync( dir_path );
+        }
+        catch (e) {
+            rimraf(dir_path);
+        }
     }
 }
