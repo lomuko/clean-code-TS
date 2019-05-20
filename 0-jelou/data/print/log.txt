@@ -1,0 +1,5 @@
+START
+Sent Order: 1
+Sent Invoice: 1
+END
+processed: order-1_warehouse@acme.es.txt

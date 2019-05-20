@@ -13,7 +13,7 @@ export const shoopingCart = {
 }
 
 export const shoppingCartFilePath =
-    path.join(__dirname, '..' , 'src/data', `shooping-${shoopingCart.clientName}.json`);
+    path.join(__dirname, '..' , 'data', `shooping-${shoopingCart.clientName}.json`);
 
 
     export function cleanShoopingCart(){
@@ -23,15 +23,14 @@ export const shoppingCartFilePath =
     }
 
     export function cleanCheckOuts(){
-    const emailFolder= path.join(__dirname, '..' , 'src/data' , 'email');
+    const emailFolder= path.join(__dirname, '..' , 'data' , 'email');
     rimraf(emailFolder);
-    const printFolder= path.join(__dirname, '..' , 'src/data' , 'print');
+    const printFolder= path.join(__dirname, '..' , 'data' , 'print');
     rimraf(printFolder);
 }
 
 
 function rimraf(dir_path:string) {
-    console.log('deleting: '+ dir_path);
     if (fs.existsSync(dir_path)) {
         fs.readdirSync(dir_path).forEach(function(entry) {
             var entry_path = path.join(dir_path, entry);

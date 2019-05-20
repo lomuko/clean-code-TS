@@ -28,12 +28,12 @@ export class Warehouse {
   public stock: any[] = [];
 
   processOrders() {
-    const ordersFolder = path.join( __dirname, 'data', 'email' );
+    const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if (fs.existsSync(ordersFolder)) {
       fs.readdirSync(ordersFolder).forEach(file => {
         if ( path.basename( file ).startsWith( 'order-' ) ) {
           const shippment = file.replace( 'order-', 'shipment' );
-          fs.renameSync( path.join( __dirname, 'data', 'email', file), path.join( __dirname, 'data', 'email', shippment) );
+          fs.renameSync( path.join( __dirname, '..', 'data', 'email', file), path.join( __dirname, '..', 'data', 'email', shippment) );
           const fileName = `log.txt`;
           Printer.print(fileName, 'processed: ' + file );
         }

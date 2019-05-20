@@ -36,18 +36,18 @@ export class ShoppingCart {
 
   // save to read later
   public save() {
-    if (!fs.existsSync(path.join(__dirname, 'data'))) {
-      fs.mkdirSync(path.join(__dirname, 'data'));
+    if (!fs.existsSync(path.join(__dirname, '..' , 'data'))) {
+      fs.mkdirSync(path.join(__dirname, '..' , 'data'));
     }
     const fileName = `shooping-${this.clientName}.json`;
-    if (!fs.existsSync(path.join(__dirname, 'data', fileName))) {
-      fs.writeFileSync(path.join(__dirname, 'data', fileName), JSON.stringify(this.items));
+    if (!fs.existsSync(path.join(__dirname, '..' , 'data', fileName))) {
+      fs.writeFileSync(path.join(__dirname, '..' , 'data', fileName), JSON.stringify(this.items));
     }
   }
 
   // read from file
   public read() {
-    const fileName = path.join(__dirname, 'data', `shooping-${this.clientName}.json`);
+    const fileName = path.join(__dirname, '..' , 'data', `shooping-${this.clientName}.json`);
     if (fs.existsSync(fileName)) {
       const file = fs.readFileSync(fileName, 'utf8');
       this.items = JSON.parse(file);
@@ -55,7 +55,7 @@ export class ShoppingCart {
   }
   // read from file
   public delete() {
-    const fileName = path.join(__dirname, 'data', `shooping-${this.clientName}.json`);
+    const fileName = path.join(__dirname, '..' , 'data', `shooping-${this.clientName}.json`);
     if (fs.existsSync(fileName)) {
       fs.unlinkSync( fileName );
     }
@@ -152,7 +152,7 @@ export class ShoppingCart {
 
     this.taxes += Tax.calculate(this.totalAmount, this.country, this.region, this.student);
 
-    const lastInvoice = path.join(__dirname, 'data', `lastinvoice.txt`);
+    const lastInvoice = path.join(__dirname, '..' , 'data', `lastinvoice.txt`);
     let number = 0;
     if (fs.existsSync(lastInvoice)) {
       number = Number.parseInt(fs.readFileSync(lastInvoice, 'utf8'));

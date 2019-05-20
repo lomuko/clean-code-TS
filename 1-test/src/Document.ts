@@ -46,7 +46,7 @@ export class Document {
   }
   emailOrder(shoppingCart: ShoppingCart, doc: string, country: string) {
     const warehouse = this.getAddress(country);
-    // console.log('Sending email to ' + warehouse);
+    console.log('Sending email to ' + warehouse);
     const message = `
     ---
     Serve this order ASAP.
@@ -54,13 +54,13 @@ export class Document {
     ${doc}
     Regards, the shop.acme.com
     ---`;
-    // console.table(message);
+    console.table(message);
     const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
-    if (!fs.existsSync(path.join(__dirname, 'data', 'email'))) {
-      fs.mkdirSync(path.join(__dirname, 'data', 'email'));
+    if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email'))) {
+      fs.mkdirSync(path.join(__dirname,'..', 'data', 'email'));
     }
-    if (!fs.existsSync(path.join(__dirname, 'data', 'email', fileName))) {
-      fs.writeFileSync(path.join(__dirname, 'data', 'email', fileName), message);
+    if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email', fileName))) {
+      fs.writeFileSync(path.join(__dirname,'..', 'data', 'email', fileName), message);
     }
     this.printLog('Sent Order: ' + shoppingCart.invoiceNumber );
   }
@@ -81,11 +81,11 @@ export class Document {
     ---`;
     console.table(message);
     const fileName = `invoice-${address}.txt`;
-    if (!fs.existsSync(path.join(__dirname, 'data', 'email'))) {
-      fs.mkdirSync(path.join(__dirname, 'data', 'email'));
+    if (!fs.existsSync(path.join(__dirname,'..', 'data', 'email'))) {
+      fs.mkdirSync(path.join(__dirname, '..','data', 'email'));
     }
-    if (!fs.existsSync(path.join(__dirname, 'data', 'email', fileName))) {
-      fs.writeFileSync(path.join(__dirname, 'data', 'email', fileName), message);
+    if (!fs.existsSync(path.join(__dirname, '..','data', 'email', fileName))) {
+      fs.writeFileSync(path.join(__dirname, '..','data', 'email', fileName), message);
     }
   }
 }
