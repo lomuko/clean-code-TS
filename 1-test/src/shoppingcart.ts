@@ -72,17 +72,17 @@ export class ShoppingCart {
       w.buyProduct( line.product, line.q );
       line.totalAmount = line.price * line.q;
       this.totalAmount += line.totalAmount;
-      console.log(this.totalAmount);
+      // console.log(this.totalAmount);
       // add taxes by product
       if ( !line.taxFree ) {
         line.taxes = Tax.calculateLine( line, this.country, this.region, this.student );
         this.taxes += line.taxes;
         let lineTotal = line.totalAmount + line.taxes;
       }
-      console.log(this.totalAmount);
+      // console.log(this.totalAmount);
     });
 
-    console.log(this.totalAmount);
+    // console.log(this.totalAmount);
     // add shipping costs
     if ( this.totalAmount < 100 ) {
       switch (this.country) {

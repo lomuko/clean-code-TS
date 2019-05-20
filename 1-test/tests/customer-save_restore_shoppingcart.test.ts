@@ -11,14 +11,15 @@ afterAll(() => {
 
 describe(`As a customer, I want to save and restore my current shopping cart, so I can continue later`,()=>{
     let assert:Assert;
-
+  const shoppingCart = mocks.newShoppingCart;
+  shoppingCart.addProduct('computer', 1000, 1, shoppingCart.country);
     assert = {
         given: 'a shopping cart',
         should: `save it on ${mocks.shoppingCartFilePath}`,
       };
     test(`given ${assert.given} should ${assert.should}`, () => {
-      const shoppingCart = mocks.newShoppingCart;
-      shoppingCart.addProduct('computer', 1000, 1, shoppingCart.country);
+
+
       shoppingCart.save();
       assert.actual = fs.existsSync( mocks.shoppingCartFilePath );
       assert.expected= true;
@@ -30,9 +31,6 @@ describe(`As a customer, I want to save and restore my current shopping cart, so
       should:'restore it',
     };
   test(`given ${assert.given} should ${assert.should}`, () => {
-    const shoppingCart = mocks.newShoppingCart;
-    shoppingCart.addProduct('computer', 1000, 1, shoppingCart.country);
-    shoppingCart.save();
     shoppingCart.read();
     assert.actual=  shoppingCart.items.length;
     assert.expected= 1;

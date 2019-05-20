@@ -7,6 +7,7 @@ export const newShoppingCart =
      new ShoppingCart('Alberto', false, 'Galicia', 'Spain', 'alberto@code.dev', true, 'A12345678');
 
 export const theWarehouse = Warehouse;
+export const oneWarehouse = new Warehouse();
 
 export const shoppingCart = {
     clientName:"Alberto",student:false,region:"Galicia",country:"Spain",email:"alberto@code.dev",isVip:true,
@@ -19,6 +20,9 @@ export const shoppingCartFilePath =
 
 export const orderFilePath = (invoiceNumber:number) =>
     path.join( __dirname, '..', 'data', 'email', `order-${invoiceNumber}_warehouse@acme.es.txt` );
+
+    export const shipmentFilePath = (invoiceNumber:number ) =>
+    path.join( __dirname, '..', 'data', 'email', `shipment${invoiceNumber}_warehouse@acme.es.txt` );
 
 export const invoiceFilePath = ( ) =>
     path.join( __dirname, '..', 'data', 'email', `invoice-${shoppingCart.email}.txt` );
