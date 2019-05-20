@@ -39,6 +39,27 @@ class: impact
 
 ---
 
+## Método RITE
+
+- Readable : legible
+- Isolated/Integrated : aislado/integrado
+- Thorough: completo
+- Explicit: explícito
+
+
+```javascript
+describe('sum()', async assert => {
+  assert({
+    given: 'no arguments',
+    should: 'return 0',
+    actual: sum(),
+    expected: 0
+  });
+});
+```
+
+---
+
 ### Si funciona, y tienes pruebas, tócalo
 
 ![No siempre pruebo mi código... pero cuando lo hago, es en producción](./assets/test-production.jpeg)
