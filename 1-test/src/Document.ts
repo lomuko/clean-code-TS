@@ -14,8 +14,8 @@ export class Document {
     ${shoppingCart.country} - ${shoppingCart.region}
     Items purchased:
     ${this.lines( shoppingCart )}
-    Amount: #${shoppingCart.totalAmount - shoppingCart.ports}Euros
-    Ports: #${shoppingCart.ports}Euros
+    Amount: #${shoppingCart.totalAmount - shoppingCart.shipping_cost}Euros
+    Shipping Cost: #${shoppingCart.shipping_cost}Euros
     Base Amount: #${shoppingCart.totalAmount}Euros
     Tax: #${shoppingCart.taxes}Euros
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxes}Euros
@@ -46,7 +46,7 @@ export class Document {
   }
   emailOrder(shoppingCart: ShoppingCart, doc: string, country: string) {
     const warehouse = this.getAddress(country);
-    console.log('Sending email to ' + warehouse);
+    // console.log('Sending email to ' + warehouse);
     const message = `
     ---
     Serve this order ASAP.
@@ -54,7 +54,7 @@ export class Document {
     ${doc}
     Regards, the shop.acme.com
     ---`;
-    console.table(message);
+    // console.table(message);
     const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
     if (!fs.existsSync(path.join(__dirname, 'data', 'email'))) {
       fs.mkdirSync(path.join(__dirname, 'data', 'email'));
