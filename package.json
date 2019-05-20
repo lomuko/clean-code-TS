@@ -7,11 +7,15 @@
   "author": "Alberto Basalo <albertobasalo@hotmail.com>",
   "license": "MIT",
   "scripts": {
-    "start-0": "ts-node ./0-jelou/0-jelou.ts"
+    "start-0": "ts-node ./0-jelou/0-jelou.ts",
+    "test": "jest"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "@types/node": "^12.0.0",
-    "jest": "^24.7.1",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
