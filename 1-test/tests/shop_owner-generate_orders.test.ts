@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import { Assert } from "./assert";
 import * as mocks from "./mocks";
 
-afterEach(() => {
-  mocks.cleanCheckOuts();
+afterAll(() => {
+   mocks.cleanCheckOuts();
 });
 
 describe(`As a shop owner, I want to generate orders, so I can send products to customers`,()=>{
@@ -19,7 +19,6 @@ describe(`As a shop owner, I want to generate orders, so I can send products to 
       shoppingCart.addProduct( 'monitor', 200, 25, shoppingCart.country );
       shoppingCart.addProduct('course', 100, 10, shoppingCart.country);
       shoppingCart.calculate( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
-      console.log( mocks.orderFilePath( shoppingCart.invoiceNumber ) );
       assert.actual=  fs.existsSync(mocks.orderFilePath(shoppingCart.invoiceNumber));
       assert.expected= true;
       expect(assert.actual).toEqual(assert.expected);

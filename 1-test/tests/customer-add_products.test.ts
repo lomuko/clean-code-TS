@@ -10,7 +10,7 @@ describe(`As a customer, I want to add products to the shopping cart, so I can b
       };
     test(`given ${assert.given} should ${assert.should}`, () => {
       assert.actual=  mocks.newShoppingCart;
-      assert.expected= mocks.shoopingCart;
+      assert.expected= mocks.shoppingCart;
       expect(assert.actual).toEqual(assert.expected);
     });
 

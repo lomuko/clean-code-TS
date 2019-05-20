@@ -1,25 +1,33 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ShoppingCart } from '../src/shoppingcart';
+import { Warehouse } from '../src/warehouse';
 
 export const newShoppingCart =
      new ShoppingCart('Alberto', false, 'Galicia', 'Spain', 'alberto@code.dev', true, 'A12345678');
 
+export const theWarehouse = Warehouse;
 
-export const shoopingCart = {
+export const shoppingCart = {
     clientName:"Alberto",student:false,region:"Galicia",country:"Spain",email:"alberto@code.dev",isVip:true,
     taxNumber:"A12345678",items:[],totalAmount:0,shipping_cost:0,taxes:0,
     payment:"",paymentId:"",shippingAddress:"",billingAddress:"",invoiceNumber:0,"doc":{}
 }
 
 export const shoppingCartFilePath =
-    path.join( __dirname, '..', 'data', `shooping-${shoopingCart.clientName}.json` );
+    path.join( __dirname, '..', 'data', `shopping-${shoppingCart.clientName}.json` );
 
 export const orderFilePath = (invoiceNumber:number) =>
-    path.join(__dirname, '..' , 'data', 'email', `order-${invoiceNumber}_warehouse@acme.es.txt`);
+    path.join( __dirname, '..', 'data', 'email', `order-${invoiceNumber}_warehouse@acme.es.txt` );
+
+export const invoiceFilePath = ( ) =>
+    path.join( __dirname, '..', 'data', 'email', `invoice-${shoppingCart.email}.txt` );
+
+    export const invoicePrintingFilePath = ( invoiceNumber: number ) =>
+    path.join(__dirname, '..' , 'data', 'print', `invoice-${invoiceNumber}.txt`);
 
 
-    export function cleanShoopingCart(){
+    export function cleanShoppingCart(){
         if (fs.existsSync(shoppingCartFilePath)) {
             rimraf(shoppingCartFilePath);
           }

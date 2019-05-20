@@ -16,22 +16,19 @@ As a : shop owner,
   I want: to generate orders
   so : I can send products to customers
 
-# 6
 As a : shop owner,
   I want: to generate invoices
   so : I can legally sell products
 
-# 7
 As a : shop owner,
   I want: to have my product stock refilled
   so : I can continue selling
 
-# 8
+# To be tested.
 As a : warehouse employee,
   I want: to process pending orders
   so : I can satisfy our customers
 
-# 9
 As a : system operator,
   I want: to get a log
   so : I know what happend to the system
@@ -39,7 +36,6 @@ As a : system operator,
 
 # To do.
 
-# 10
 As a : shop owner
   I can: manage products in my webshop,
   so: I can update price and product information if it is changed

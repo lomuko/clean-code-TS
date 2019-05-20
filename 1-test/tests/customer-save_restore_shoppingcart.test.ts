@@ -3,7 +3,10 @@ import { Assert } from "./assert";
 import * as mocks from "./mocks";
 
 beforeAll(() => {
-  mocks.cleanShoopingCart();
+  // mocks.cleanShoppingCart();
+} );
+afterAll(() => {
+  // mocks.cleanShoppingCart();
 });
 
 describe(`As a customer, I want to save and restore my current shopping cart, so I can continue later`,()=>{
@@ -11,13 +14,13 @@ describe(`As a customer, I want to save and restore my current shopping cart, so
 
     assert = {
         given: 'a shopping cart',
-        should:'save it',
+        should: `save it on ${mocks.shoppingCartFilePath}`,
       };
     test(`given ${assert.given} should ${assert.should}`, () => {
       const shoppingCart = mocks.newShoppingCart;
       shoppingCart.addProduct('computer', 1000, 1, shoppingCart.country);
       shoppingCart.save();
-      assert.actual=  fs.existsSync(mocks.shoppingCartFilePath);
+      assert.actual = fs.existsSync( mocks.shoppingCartFilePath );
       assert.expected= true;
       expect(assert.actual).toEqual(assert.expected);
     });
@@ -28,6 +31,8 @@ describe(`As a customer, I want to save and restore my current shopping cart, so
     };
   test(`given ${assert.given} should ${assert.should}`, () => {
     const shoppingCart = mocks.newShoppingCart;
+    shoppingCart.addProduct('computer', 1000, 1, shoppingCart.country);
+    shoppingCart.save();
     shoppingCart.read();
     assert.actual=  shoppingCart.items.length;
     assert.expected= 1;
