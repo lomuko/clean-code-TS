@@ -3,8 +3,8 @@ import * as path from 'path';
 
 export class Printer {
   public static print( fileName : string, textContent : string ) {
-    const printFolder = Printer.ensurePrintFolder();
     textContent += '\n';
+    const printFolder = Printer.ensurePrintFolder();
     Printer.appendOrCreateFile( printFolder, fileName, textContent );
   }
 
@@ -17,7 +17,7 @@ export class Printer {
     if ( !fs.existsSync( printFolder ) ) {
       fs.mkdirSync( printFolder );
     }
-    return ensurePrintFolder;
+    return printFolder;
   }
 
   private static appendOrCreateFile(

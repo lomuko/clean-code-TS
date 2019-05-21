@@ -1,10 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Printer } from './Printer';
+import { Printer } from './printer';
 import { ShoppingCart } from './shopping-cart';
 
 export class DocumentManager {
   private readonly logFileName = `log.txt`;
+
+  private readonly emailFolder = path.join( __dirname, '..', 'data', 'email' );
 
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = `
@@ -45,15 +47,19 @@ export class DocumentManager {
 
   public printDocument( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
-    if ( documentContent ) {
+    if ( this.hasContent( documentContent ) ) {
       Printer.print( fileName, documentContent );
     }
   }
 
   public printLog( logContent : string ) {
-    if ( logContent ) {
+    if ( this.hasContent( logContent ) ) {
       Printer.print( this.logFileName, logContent );
     }
+  }
+
+  private hasContent( content : string ) {
+    return content !== null && content.length > 0;
   }
 
   public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
@@ -65,15 +71,11 @@ export class DocumentManager {
     ${orderContent}
     Regards, the shop.acme.com
     ---`;
-    const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email' ) ) ) {
-      fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
-    }
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', 'email', fileName ),
-        orderMessageTemplate
-      );
+    this.ensureEmailFolder();
+    const orderFileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
+    const fileName = path.join( this.emailFolder, orderFileName );
+    if ( !fs.existsSync( fileName ) ) {
+      fs.writeFileSync( fileName, orderMessageTemplate );
     }
     this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
   }
@@ -94,15 +96,17 @@ export class DocumentManager {
 
     Thanks for your purchasing, the shop.acme.com
     ---`;
-    const fileName = `invoice-${emailAddress}.txt`;
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email' ) ) ) {
-      fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
+    this.ensureEmailFolder();
+    const invoiceFileName = `invoice-${emailAddress}.txt`;
+    const fileName = path.join( this.emailFolder, invoiceFileName );
+    if ( !fs.existsSync( fileName ) ) {
+      fs.writeFileSync( fileName, invoiceMessageTemplate );
     }
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', 'email', fileName ),
-        invoiceMessageTemplate
-      );
+  }
+
+  private ensureEmailFolder() {
+    if ( !fs.existsSync( this.emailFolder ) ) {
+      fs.mkdirSync( this.emailFolder );
     }
   }
 }

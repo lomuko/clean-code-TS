@@ -41,20 +41,19 @@ export class ShoppingCart {
   }
 
   public saveToStorage() {
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
-      fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
+    if ( !fs.existsSync( this.dataFolder() ) ) {
+      fs.mkdirSync( this.dataFolder() );
     }
-    const fileName = `shopping-${this.clientName}.json`;
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', fileName ),
-        JSON.stringify( this.lineItems )
-      );
+    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const fileName = path.join( this.dataFolder(), shoppingFileName );
+    if ( !fs.existsSync( fileName ) ) {
+      fs.writeFileSync( fileName, JSON.stringify( this.lineItems ) );
     }
   }
 
   public loadFromStorage() {
-    const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
+    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const fileName = path.join( this.dataFolder(), shoppingFileName );
     if ( fs.existsSync( fileName ) ) {
       const file = fs.readFileSync( fileName, 'utf8' );
       this.lineItems = JSON.parse( file );
@@ -62,7 +61,8 @@ export class ShoppingCart {
   }
 
   public deleteFromStorage() {
-    const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
+    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const fileName = path.join( this.dataFolder(), shoppingFileName );
     if ( fs.existsSync( fileName ) ) {
       fs.unlinkSync( fileName );
     }
@@ -87,22 +87,26 @@ export class ShoppingCart {
 
     this.applyDiscount();
 
-    this.taxesAmount += TaxCalculator.calculate(
+    this.taxesAmount += TaxCalculator.calculateTotal(
       this.totalAmount,
       this.country,
       this.region,
       this.isStudent
     );
 
-    const invoiceNumberFileName = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
+    this.setInvoiceNumber();
+    this.sendOrderToWarehouse();
+    this.deleteFromStorage();
+  }
+
+  private setInvoiceNumber() {
+    const invoiceNumberFileName = path.join( this.dataFolder(), `lastinvoice.txt` );
     let lastInvoiceNumber = 0;
     if ( fs.existsSync( invoiceNumberFileName ) ) {
       lastInvoiceNumber = Number.parseInt( fs.readFileSync( invoiceNumberFileName, 'utf8' ) );
     }
     this.invoiceNumber = lastInvoiceNumber + 1;
     fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
-    this.sendOrderToWarehouse();
-    this.deleteFromStorage();
   }
 
   private applyPaymentMethodExtra( payment : string ) {
@@ -194,19 +198,27 @@ export class ShoppingCart {
   private calculateTotalAmount() {
     const warehouseAdministrator = new WarehouseAdministrator();
     this.lineItems.forEach( line => {
-      warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
-      line.totalAmount = line.price * line.quantity;
-      this.totalAmount += line.totalAmount;
-      this.addTaxesByProduct( line );
+      this.processLineItem( warehouseAdministrator, line );
     } );
   }
 
+  private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : any ) {
+    warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
+    line.totalAmount = line.price * line.quantity;
+    this.totalAmount += line.totalAmount;
+    this.addTaxesByProduct( line );
+  }
+
   private addTaxesByProduct( line : any ) {
-    if ( !line.taxFree ) {
+    if ( this.hasTaxes( line ) ) {
       line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
       this.taxesAmount += line.taxes;
       let lineTotal = line.totalAmount + line.taxes;
     }
+  }
+
+  private hasTaxes( line : any ) {
+    return !line.taxFree;
   }
 
   private sendOrderToWarehouse() {
@@ -216,5 +228,9 @@ export class ShoppingCart {
 
   public sendInvoiceToCustomer() {
     this.documentManager.sendInvoice( this );
+  }
+
+  private dataFolder() {
+    return path.join( __dirname, '..', 'data' );
   }
 }

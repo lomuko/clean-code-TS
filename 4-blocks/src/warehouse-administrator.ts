@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Printer } from './Printer';
+import { Printer } from './printer';
+import { Product } from './product';
 
 export class WarehouseAdministrator {
   public static productCatalog : any[] = [
@@ -37,16 +38,24 @@ export class WarehouseAdministrator {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if ( fs.existsSync( ordersFolder ) ) {
       fs.readdirSync( ordersFolder ).forEach( orderFileName => {
-        if ( path.basename( orderFileName ).startsWith( 'order-' ) ) {
-          const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
-          fs.renameSync(
-            path.join( __dirname, '..', 'data', 'email', orderFileName ),
-            path.join( __dirname, '..', 'data', 'email', shippmentFileName )
-          );
-          Printer.print( this.logFileName, 'processed: ' + orderFileName );
+        if ( this.isAnOrderFile( orderFileName ) ) {
+          this.processOrder( orderFileName, ordersFolder );
         }
       } );
     }
+  }
+
+  private processOrder( orderFileName : string, ordersFolder : string ) {
+    const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
+    fs.renameSync(
+      path.join( ordersFolder, orderFileName ),
+      path.join( ordersFolder, shippmentFileName )
+    );
+    Printer.print( this.logFileName, 'processed: ' + orderFileName );
+  }
+
+  private isAnOrderFile( orderFileName : string ) {
+    return path.basename( orderFileName ).startsWith( 'order-' );
   }
 
   public addProduct() { }
@@ -55,14 +64,16 @@ export class WarehouseAdministrator {
     const buyedProduct = WarehouseAdministrator.productCatalog.find(
       product => product.name === buyedProductName
     );
-    if ( buyedProduct.stock <= buyedQuantity ) {
+    if ( this.isOutOfStock( buyedProduct, buyedQuantity ) ) {
       buyedQuantity = buyedProduct.stock;
       Printer.print( this.logFileName, 'out of stock: ' + buyedProduct.name );
-      buyedProduct.stock = 0;
-    } else {
-      buyedProduct.stock = buyedProduct.stock - buyedQuantity;
     }
+    buyedProduct.stock = buyedProduct.stock - buyedQuantity;
     this.restockProduct( buyedProductName );
+  }
+
+  private isOutOfStock( buyedProduct : Product, buyedQuantity : number ) {
+    return buyedProduct.stock <= buyedQuantity;
   }
 
   public restockProduct( productName : string ) {

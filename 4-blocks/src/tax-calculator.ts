@@ -2,23 +2,32 @@ export class TaxCalculator {
   private static readonly decimalPlaces = 2;
 
   public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
-    return isStudent || region === 'St Pierre'
-      ? 0
-      : Number(
-          ( ( line.totalAmount * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
-            TaxCalculator.decimalPlaces
-          )
-        );
+    if ( isStudent || region === 'St Pierre' ) {
+      return 0;
+    } else {
+      return Number(
+        ( ( line.totalAmount * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
+          TaxCalculator.decimalPlaces
+        )
+      );
+    }
   }
 
-  public static calculate( base : number, country : string, region : string, isStudent : boolean ) {
-    return isStudent || region === 'St Pierre'
-      ? 0
-      : Number(
-          ( ( base * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
-            TaxCalculator.decimalPlaces
-          )
-        );
+  public static calculateTotal(
+    base : number,
+    country : string,
+    region : string,
+    isStudent : boolean
+  ) {
+    if ( isStudent || region === 'St Pierre' ) {
+      return 0;
+    } else {
+      return Number(
+        ( ( base * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
+          TaxCalculator.decimalPlaces
+        )
+      );
+    }
   }
 
   private static coutryTax( country : string, region : string ) {
