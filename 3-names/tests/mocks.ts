@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ShoppingCart } from '../src/shopping-cart';
+import { WarehouseAdministrator } from '../src/warehouse-administrator';
 
 export const newShoppingCart = new ShoppingCart(
   'Alberto',
@@ -17,7 +18,7 @@ export const oneWarehouse = new WarehouseAdministrator();
 
 export const shoppingCart = {
   clientName: 'Alberto',
-  student: false,
+  isStudent: false,
   region: 'Galicia',
   country: 'Spain',
   email: 'alberto@code.dev',
@@ -32,7 +33,7 @@ export const shoppingCart = {
   shippingAddress: '',
   billingAddress: '',
   invoiceNumber: 0,
-  doc: { }
+  documentManager: { }
 };
 
 const dataFolder = path.join( __dirname, '..', 'data' );
@@ -76,12 +77,12 @@ function rimraf( dirPath : string ) {
       } else {
         try {
           fs.unlinkSync( entryPath );
-        } catch ( e ) { }
+        } catch ( error ) { }
       }
     } );
     try {
       fs.rmdirSync( dirPath );
-    } catch ( e ) {
+    } catch ( error ) {
       rimraf( dirPath );
     }
   }

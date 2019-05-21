@@ -17,8 +17,8 @@ describe( `As a shop owner, I want to have my product stock refilled, so I can c
     shoppingCart.addProduct( 'monitor', 200, 40, shoppingCart.country );
     shoppingCart.calculate( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
 
-    assert.actual = mocks.theWarehouse.catalog[0].stock;
-    assert.expected = mocks.theWarehouse.catalog[0].minimun;
+    assert.actual = mocks.theWarehouse.productCatalog[0].stock;
+    assert.expected = mocks.theWarehouse.productCatalog[0].minimun;
     expect( assert.actual ).toEqual( assert.expected );
   } );
 } );
