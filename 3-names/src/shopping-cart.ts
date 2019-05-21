@@ -7,7 +7,7 @@ import { Warehouse } from './warehouse';
 export class ShoppingCart {
   public items : any[] = [];
   public totalAmount : number = 0;
-  public shipping_cost = 0;
+  public shippingCost = 0;
   public taxes : number = 0;
   public payment : string = '';
   public paymentId : string = '';
@@ -94,53 +94,53 @@ export class ShoppingCart {
     if ( this.totalAmount < 100 ) {
       switch ( this.country ) {
         case 'Spain':
-          this.shipping_cost = this.totalAmount * 0.1;
+          this.shippingCost = this.totalAmount * 0.1;
           break;
         case 'Portugal':
-          this.shipping_cost = this.totalAmount * 0.15;
+          this.shippingCost = this.totalAmount * 0.15;
           break;
         case 'France':
-          this.shipping_cost = this.totalAmount * 0.2;
+          this.shippingCost = this.totalAmount * 0.2;
           break;
 
         default:
-          this.shipping_cost = this.totalAmount * 0.25;
+          this.shippingCost = this.totalAmount * 0.25;
           break;
       }
     } else if ( this.totalAmount < 1000 ) {
       switch ( this.country ) {
         case 'Spain':
-          this.shipping_cost = 10;
+          this.shippingCost = 10;
           break;
         case 'Portugal':
-          this.shipping_cost = 15;
+          this.shippingCost = 15;
           break;
         case 'France':
-          this.shipping_cost = 20;
+          this.shippingCost = 20;
           break;
 
         default:
-          this.shipping_cost = 25;
+          this.shippingCost = 25;
           break;
       }
     } else {
       switch ( this.country ) {
         case 'Spain':
-          this.shipping_cost = 0;
+          this.shippingCost = 0;
           break;
         case 'Portugal':
-          this.shipping_cost = 10;
+          this.shippingCost = 10;
           break;
         case 'France':
-          this.shipping_cost = 15;
+          this.shippingCost = 15;
           break;
 
         default:
-          this.shipping_cost = 20;
+          this.shippingCost = 20;
           break;
       }
     }
-    this.totalAmount += this.shipping_cost;
+    this.totalAmount += this.shippingCost;
     if ( payment === 'PayPal' ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
@@ -158,13 +158,13 @@ export class ShoppingCart {
     this.taxes += Tax.calculate( this.totalAmount, this.country, this.region, this.student );
 
     const lastInvoice = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
-    let number = 0;
+    let invoiceNumber = 0;
     if ( fs.existsSync( lastInvoice ) ) {
-      number = Number.parseInt( fs.readFileSync( lastInvoice, 'utf8' ) );
+      invoiceNumber = Number.parseInt( fs.readFileSync( lastInvoice, 'utf8' ) );
     }
-    number++;
-    this.invoiceNumber = number;
-    fs.writeFileSync( lastInvoice, number );
+    invoiceNumber++;
+    this.invoiceNumber = invoiceNumber;
+    fs.writeFileSync( lastInvoice, invoiceNumber );
     this.savetoWarehouse();
     this.delete();
   }

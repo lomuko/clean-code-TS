@@ -36,6 +36,7 @@
         "variable-declaration": "onespace"
       }
     ],
+    "variable-name": [true, "check-format", "ban-keywords"],
     "whitespace": [
       true,
       "check-branch",

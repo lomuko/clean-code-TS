@@ -68,22 +68,22 @@ export function cleanCheckOuts() {
   rimraf( printFolder );
 }
 
-function rimraf( dir_path : string ) {
-  if ( fs.existsSync( dir_path ) ) {
-    fs.readdirSync( dir_path ).forEach( function( entry ) {
-      var entry_path = path.join( dir_path, entry );
-      if ( fs.lstatSync( entry_path ).isDirectory() ) {
-        rimraf( entry_path );
+function rimraf( dirPath : string ) {
+  if ( fs.existsSync( dirPath ) ) {
+    fs.readdirSync( dirPath ).forEach( function( entry ) {
+      var entryPath = path.join( dirPath, entry );
+      if ( fs.lstatSync( entryPath ).isDirectory() ) {
+        rimraf( entryPath );
       } else {
         try {
-          fs.unlinkSync( entry_path );
+          fs.unlinkSync( entryPath );
         } catch ( e ) { }
       }
     } );
     try {
-      fs.rmdirSync( dir_path );
+      fs.rmdirSync( dirPath );
     } catch ( e ) {
-      rimraf( dir_path );
+      rimraf( dirPath );
     }
   }
 }
