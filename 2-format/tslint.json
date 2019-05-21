@@ -2,7 +2,10 @@
   "extends": "../tslint.json",
   "rules": {
     "brace-style": ["error", "1tbs", { "allowSingleLine": false }],
+    "class-name": true,
     "curly": true,
+    "file-name-casing": [true, "kebab-case"],
+    "import-spacing": true,
     "member-access": true,
     "member-ordering": [
       true,
@@ -10,7 +13,9 @@
         "order": ["static-field", "instance-field", "static-method", "instance-method"]
       }
     ],
+    "no-consecutive-blank-lines": true,
     "no-console": true,
+    "no-irregular-whitespace": true,
     "no-multi-spaces": true,
     "no-multiple-empty-lines": [
       "error",

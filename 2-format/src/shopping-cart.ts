@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Document } from './Document';
-import { Tax } from './Tax';
+import { Document } from './document';
+import { Tax } from './tax';
 import { Warehouse } from './warehouse';
 
 export class ShoppingCart {

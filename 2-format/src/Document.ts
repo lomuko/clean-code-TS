@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Printer } from './Printer';
-import { ShoppingCart } from './shoppingcart';
+import { ShoppingCart } from './shopping-cart';
+
 export class Document {
   public sendInvoice(shoppingCart: ShoppingCart) {
     const invoice = `
@@ -24,9 +25,11 @@ export class Document {
     this.emailInvoice(shoppingCart.email, invoice);
     this.printLog('Sent Invoice: ' + shoppingCart.invoiceNumber);
   }
+
   private lines(shoppingCart: ShoppingCart) {
     return JSON.stringify(shoppingCart.items);
   }
+
   public order(shoppingCart: ShoppingCart) {
     return `
     Invoice Number: ${shoppingCart.invoiceNumber}
@@ -36,14 +39,21 @@ export class Document {
     ${this.lines(shoppingCart)}
     `;
   }
+
   public print(shoppingCart: ShoppingCart, doc: string) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
-    if (doc) { Printer.print(fileName, doc); }
+    if (doc) {
+      Printer.print(fileName, doc);
+    }
   }
+
   public printLog(doc: string) {
     const fileName = `log.txt`;
-    if (doc) { Printer.print(fileName, doc); }
+    if (doc) {
+      Printer.print(fileName, doc);
+    }
   }
+
   public emailOrder(shoppingCart: ShoppingCart, doc: string, country: string) {
     const warehouse = this.getAddress(country);
     const message = `
@@ -62,12 +72,14 @@ export class Document {
     }
     this.printLog('Sent Order: ' + shoppingCart.invoiceNumber);
   }
+
   private getAddress(country: string) {
-    if (country == 'Spain') {
+    if (country === 'Spain') {
       return 'warehouse@acme.es';
     }
     return 'warehouse@acme.com';
   }
+
   public emailInvoice(address: string, invoice: string) {
     const message = `
     ---

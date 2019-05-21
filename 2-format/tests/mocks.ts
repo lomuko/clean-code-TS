@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { ShoppingCart } from '../src/shoppingcart';
+import { ShoppingCart } from '../src/shopping-cart';
 import { Warehouse } from '../src/warehouse';
 
 export const newShoppingCart = new ShoppingCart(
