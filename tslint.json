@@ -1,6 +1,6 @@
 {
   "rulesDirectory": [],
-  "plugins": ["@getify/proper-arrows"]
+  "plugins": []
   // "rules": {
   //   "arrow-return-shorthand": true,
   //   "callable-types": true,

@@ -24,7 +24,7 @@ export class ShoppingCart {
     public email: string,
     private isVip: boolean,
     public taxNumber?: string
-  ) {}
+  ) { }
 
   public addProduct(
     product: string,

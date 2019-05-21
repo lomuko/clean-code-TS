@@ -1,7 +1,7 @@
 {
   "extends": "../tslint.json",
   "rules": {
-    "brace-style": ["error", "1tbs", { "allowSingleLine": false }],
+    "align": [true, "arguments", "elements", "members", "parameters", "statements"],
     "class-name": true,
     "curly": true,
     "file-name-casing": [true, "kebab-case"],
@@ -16,14 +16,22 @@
     "no-consecutive-blank-lines": true,
     "no-console": true,
     "no-irregular-whitespace": true,
-    "no-multi-spaces": true,
-    "no-multiple-empty-lines": [
-      "error",
-      {
-        "max": 1
-      }
-    ],
     "no-empty": false,
-    "triple-equals": [true, "allow-null-check"]
+    "space-within-parens": [true, 1],
+    "triple-equals": [true, "allow-null-check"],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock",
+      "check-postbrace"
+    ]
   }
 }

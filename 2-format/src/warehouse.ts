@@ -49,7 +49,7 @@ export class Warehouse {
     }
   }
 
-  public addProduct() {}
+  public addProduct() { }
 
   public buyProduct(name: string, quantity: number) {
     const p = Warehouse.catalog.find(p => p.name === name);
