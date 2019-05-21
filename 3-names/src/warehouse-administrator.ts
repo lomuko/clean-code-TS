@@ -30,20 +30,20 @@ export class WarehouseAdministrator {
       taxFree: true
     }
   ];
+  private readonly logFileName = `log.txt`;
   public stock : any[] = [];
 
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if ( fs.existsSync( ordersFolder ) ) {
-      fs.readdirSync( ordersFolder ).forEach( file => {
-        if ( path.basename( file ).startsWith( 'order-' ) ) {
-          const shippment = file.replace( 'order-', 'shipment-' );
+      fs.readdirSync( ordersFolder ).forEach( orderFileName => {
+        if ( path.basename( orderFileName ).startsWith( 'order-' ) ) {
+          const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
           fs.renameSync(
-            path.join( __dirname, '..', 'data', 'email', file ),
-            path.join( __dirname, '..', 'data', 'email', shippment )
+            path.join( __dirname, '..', 'data', 'email', orderFileName ),
+            path.join( __dirname, '..', 'data', 'email', shippmentFileName )
           );
-          const fileName = `log.txt`;
-          Printer.print( fileName, 'processed: ' + file );
+          Printer.print( this.logFileName, 'processed: ' + orderFileName );
         }
       } );
     }
@@ -57,8 +57,7 @@ export class WarehouseAdministrator {
     );
     if ( buyedProduct.stock <= buyedQuantity ) {
       buyedQuantity = buyedProduct.stock;
-      const fileName = `log.txt`;
-      Printer.print( fileName, 'out of stock: ' + buyedProduct.name );
+      Printer.print( this.logFileName, 'out of stock: ' + buyedProduct.name );
       buyedProduct.stock = 0;
     } else {
       buyedProduct.stock = buyedProduct.stock - buyedQuantity;

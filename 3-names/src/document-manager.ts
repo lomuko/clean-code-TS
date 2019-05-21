@@ -4,8 +4,10 @@ import { Printer } from './Printer';
 import { ShoppingCart } from './shopping-cart';
 
 export class DocumentManager {
+  private readonly logFileName = `log.txt`;
+
   public sendInvoice( shoppingCart : ShoppingCart ) {
-    const invoice = `
+    const invoiceTemplate = `
     LEGAL INVOICE FROM acme!
     ========================
     Invoice Number: ${shoppingCart.invoiceNumber}#
@@ -21,8 +23,8 @@ export class DocumentManager {
     Tax: #${shoppingCart.taxes}Euros
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxes}Euros
     `;
-    this.printDocument( shoppingCart, invoice );
-    this.emailInvoice( shoppingCart.email, invoice );
+    this.printDocument( shoppingCart, invoiceTemplate );
+    this.emailInvoice( shoppingCart.email, invoiceTemplate );
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
 
@@ -31,13 +33,14 @@ export class DocumentManager {
   }
 
   public getOrderMessage( shoppingCart : ShoppingCart ) {
-    return `
+    const orderTemplate = `
     Invoice Number: ${shoppingCart.invoiceNumber}
     ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
     ${shoppingCart.shippingAddress}
     Items purchased:
     ${this.getDocumentItemLines( shoppingCart )}
     `;
+    return orderTemplate;
   }
 
   public printDocument( shoppingCart : ShoppingCart, documentContent : string ) {
@@ -48,15 +51,14 @@ export class DocumentManager {
   }
 
   public printLog( logContent : string ) {
-    const fileName = `log.txt`;
     if ( logContent ) {
-      Printer.print( fileName, logContent );
+      Printer.print( this.logFileName, logContent );
     }
   }
 
   public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
     const warehouse = this.getWarehouseAddressByCountry( customerCountry );
-    const message = `
+    const orderMessageTemplate = `
     ---
     Serve this order ASAP.
     ---
@@ -68,7 +70,10 @@ export class DocumentManager {
       fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
     }
     if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) ) ) {
-      fs.writeFileSync( path.join( __dirname, '..', 'data', 'email', fileName ), message );
+      fs.writeFileSync(
+        path.join( __dirname, '..', 'data', 'email', fileName ),
+        orderMessageTemplate
+      );
     }
     this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
   }
@@ -81,7 +86,7 @@ export class DocumentManager {
   }
 
   public emailInvoice( emailAddress : string, invoiceContent : string ) {
-    const message = `
+    const invoiceMessageTemplate = `
     ---
     See attached invoice.
     ---
@@ -94,7 +99,10 @@ export class DocumentManager {
       fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
     }
     if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) ) ) {
-      fs.writeFileSync( path.join( __dirname, '..', 'data', 'email', fileName ), message );
+      fs.writeFileSync(
+        path.join( __dirname, '..', 'data', 'email', fileName ),
+        invoiceMessageTemplate
+      );
     }
   }
 }

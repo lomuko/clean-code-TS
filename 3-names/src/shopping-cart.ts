@@ -26,7 +26,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addProduct(
+  public addLineItem(
     productName : string,
     price : number,
     quantity : number,
@@ -36,7 +36,7 @@ export class ShoppingCart {
     this.lineItems.push( { productName, price, quantity } );
   }
 
-  public removeProductLine( productName : string ) {
+  public removeLineItem( productName : string ) {
     this.lineItems = this.lineItems.filter( lineItem => lineItem.productName !== productName );
   }
 
@@ -169,27 +169,24 @@ export class ShoppingCart {
       this.isStudent
     );
 
-    const lastInvoice = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
-    let invoiceNumber = 0;
-    if ( fs.existsSync( lastInvoice ) ) {
-      invoiceNumber = Number.parseInt( fs.readFileSync( lastInvoice, 'utf8' ) );
+    const invoiceNumberFileName = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
+    let lastInvoiceNumber = 0;
+    if ( fs.existsSync( invoiceNumberFileName ) ) {
+      lastInvoiceNumber = Number.parseInt( fs.readFileSync( invoiceNumberFileName, 'utf8' ) );
     }
-    invoiceNumber++;
-    this.invoiceNumber = invoiceNumber;
-    fs.writeFileSync( lastInvoice, invoiceNumber );
-    this.saveToWarehouse();
+    this.invoiceNumber = lastInvoiceNumber + 1;
+    fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
+    this.sendOrderToWarehouse();
     this.deleteFromStorage();
   }
 
-  // save to process at the warehouse
-  private saveToWarehouse() {
+  private sendOrderToWarehouse() {
     // send packing list to courier
     const order = this.documentManager.getOrderMessage( this );
     // send by email
     this.documentManager.emailOrder( this, order, this.country );
   }
 
-  // send invoice to customer
   public sendInvoiceToCustomer() {
     // create document
     this.documentManager.sendInvoice( this );
