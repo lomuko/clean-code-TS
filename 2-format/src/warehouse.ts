@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Printer } from './Printer';
 
 export class Warehouse {
-  public static catalog: any[] = [
+  public static catalog : any[] = [
     {
       name: 'monitor',
       price: 1000,
@@ -30,7 +30,7 @@ export class Warehouse {
       taxFree: true
     }
   ];
-  public stock: any[] = [];
+  public stock : any[] = [];
 
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
@@ -51,7 +51,7 @@ export class Warehouse {
 
   public addProduct() { }
 
-  public buyProduct( name: string, quantity: number ) {
+  public buyProduct( name : string, quantity : number ) {
     const p = Warehouse.catalog.find( p => p.name === name );
     if ( p.stock <= quantity ) {
       quantity = p.stock;
@@ -64,7 +64,7 @@ export class Warehouse {
     this.restock( name );
   }
 
-  public restock( name: string ) {
+  public restock( name : string ) {
     const p = Warehouse.catalog.find( p => p.name === name );
     p.stock = p.minimun;
     Printer.print( 'restock-' + name + '.json', JSON.stringify( p ) );

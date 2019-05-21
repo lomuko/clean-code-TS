@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class Printer {
-  public static print( fileName: string, text: string ) {
+  public static print( fileName : string, text : string ) {
     if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
       fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
     }

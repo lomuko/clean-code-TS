@@ -5,38 +5,38 @@ import { Tax } from './tax';
 import { Warehouse } from './warehouse';
 
 export class ShoppingCart {
-  public items: any[] = [];
-  public totalAmount: number = 0;
+  public items : any[] = [];
+  public totalAmount : number = 0;
   public shipping_cost = 0;
-  public taxes: number = 0;
-  public payment: string = '';
-  public paymentId: string = '';
-  public shippingAddress: string = '';
-  public billingAddress: string = '';
-  public invoiceNumber: number = 0;
+  public taxes : number = 0;
+  public payment : string = '';
+  public paymentId : string = '';
+  public shippingAddress : string = '';
+  public billingAddress : string = '';
+  public invoiceNumber : number = 0;
   public doc = new Document();
 
   constructor(
-    public clientName: string,
-    private student: boolean,
-    public region: string,
-    public country: string,
-    public email: string,
-    private isVip: boolean,
-    public taxNumber?: string
+    public clientName : string,
+    private student : boolean,
+    public region : string,
+    public country : string,
+    public email : string,
+    private isVip : boolean,
+    public taxNumber? : string
   ) { }
 
   public addProduct(
-    product: string,
-    price: number,
-    q: number,
-    country?: string,
-    taxFree?: boolean
+    product : string,
+    price : number,
+    q : number,
+    country? : string,
+    taxFree? : boolean
   ) {
     this.items.push( { product, price, q } );
   }
 
-  public removeLine( p: string ) {
+  public removeLine( p : string ) {
     this.items = this.items.filter( i => i.product !== p );
   }
 
@@ -70,7 +70,7 @@ export class ShoppingCart {
     }
   }
 
-  public calculate( payment: string, id: string, address: string, billing?: string ) {
+  public calculate( payment : string, id : string, address : string, billing? : string ) {
     this.shippingAddress = address;
     this.billingAddress = billing || address;
     this.payment = payment;

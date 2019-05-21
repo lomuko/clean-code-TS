@@ -9,7 +9,7 @@
   "scripts": {
     "start": "ts-node ./0-jelou/src/automatic.ts",
     "test": "jest 2-",
-    "lint": "tslint  '2-format/src/**/*.ts' -c 2-format/tslint.json"
+    "lint": "tslint  '2-format/**/*.ts' -c 2-format/tslint.json"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
