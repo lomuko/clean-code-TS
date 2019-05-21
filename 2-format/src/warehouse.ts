@@ -52,7 +52,7 @@ export class Warehouse {
   public addProduct() {}
 
   public buyProduct(name: string, quantity: number) {
-    const p = Warehouse.catalog.find(p => p.name == name);
+    const p = Warehouse.catalog.find(p => p.name === name);
     if (p.stock <= quantity) {
       quantity = p.stock;
       const fileName = `log.txt`;
@@ -65,7 +65,7 @@ export class Warehouse {
   }
 
   public restock(name: string) {
-    const p = Warehouse.catalog.find(p => p.name == name);
+    const p = Warehouse.catalog.find(p => p.name === name);
     p.stock = p.minimun;
     Printer.print('restock-' + name + '.json', JSON.stringify(p));
   }

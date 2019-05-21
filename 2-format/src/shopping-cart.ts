@@ -37,7 +37,7 @@ export class ShoppingCart {
   }
 
   public removeLine(p: string) {
-    this.items = this.items.filter(i => i.product != p);
+    this.items = this.items.filter(i => i.product !== p);
   }
 
   // save to read later
@@ -140,16 +140,16 @@ export class ShoppingCart {
       }
     }
     this.totalAmount += this.shipping_cost;
-    if (payment == 'PayPal') {
+    if (payment === 'PayPal') {
       this.totalAmount = this.totalAmount * 1.05;
     }
 
     // apply discount
     if (
       this.isVip ||
-      (this.totalAmount > 3000 && this.country == 'Portugal') ||
-      (this.totalAmount > 2000 && this.country == 'France') ||
-      (this.totalAmount > 1000 && this.country == 'Spain')
+      (this.totalAmount > 3000 && this.country === 'Portugal') ||
+      (this.totalAmount > 2000 && this.country === 'France') ||
+      (this.totalAmount > 1000 && this.country === 'Spain')
     ) {
       this.totalAmount *= 0.9;
     }
