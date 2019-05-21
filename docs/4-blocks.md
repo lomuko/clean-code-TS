@@ -26,7 +26,7 @@ class: impact
 
 - _Reducir_ el numero de líneas por bloque
 - _Reducir_ el anidamiento
-- _Reducir_ la complejidad ciclomática
+- _Reducir_ la complejidad ciclomática (4 - 8)
 
 > Afecta a los `if/else` a los `for` a los `switch`...
 
@@ -65,6 +65,7 @@ class: impact
 
 #### Muchas más funciones... y muchos menos comentarios
 
+> Sin comentarios dentro de bloques
 ---
 
 > "Cada vez que escribas un comentario, debes sentirlo como un fallo de tu capacidad de expresión"

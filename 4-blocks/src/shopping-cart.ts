@@ -69,98 +69,23 @@ export class ShoppingCart {
   }
 
   public calculate(
-    payment : string,
+    paymentMethod : string,
     paymentId : string,
     shippingAddress : string,
     billingAddress? : string
   ) {
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress || shippingAddress;
-    this.paymentMethod = payment;
+    this.paymentMethod = paymentMethod;
     this.paymentId = paymentId;
-    const warehouseAdministrator = new WarehouseAdministrator();
-    // calculate total price
-    this.lineItems.forEach( line => {
-      warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
-      line.totalAmount = line.price * line.quantity;
-      this.totalAmount += line.totalAmount;
-      // add taxes by product
-      if ( !line.taxFree ) {
-        line.taxes = TaxCalculator.calculateLine(
-          line,
-          this.country,
-          this.region,
-          this.isStudent
-        );
-        this.taxesAmount += line.taxes;
-        let lineTotal = line.totalAmount + line.taxes;
-      }
-    } );
 
-    // add shipping costs
-    if ( this.totalAmount < 100 ) {
-      switch ( this.country ) {
-        case 'Spain':
-          this.shippingCost = this.totalAmount * 0.1;
-          break;
-        case 'Portugal':
-          this.shippingCost = this.totalAmount * 0.15;
-          break;
-        case 'France':
-          this.shippingCost = this.totalAmount * 0.2;
-          break;
+    this.calculateTotalAmount();
 
-        default:
-          this.shippingCost = this.totalAmount * 0.25;
-          break;
-      }
-    } else if ( this.totalAmount < 1000 ) {
-      switch ( this.country ) {
-        case 'Spain':
-          this.shippingCost = 10;
-          break;
-        case 'Portugal':
-          this.shippingCost = 15;
-          break;
-        case 'France':
-          this.shippingCost = 20;
-          break;
+    this.calculateShippingCosts();
 
-        default:
-          this.shippingCost = 25;
-          break;
-      }
-    } else {
-      switch ( this.country ) {
-        case 'Spain':
-          this.shippingCost = 0;
-          break;
-        case 'Portugal':
-          this.shippingCost = 10;
-          break;
-        case 'France':
-          this.shippingCost = 15;
-          break;
+    this.applyPaymentMethodExtra( paymentMethod );
 
-        default:
-          this.shippingCost = 20;
-          break;
-      }
-    }
-    this.totalAmount += this.shippingCost;
-    if ( payment === 'PayPal' ) {
-      this.totalAmount = this.totalAmount * 1.05;
-    }
-
-    // apply discount
-    if (
-      this.isVip ||
-      ( this.totalAmount > 3000 && this.country === 'Portugal' ) ||
-      ( this.totalAmount > 2000 && this.country === 'France' ) ||
-      ( this.totalAmount > 1000 && this.country === 'Spain' )
-    ) {
-      this.totalAmount *= 0.9;
-    }
+    this.applyDiscount();
 
     this.taxesAmount += TaxCalculator.calculate(
       this.totalAmount,
@@ -180,15 +105,116 @@ export class ShoppingCart {
     this.deleteFromStorage();
   }
 
+  private applyPaymentMethodExtra( payment : string ) {
+    if ( payment === 'PayPal' ) {
+      this.totalAmount = this.totalAmount * 1.05;
+    }
+  }
+
+  private applyDiscount() {
+    if ( this.hasDiscount() ) {
+      this.totalAmount *= 0.9;
+    }
+  }
+
+  private hasDiscount() {
+    return this.isVip || this.hasCountryDiscount();
+  }
+
+  private hasCountryDiscount() {
+    return (
+      ( this.totalAmount > 3000 && this.country === 'Portugal' ) ||
+      ( this.totalAmount > 2000 && this.country === 'France' ) ||
+      ( this.totalAmount > 1000 && this.country === 'Spain' )
+    );
+  }
+
+  private calculateShippingCosts() {
+    if ( this.totalAmount < 100 ) {
+      this.calculateShippingSmallOrders();
+    } else if ( this.totalAmount < 1000 ) {
+      this.calculateShippingMediumOrders();
+    } else {
+      this.calculateShippingBigOrders();
+    }
+    this.totalAmount += this.shippingCost;
+  }
+
+  private calculateShippingSmallOrders() {
+    switch ( this.country ) {
+      case 'Spain':
+        this.shippingCost = this.totalAmount * 0.1;
+        break;
+      case 'Portugal':
+        this.shippingCost = this.totalAmount * 0.15;
+        break;
+      case 'France':
+        this.shippingCost = this.totalAmount * 0.2;
+        break;
+      default:
+        this.shippingCost = this.totalAmount * 0.25;
+        break;
+    }
+  }
+
+  private calculateShippingMediumOrders() {
+    switch ( this.country ) {
+      case 'Spain':
+        this.shippingCost = 10;
+        break;
+      case 'Portugal':
+        this.shippingCost = 15;
+        break;
+      case 'France':
+        this.shippingCost = 20;
+        break;
+      default:
+        this.shippingCost = 25;
+        break;
+    }
+  }
+
+  private calculateShippingBigOrders() {
+    switch ( this.country ) {
+      case 'Spain':
+        this.shippingCost = 0;
+        break;
+      case 'Portugal':
+        this.shippingCost = 10;
+        break;
+      case 'France':
+        this.shippingCost = 15;
+        break;
+      default:
+        this.shippingCost = 20;
+        break;
+    }
+  }
+
+  private calculateTotalAmount() {
+    const warehouseAdministrator = new WarehouseAdministrator();
+    this.lineItems.forEach( line => {
+      warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
+      line.totalAmount = line.price * line.quantity;
+      this.totalAmount += line.totalAmount;
+      this.addTaxesByProduct( line );
+    } );
+  }
+
+  private addTaxesByProduct( line : any ) {
+    if ( !line.taxFree ) {
+      line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
+      this.taxesAmount += line.taxes;
+      let lineTotal = line.totalAmount + line.taxes;
+    }
+  }
+
   private sendOrderToWarehouse() {
-    // send packing list to courier
-    const order = this.documentManager.getOrderMessage( this );
-    // send by email
-    this.documentManager.emailOrder( this, order, this.country );
+    const orderMessage = this.documentManager.getOrderMessage( this );
+    this.documentManager.emailOrder( this, orderMessage, this.country );
   }
 
   public sendInvoiceToCustomer() {
-    // create document
     this.documentManager.sendInvoice( this );
   }
 }
