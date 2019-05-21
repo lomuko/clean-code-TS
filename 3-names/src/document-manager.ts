@@ -20,8 +20,8 @@ export class DocumentManager {
     Amount: #${shoppingCart.totalAmount - shoppingCart.shippingCost}Euros
     Shipping Cost: #${shoppingCart.shippingCost}Euros
     Base Amount: #${shoppingCart.totalAmount}Euros
-    Tax: #${shoppingCart.taxes}Euros
-    Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxes}Euros
+    Tax: #${shoppingCart.taxesAmount}Euros
+    Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxesAmount}Euros
     `;
     this.printDocument( shoppingCart, invoiceTemplate );
     this.emailInvoice( shoppingCart.email, invoiceTemplate );

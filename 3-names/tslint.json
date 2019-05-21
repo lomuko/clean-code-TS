@@ -14,7 +14,7 @@
       }
     ],
     "import-spacing": true,
-    "max-lines": ["error", 128],
+    "max-file-line-count": [true, 128],
     "member-access": true,
     "member-ordering": [
       true,

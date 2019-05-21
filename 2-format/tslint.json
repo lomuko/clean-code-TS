@@ -6,6 +6,7 @@
     "curly": true,
     "file-name-casing": [true, "kebab-case"],
     "import-spacing": true,
+    "max-file-line-count": [true, 128],
     "member-access": true,
     "member-ordering": [
       true,

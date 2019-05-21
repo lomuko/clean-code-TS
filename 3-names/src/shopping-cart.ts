@@ -8,8 +8,8 @@ export class ShoppingCart {
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
-  public taxes : number = 0;
-  public payment : string = '';
+  public taxesAmount : number = 0;
+  public paymentMethod : string = '';
   public paymentId : string = '';
   public shippingAddress : string = '';
   public billingAddress : string = '';
@@ -76,7 +76,7 @@ export class ShoppingCart {
   ) {
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress || shippingAddress;
-    this.payment = payment;
+    this.paymentMethod = payment;
     this.paymentId = paymentId;
     const warehouseAdministrator = new WarehouseAdministrator();
     // calculate total price
@@ -92,7 +92,7 @@ export class ShoppingCart {
           this.region,
           this.isStudent
         );
-        this.taxes += line.taxes;
+        this.taxesAmount += line.taxes;
         let lineTotal = line.totalAmount + line.taxes;
       }
     } );
@@ -162,7 +162,7 @@ export class ShoppingCart {
       this.totalAmount *= 0.9;
     }
 
-    this.taxes += TaxCalculator.calculate(
+    this.taxesAmount += TaxCalculator.calculate(
       this.totalAmount,
       this.country,
       this.region,
