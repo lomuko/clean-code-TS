@@ -75,7 +75,9 @@ function rimraf(dir_path: string) {
       if (fs.lstatSync(entry_path).isDirectory()) {
         rimraf(entry_path);
       } else {
-        fs.unlinkSync(entry_path);
+        try {
+          fs.unlinkSync(entry_path);
+        } catch (e) {}
       }
     });
     try {
