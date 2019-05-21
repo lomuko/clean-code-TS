@@ -22,7 +22,7 @@ describe( `As a customer, I want to add products to the shopping cart, so I can 
     const mySC = mocks.newShoppingCart;
     mySC.addProduct( 'computer', 1000, 1, mySC.country );
     assert.actual = mySC.lineItems;
-    assert.expected = [{ price: 1000, product: 'computer', q: 1 }];
+    assert.expected = [{ price: 1000, productName: 'computer', quantity: 1 }];
     expect( assert.actual ).toEqual( assert.expected );
   } );
 } );
