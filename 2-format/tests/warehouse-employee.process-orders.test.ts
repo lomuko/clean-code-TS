@@ -12,6 +12,7 @@ describe( `As a warehouse employee, I want to process pending orders, so I can s
   const shoppingCart = mocks.newShoppingCart;
   shoppingCart.calculate( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
   const shipmentFilePath = mocks.shipmentFilePath( shoppingCart.invoiceNumber );
+
   assert = {
     given: 'an pending order',
     should: `process it and create a shipment ${shipmentFilePath}`

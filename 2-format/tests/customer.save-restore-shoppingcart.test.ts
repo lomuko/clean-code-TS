@@ -13,6 +13,7 @@ describe( `As a customer, I want to save and restore my current shopping cart, s
   let assert : Assert;
   const shoppingCart = mocks.newShoppingCart;
   shoppingCart.addProduct( 'computer', 1000, 1, shoppingCart.country );
+
   assert = {
     given: 'a shopping cart',
     should: `save it on ${mocks.shoppingCartFilePath}`

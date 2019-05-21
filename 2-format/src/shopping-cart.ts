@@ -62,6 +62,7 @@ export class ShoppingCart {
       this.items = JSON.parse( file );
     }
   }
+
   // read from file
   public delete() {
     const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
@@ -175,6 +176,7 @@ export class ShoppingCart {
     // send by email
     this.doc.emailOrder( this, order, this.country );
   }
+
   // send invoice to customer
   public invoice() {
     // create document

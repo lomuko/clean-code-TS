@@ -9,6 +9,7 @@ describe( `As a customer, I want to check out, so I can pay and get the products
   let assert : Assert;
 
   const shoppingCart = mocks.newShoppingCart;
+
   assert = {
     given: 'a shopping cart',
     should: 'calculate check out'
