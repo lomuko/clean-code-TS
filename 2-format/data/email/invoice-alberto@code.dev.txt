@@ -1,0 +1,23 @@
+
+    ---
+    See attached invoice.
+    ---
+    
+    LEGAL INVOICE FROM acme!
+    ========================
+    Invoice Number: 42#
+    ----------------------------------------------
+    Alberto - A12345678
+    Corp. Building
+    Spain - Galicia
+    Items purchased:
+    [{"product":"computer","price":1000,"q":1,"totalAmount":1000,"taxes":210},{"product":"monitor","price":200,"q":25,"totalAmount":5000,"taxes":1050},{"product":"course","price":100,"q":10,"totalAmount":1000,"taxes":210}]
+    Amount: #6615Euros
+    Shipping Cost: #0Euros
+    Base Amount: #6615Euros
+    Tax: #2859.15Euros
+    Total Amount: #9474.15Euros
+    
+
+    Thanks for your purchasing, the shop.acme.com
+    ---

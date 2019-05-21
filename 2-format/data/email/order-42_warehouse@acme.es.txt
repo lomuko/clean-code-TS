@@ -1,0 +1,13 @@
+
+    ---
+    Serve this order ASAP.
+    ---
+    
+    Invoice Number: 42
+    Alberto - A12345678
+    One Street
+    Items purchased:
+    [{"product":"computer","price":1000,"q":1,"totalAmount":1000,"taxes":210},{"product":"monitor","price":200,"q":25,"totalAmount":5000,"taxes":1050},{"product":"course","price":100,"q":10,"totalAmount":1000,"taxes":210}]
+    
+    Regards, the shop.acme.com
+    ---
