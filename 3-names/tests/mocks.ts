@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { DocumentManager } from '../src/document-manager';
 import { ShoppingCart } from '../src/shopping-cart';
 import { WarehouseAdministrator } from '../src/warehouse-administrator';
 
@@ -33,7 +34,7 @@ export const shoppingCart = {
   shippingAddress: '',
   billingAddress: '',
   invoiceNumber: 0,
-  documentManager: { }
+  documentManager: new DocumentManager()
 };
 
 const dataFolder = path.join( __dirname, '..', 'data' );
