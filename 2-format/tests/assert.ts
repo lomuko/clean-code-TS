@@ -1,7 +1,6 @@
-export interface Assert{
-  given: string,
-  should:string,
-  actual?:  any,
-  expected?: any
+export interface Assert {
+  given: string;
+  should: string;
+  actual?: any;
+  expected?: any;
 }
-
