@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Printer } from './Printer';
 
-export class Warehouse {
-  public static catalog : any[] = [
+export class WarehouseAdministrator {
+  public static productCatalog : any[] = [
     {
       name: 'monitor',
       price: 1000,
@@ -51,22 +51,26 @@ export class Warehouse {
 
   public addProduct() { }
 
-  public buyProduct( name : string, quantity : number ) {
-    const p = Warehouse.catalog.find( p => p.name === name );
-    if ( p.stock <= quantity ) {
-      quantity = p.stock;
+  public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
+    const buyedProduct = WarehouseAdministrator.productCatalog.find(
+      product => product.name === buyedProductName
+    );
+    if ( buyedProduct.stock <= buyedQuantity ) {
+      buyedQuantity = buyedProduct.stock;
       const fileName = `log.txt`;
-      Printer.print( fileName, 'out of stock: ' + p.name );
-      p.stock = 0;
+      Printer.print( fileName, 'out of stock: ' + buyedProduct.name );
+      buyedProduct.stock = 0;
     } else {
-      p.stock = p.stock - quantity;
+      buyedProduct.stock = buyedProduct.stock - buyedQuantity;
     }
-    this.restock( name );
+    this.restockProduct( buyedProductName );
   }
 
-  public restock( name : string ) {
-    const p = Warehouse.catalog.find( p => p.name === name );
-    p.stock = p.minimun;
-    Printer.print( 'restock-' + name + '.json', JSON.stringify( p ) );
+  public restockProduct( productName : string ) {
+    const productToRestoc = WarehouseAdministrator.productCatalog.find(
+      product => product.name === productName
+    );
+    productToRestoc.stock = productToRestoc.minimun;
+    Printer.print( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
   }
 }

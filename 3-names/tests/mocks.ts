@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ShoppingCart } from '../src/shopping-cart';
-import { Warehouse } from '../src/warehouse';
 
 export const newShoppingCart = new ShoppingCart(
   'Alberto',
@@ -13,8 +12,8 @@ export const newShoppingCart = new ShoppingCart(
   'A12345678'
 );
 
-export const theWarehouse = Warehouse;
-export const oneWarehouse = new Warehouse();
+export const theWarehouse = WarehouseAdministrator;
+export const oneWarehouse = new WarehouseAdministrator();
 
 export const shoppingCart = {
   clientName: 'Alberto',

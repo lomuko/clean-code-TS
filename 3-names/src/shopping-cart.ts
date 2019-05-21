@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Document } from './document';
-import { Tax } from './tax';
-import { Warehouse } from './warehouse';
+import { DocumentManager } from './document-manager';
+import { TaxCalculator } from './tax-calculator';
+import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
-  public items : any[] = [];
+  public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
   public taxes : number = 0;
@@ -14,11 +14,11 @@ export class ShoppingCart {
   public shippingAddress : string = '';
   public billingAddress : string = '';
   public invoiceNumber : number = 0;
-  public doc = new Document();
+  public documentManager = new DocumentManager();
 
   constructor(
     public clientName : string,
-    private student : boolean,
+    private isStudent : boolean,
     public region : string,
     public country : string,
     public email : string,
@@ -27,21 +27,20 @@ export class ShoppingCart {
   ) { }
 
   public addProduct(
-    product : string,
+    productName : string,
     price : number,
-    q : number,
+    quantity : number,
     country? : string,
     taxFree? : boolean
   ) {
-    this.items.push( { product, price, q } );
+    this.lineItems.push( { productName, price, quantity } );
   }
 
-  public removeLine( p : string ) {
-    this.items = this.items.filter( i => i.product !== p );
+  public removeProductLine( productName : string ) {
+    this.lineItems = this.lineItems.filter( lineItem => lineItem.productName !== productName );
   }
 
-  // save to read later
-  public save() {
+  public saveToStorage() {
     if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
       fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
     }
@@ -49,42 +48,50 @@ export class ShoppingCart {
     if ( !fs.existsSync( path.join( __dirname, '..', 'data', fileName ) ) ) {
       fs.writeFileSync(
         path.join( __dirname, '..', 'data', fileName ),
-        JSON.stringify( this.items )
+        JSON.stringify( this.lineItems )
       );
     }
   }
 
-  // read from file
-  public read() {
+  public loadFromStorage() {
     const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
     if ( fs.existsSync( fileName ) ) {
       const file = fs.readFileSync( fileName, 'utf8' );
-      this.items = JSON.parse( file );
+      this.lineItems = JSON.parse( file );
     }
   }
 
-  // read from file
-  public delete() {
+  public deleteFromStorage() {
     const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
     if ( fs.existsSync( fileName ) ) {
       fs.unlinkSync( fileName );
     }
   }
 
-  public calculate( payment : string, id : string, address : string, billing? : string ) {
-    this.shippingAddress = address;
-    this.billingAddress = billing || address;
+  public calculate(
+    payment : string,
+    paymentId : string,
+    shippingAddress : string,
+    billingAddress? : string
+  ) {
+    this.shippingAddress = shippingAddress;
+    this.billingAddress = billingAddress || shippingAddress;
     this.payment = payment;
-    this.paymentId = id;
-    const w = new Warehouse();
+    this.paymentId = paymentId;
+    const warehouseAdministrator = new WarehouseAdministrator();
     // calculate total price
-    this.items.forEach( line => {
-      w.buyProduct( line.product, line.q );
-      line.totalAmount = line.price * line.q;
+    this.lineItems.forEach( line => {
+      warehouseAdministrator.updateBuyedProduct( line.product, line.quantity );
+      line.totalAmount = line.price * line.quantity;
       this.totalAmount += line.totalAmount;
       // add taxes by product
       if ( !line.taxFree ) {
-        line.taxes = Tax.calculateLine( line, this.country, this.region, this.student );
+        line.taxes = TaxCalculator.calculateLine(
+          line,
+          this.country,
+          this.region,
+          this.isStudent
+        );
         this.taxes += line.taxes;
         let lineTotal = line.totalAmount + line.taxes;
       }
@@ -155,7 +162,12 @@ export class ShoppingCart {
       this.totalAmount *= 0.9;
     }
 
-    this.taxes += Tax.calculate( this.totalAmount, this.country, this.region, this.student );
+    this.taxes += TaxCalculator.calculate(
+      this.totalAmount,
+      this.country,
+      this.region,
+      this.isStudent
+    );
 
     const lastInvoice = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
     let invoiceNumber = 0;
@@ -165,21 +177,21 @@ export class ShoppingCart {
     invoiceNumber++;
     this.invoiceNumber = invoiceNumber;
     fs.writeFileSync( lastInvoice, invoiceNumber );
-    this.savetoWarehouse();
-    this.delete();
+    this.saveToWarehouse();
+    this.deleteFromStorage();
   }
 
   // save to process at the warehouse
-  private savetoWarehouse() {
+  private saveToWarehouse() {
     // send packing list to courier
-    const order = this.doc.order( this );
+    const order = this.documentManager.getOrderMessage( this );
     // send by email
-    this.doc.emailOrder( this, order, this.country );
+    this.documentManager.emailOrder( this, order, this.country );
   }
 
   // send invoice to customer
-  public invoice() {
+  public sendInvoiceToCustomer() {
     // create document
-    this.doc.sendInvoice( this );
+    this.documentManager.sendInvoice( this );
   }
 }

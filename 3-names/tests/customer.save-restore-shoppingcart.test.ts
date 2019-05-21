@@ -19,7 +19,7 @@ describe( `As a customer, I want to save and restore my current shopping cart, s
     should: `save it on ${mocks.shoppingCartFilePath}`
   };
   test( `given ${assert.given} should ${assert.should}`, () => {
-    shoppingCart.save();
+    shoppingCart.saveToStorage();
     assert.actual = fs.existsSync( mocks.shoppingCartFilePath );
     assert.expected = true;
     expect( assert.actual ).toEqual( assert.expected );
@@ -30,8 +30,8 @@ describe( `As a customer, I want to save and restore my current shopping cart, s
     should: 'restore it'
   };
   test( `given ${assert.given} should ${assert.should}`, () => {
-    shoppingCart.read();
-    assert.actual = shoppingCart.items.length;
+    shoppingCart.loadFromStorage();
+    assert.actual = shoppingCart.lineItems.length;
     assert.expected = 1;
     expect( assert.actual ).toEqual( assert.expected );
   } );

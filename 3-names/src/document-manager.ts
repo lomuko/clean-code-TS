@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Printer } from './Printer';
 import { ShoppingCart } from './shopping-cart';
 
-export class Document {
+export class DocumentManager {
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoice = `
     LEGAL INVOICE FROM acme!
@@ -14,53 +14,53 @@ export class Document {
     ${shoppingCart.billingAddress}
     ${shoppingCart.country} - ${shoppingCart.region}
     Items purchased:
-    ${this.lines( shoppingCart )}
+    ${this.getDocumentItemLines( shoppingCart )}
     Amount: #${shoppingCart.totalAmount - shoppingCart.shippingCost}Euros
     Shipping Cost: #${shoppingCart.shippingCost}Euros
     Base Amount: #${shoppingCart.totalAmount}Euros
     Tax: #${shoppingCart.taxes}Euros
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxes}Euros
     `;
-    this.print( shoppingCart, invoice );
+    this.printDocument( shoppingCart, invoice );
     this.emailInvoice( shoppingCart.email, invoice );
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
 
-  private lines( shoppingCart : ShoppingCart ) {
-    return JSON.stringify( shoppingCart.items );
+  private getDocumentItemLines( shoppingCart : ShoppingCart ) {
+    return JSON.stringify( shoppingCart.lineItems );
   }
 
-  public order( shoppingCart : ShoppingCart ) {
+  public getOrderMessage( shoppingCart : ShoppingCart ) {
     return `
     Invoice Number: ${shoppingCart.invoiceNumber}
     ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
     ${shoppingCart.shippingAddress}
     Items purchased:
-    ${this.lines( shoppingCart )}
+    ${this.getDocumentItemLines( shoppingCart )}
     `;
   }
 
-  public print( shoppingCart : ShoppingCart, doc : string ) {
+  public printDocument( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
-    if ( doc ) {
-      Printer.print( fileName, doc );
+    if ( documentContent ) {
+      Printer.print( fileName, documentContent );
     }
   }
 
-  public printLog( doc : string ) {
+  public printLog( logContent : string ) {
     const fileName = `log.txt`;
-    if ( doc ) {
-      Printer.print( fileName, doc );
+    if ( logContent ) {
+      Printer.print( fileName, logContent );
     }
   }
 
-  public emailOrder( shoppingCart : ShoppingCart, doc : string, country : string ) {
-    const warehouse = this.getAddress( country );
+  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+    const warehouse = this.getWarehouseAddressByCountry( customerCountry );
     const message = `
     ---
     Serve this order ASAP.
     ---
-    ${doc}
+    ${orderContent}
     Regards, the shop.acme.com
     ---`;
     const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
@@ -73,23 +73,23 @@ export class Document {
     this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
   }
 
-  private getAddress( country : string ) {
-    if ( country === 'Spain' ) {
+  private getWarehouseAddressByCountry( customerCountry : string ) {
+    if ( customerCountry === 'Spain' ) {
       return 'warehouse@acme.es';
     }
     return 'warehouse@acme.com';
   }
 
-  public emailInvoice( address : string, invoice : string ) {
+  public emailInvoice( emailAddress : string, invoiceContent : string ) {
     const message = `
     ---
     See attached invoice.
     ---
-    ${invoice}
+    ${invoiceContent}
 
     Thanks for your purchasing, the shop.acme.com
     ---`;
-    const fileName = `invoice-${address}.txt`;
+    const fileName = `invoice-${emailAddress}.txt`;
     if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email' ) ) ) {
       fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
     }
