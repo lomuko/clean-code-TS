@@ -9,6 +9,13 @@ export class DocumentManager {
   private readonly emailFolder = path.join( __dirname, '..', 'data', 'email' );
 
   public sendInvoice( shoppingCart : ShoppingCart ) {
+    const invoiceTemplate = this.getInvoiceTemplate( shoppingCart );
+    this.printDocument( shoppingCart, invoiceTemplate );
+    this.emailInvoice( shoppingCart.email, invoiceTemplate );
+    this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
+  }
+
+  private getInvoiceTemplate( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = `
     LEGAL INVOICE FROM acme!
     ========================
@@ -25,16 +32,14 @@ export class DocumentManager {
     Tax: #${shoppingCart.taxesAmount}Euros
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxesAmount}Euros
     `;
-    this.printDocument( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.email, invoiceTemplate );
-    this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
+    return invoiceTemplate;
   }
 
   private getDocumentItemLines( shoppingCart : ShoppingCart ) {
     return JSON.stringify( shoppingCart.lineItems );
   }
 
-  public getOrderMessage( shoppingCart : ShoppingCart ) {
+  public getOrderTemplate( shoppingCart : ShoppingCart ) {
     const orderTemplate = `
     Invoice Number: ${shoppingCart.invoiceNumber}
     ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
@@ -63,7 +68,22 @@ export class DocumentManager {
   }
 
   public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+    const orderMessageTemplate = this.getOrderMessageTemplate( orderContent );
+    this.ensureEmailFolder();
     const warehouse = this.getWarehouseAddressByCountry( customerCountry );
+    const orderFileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
+    const fileName = path.join( this.emailFolder, orderFileName );
+    this.writeDocument( fileName, orderMessageTemplate );
+    this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
+  }
+
+  private writeDocument( fileName : string, content : string ) {
+    if ( !fs.existsSync( fileName ) ) {
+      fs.writeFileSync( fileName, content );
+    }
+  }
+
+  private getOrderMessageTemplate( orderContent : string ) {
     const orderMessageTemplate = `
     ---
     Serve this order ASAP.
@@ -71,23 +91,26 @@ export class DocumentManager {
     ${orderContent}
     Regards, the shop.acme.com
     ---`;
-    this.ensureEmailFolder();
-    const orderFileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
-    const fileName = path.join( this.emailFolder, orderFileName );
-    if ( !fs.existsSync( fileName ) ) {
-      fs.writeFileSync( fileName, orderMessageTemplate );
-    }
-    this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
+    return orderMessageTemplate;
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
+    let warehouseAddress = 'warehouse@acme.com';
     if ( customerCountry === 'Spain' ) {
-      return 'warehouse@acme.es';
+      warehouseAddress = 'warehouse@acme.es';
     }
-    return 'warehouse@acme.com';
+    return warehouseAddress;
   }
 
   public emailInvoice( emailAddress : string, invoiceContent : string ) {
+    const invoiceMessageTemplate = this.getInvoiceMessageTemplate( invoiceContent );
+    this.ensureEmailFolder();
+    const invoiceFileName = `invoice-${emailAddress}.txt`;
+    const fileName = path.join( this.emailFolder, invoiceFileName );
+    this.writeDocument( fileName, invoiceMessageTemplate );
+  }
+
+  private getInvoiceMessageTemplate( invoiceContent : string ) {
     const invoiceMessageTemplate = `
     ---
     See attached invoice.
@@ -96,12 +119,7 @@ export class DocumentManager {
 
     Thanks for your purchasing, the shop.acme.com
     ---`;
-    this.ensureEmailFolder();
-    const invoiceFileName = `invoice-${emailAddress}.txt`;
-    const fileName = path.join( this.emailFolder, invoiceFileName );
-    if ( !fs.existsSync( fileName ) ) {
-      fs.writeFileSync( fileName, invoiceMessageTemplate );
-    }
+    return invoiceMessageTemplate;
   }
 
   private ensureEmailFolder() {

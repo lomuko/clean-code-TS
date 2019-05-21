@@ -101,12 +101,24 @@ export class ShoppingCart {
 
   private setInvoiceNumber() {
     const invoiceNumberFileName = path.join( this.dataFolder(), `lastinvoice.txt` );
+    const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
+    this.invoiceNumber = lastInvoiceNumber + 1;
+    this.writeLastInvoiceNumber( invoiceNumberFileName );
+  }
+
+  private writeLastInvoiceNumber( invoiceNumberFileName : string ) {
+    fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
+  }
+
+  private readLastInvoiceNumber( invoiceNumberFileName : string ) {
     let lastInvoiceNumber = 0;
     if ( fs.existsSync( invoiceNumberFileName ) ) {
-      lastInvoiceNumber = Number.parseInt( fs.readFileSync( invoiceNumberFileName, 'utf8' ) );
+      try {
+        const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
+        lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
+      } catch ( error ) { }
     }
-    this.invoiceNumber = lastInvoiceNumber + 1;
-    fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
+    return lastInvoiceNumber;
   }
 
   private applyPaymentMethodExtra( payment : string ) {
@@ -222,7 +234,7 @@ export class ShoppingCart {
   }
 
   private sendOrderToWarehouse() {
-    const orderMessage = this.documentManager.getOrderMessage( this );
+    const orderMessage = this.documentManager.getOrderTemplate( this );
     this.documentManager.emailOrder( this, orderMessage, this.country );
   }
 
