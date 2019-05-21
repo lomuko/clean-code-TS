@@ -1,0 +1,65 @@
+{
+  "extends": ["../tslint.json", "tslint-clean-code"],
+  "rules": {
+    "align": [true, "arguments", "elements", "members", "parameters", "statements"],
+    "class-name": true,
+    "curly": true,
+    "file-name-casing": [true, "kebab-case"],
+    "id-length": [
+      true,
+      {
+        "min": 4,
+        "max": 32,
+        "exceptions": ["x", "y", "i", "j", "fs"]
+      }
+    ],
+    "import-spacing": true,
+    "max-file-line-count": [true, 128],
+    "member-access": true,
+    "member-ordering": [
+      true,
+      {
+        "order": ["static-field", "instance-field", "static-method", "instance-method"]
+      }
+    ],
+    "no-consecutive-blank-lines": true,
+    "no-console": true,
+    "no-irregular-whitespace": true,
+    "no-empty": false,
+    "no-magic-numbers": [true, 0, 1, 100],
+    "space-within-parens": [true, 1],
+    "triple-equals": [true, "allow-null-check"],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "onespace",
+        "index-signature": "onespace",
+        "parameter": "onespace",
+        "property-declaration": "onespace",
+        "variable-declaration": "onespace"
+      },
+      {
+        "call-signature": "onespace",
+        "index-signature": "onespace",
+        "parameter": "onespace",
+        "property-declaration": "onespace",
+        "variable-declaration": "onespace"
+      }
+    ],
+    "variable-name": [true, "check-format", "ban-keywords"],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock",
+      "check-postbrace"
+    ]
+  }
+}
