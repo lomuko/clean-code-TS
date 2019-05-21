@@ -33,40 +33,40 @@ export class Warehouse {
   public stock: any[] = [];
 
   public processOrders() {
-    const ordersFolder = path.join(__dirname, '..', 'data', 'email');
-    if (fs.existsSync(ordersFolder)) {
-      fs.readdirSync(ordersFolder).forEach(file => {
-        if (path.basename(file).startsWith('order-')) {
-          const shippment = file.replace('order-', 'shipment-');
+    const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
+    if ( fs.existsSync( ordersFolder ) ) {
+      fs.readdirSync( ordersFolder ).forEach( file => {
+        if ( path.basename( file ).startsWith( 'order-' ) ) {
+          const shippment = file.replace( 'order-', 'shipment-' );
           fs.renameSync(
-            path.join(__dirname, '..', 'data', 'email', file),
-            path.join(__dirname, '..', 'data', 'email', shippment)
+            path.join( __dirname, '..', 'data', 'email', file ),
+            path.join( __dirname, '..', 'data', 'email', shippment )
           );
           const fileName = `log.txt`;
-          Printer.print(fileName, 'processed: ' + file);
+          Printer.print( fileName, 'processed: ' + file );
         }
-      });
+      } );
     }
   }
 
   public addProduct() { }
 
-  public buyProduct(name: string, quantity: number) {
-    const p = Warehouse.catalog.find(p => p.name === name);
-    if (p.stock <= quantity) {
+  public buyProduct( name: string, quantity: number ) {
+    const p = Warehouse.catalog.find( p => p.name === name );
+    if ( p.stock <= quantity ) {
       quantity = p.stock;
       const fileName = `log.txt`;
-      Printer.print(fileName, 'out of stock: ' + p.name);
+      Printer.print( fileName, 'out of stock: ' + p.name );
       p.stock = 0;
     } else {
       p.stock = p.stock - quantity;
     }
-    this.restock(name);
+    this.restock( name );
   }
 
-  public restock(name: string) {
-    const p = Warehouse.catalog.find(p => p.name === name);
+  public restock( name: string ) {
+    const p = Warehouse.catalog.find( p => p.name === name );
     p.stock = p.minimun;
-    Printer.print('restock-' + name + '.json', JSON.stringify(p));
+    Printer.print( 'restock-' + name + '.json', JSON.stringify( p ) );
   }
 }

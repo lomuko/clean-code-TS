@@ -33,65 +33,65 @@ export class ShoppingCart {
     country?: string,
     taxFree?: boolean
   ) {
-    this.items.push({ product, price, q });
+    this.items.push( { product, price, q } );
   }
 
-  public removeLine(p: string) {
-    this.items = this.items.filter(i => i.product !== p);
+  public removeLine( p: string ) {
+    this.items = this.items.filter( i => i.product !== p );
   }
 
   // save to read later
   public save() {
-    if (!fs.existsSync(path.join(__dirname, '..', 'data'))) {
-      fs.mkdirSync(path.join(__dirname, '..', 'data'));
+    if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
+      fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
     }
     const fileName = `shopping-${this.clientName}.json`;
-    if (!fs.existsSync(path.join(__dirname, '..', 'data', fileName))) {
+    if ( !fs.existsSync( path.join( __dirname, '..', 'data', fileName ) ) ) {
       fs.writeFileSync(
-        path.join(__dirname, '..', 'data', fileName),
-        JSON.stringify(this.items)
+        path.join( __dirname, '..', 'data', fileName ),
+        JSON.stringify( this.items )
       );
     }
   }
 
   // read from file
   public read() {
-    const fileName = path.join(__dirname, '..', 'data', `shopping-${this.clientName}.json`);
-    if (fs.existsSync(fileName)) {
-      const file = fs.readFileSync(fileName, 'utf8');
-      this.items = JSON.parse(file);
+    const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
+    if ( fs.existsSync( fileName ) ) {
+      const file = fs.readFileSync( fileName, 'utf8' );
+      this.items = JSON.parse( file );
     }
   }
   // read from file
   public delete() {
-    const fileName = path.join(__dirname, '..', 'data', `shopping-${this.clientName}.json`);
-    if (fs.existsSync(fileName)) {
-      fs.unlinkSync(fileName);
+    const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
+    if ( fs.existsSync( fileName ) ) {
+      fs.unlinkSync( fileName );
     }
   }
 
-  public calculate(payment: string, id: string, address: string, billing?: string) {
+  public calculate( payment: string, id: string, address: string, billing?: string ) {
     this.shippingAddress = address;
     this.billingAddress = billing || address;
     this.payment = payment;
     this.paymentId = id;
     const w = new Warehouse();
     // calculate total price
-    this.items.forEach(line => {
-      w.buyProduct(line.product, line.q);
+    this.items.forEach( line => {
+      w.buyProduct( line.product, line.q );
       line.totalAmount = line.price * line.q;
       this.totalAmount += line.totalAmount;
       // add taxes by product
-      if (!line.taxFree) {
-        line.taxes = Tax.calculateLine(line, this.country, this.region, this.student);
+      if ( !line.taxFree ) {
+        line.taxes = Tax.calculateLine( line, this.country, this.region, this.student );
         this.taxes += line.taxes;
         let lineTotal = line.totalAmount + line.taxes;
       }
-    });
+    } );
 
     // add shipping costs
-    if (this.totalAmount < 100) {
-      switch (this.country) {
+    if ( this.totalAmount < 100 ) {
+      switch ( this.country ) {
         case 'Spain':
           this.shipping_cost = this.totalAmount * 0.1;
           break;
@@ -106,8 +106,8 @@ export class ShoppingCart {
           this.shipping_cost = this.totalAmount * 0.25;
           break;
       }
-    } else if (this.totalAmount < 1000) {
-      switch (this.country) {
+    } else if ( this.totalAmount < 1000 ) {
+      switch ( this.country ) {
         case 'Spain':
           this.shipping_cost = 10;
           break;
@@ -123,7 +123,7 @@ export class ShoppingCart {
           break;
       }
     } else {
-      switch (this.country) {
+      switch ( this.country ) {
         case 'Spain':
           this.shipping_cost = 0;
           break;
@@ -140,30 +140,30 @@ export class ShoppingCart {
       }
     }
     this.totalAmount += this.shipping_cost;
-    if (payment === 'PayPal') {
+    if ( payment === 'PayPal' ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
 
     // apply discount
     if (
       this.isVip ||
-      (this.totalAmount > 3000 && this.country === 'Portugal') ||
-      (this.totalAmount > 2000 && this.country === 'France') ||
-      (this.totalAmount > 1000 && this.country === 'Spain')
+      ( this.totalAmount > 3000 && this.country === 'Portugal' ) ||
+      ( this.totalAmount > 2000 && this.country === 'France' ) ||
+      ( this.totalAmount > 1000 && this.country === 'Spain' )
     ) {
       this.totalAmount *= 0.9;
     }
 
-    this.taxes += Tax.calculate(this.totalAmount, this.country, this.region, this.student);
+    this.taxes += Tax.calculate( this.totalAmount, this.country, this.region, this.student );
 
-    const lastInvoice = path.join(__dirname, '..', 'data', `lastinvoice.txt`);
+    const lastInvoice = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
     let number = 0;
-    if (fs.existsSync(lastInvoice)) {
-      number = Number.parseInt(fs.readFileSync(lastInvoice, 'utf8'));
+    if ( fs.existsSync( lastInvoice ) ) {
+      number = Number.parseInt( fs.readFileSync( lastInvoice, 'utf8' ) );
     }
     number++;
     this.invoiceNumber = number;
-    fs.writeFileSync(lastInvoice, number);
+    fs.writeFileSync( lastInvoice, number );
     this.savetoWarehouse();
     this.delete();
   }
@@ -171,13 +171,13 @@ export class ShoppingCart {
   // save to process at the warehouse
   private savetoWarehouse() {
     // send packing list to courier
-    const order = this.doc.order(this);
+    const order = this.doc.order( this );
     // send by email
-    this.doc.emailOrder(this, order, this.country);
+    this.doc.emailOrder( this, order, this.country );
   }
   // send invoice to customer
   public invoice() {
     // create document
-    this.doc.sendInvoice(this);
+    this.doc.sendInvoice( this );
   }
 }
