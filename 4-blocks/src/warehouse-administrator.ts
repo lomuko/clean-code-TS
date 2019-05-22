@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Printer } from './printer';
-import { Product } from './product';
 
 export class WarehouseAdministrator {
   public static productCatalog : any[] = [
@@ -34,10 +33,6 @@ export class WarehouseAdministrator {
   private readonly logFileName = `log.txt`;
   public stock : any[] = [];
 
-  private static findProductByName( productName : string ) {
-    return WarehouseAdministrator.productCatalog.find( product => product.name === productName );
-  }
-
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if ( fs.existsSync( ordersFolder ) ) {
@@ -48,7 +43,7 @@ export class WarehouseAdministrator {
   }
 
   private processFileInOrderFolder( fileName : string, ordersFolder : string ) {
-    if ( this.isAnOrderFile( fileName ) ) {
+    if ( path.basename( fileName ).startsWith( 'order-' ) ) {
       this.processOrder( fileName, ordersFolder );
     }
   }
@@ -62,15 +57,13 @@ export class WarehouseAdministrator {
     Printer.print( this.logFileName, 'processed: ' + orderFileName );
   }
 
-  private isAnOrderFile( orderFileName : string ) {
-    return path.basename( orderFileName ).startsWith( 'order-' );
-  }
-
   public addProduct() { }
 
   public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.findProductByName( buyedProductName );
-    if ( this.isOutOfStock( buyedProduct, buyedQuantity ) ) {
+    const buyedProduct = WarehouseAdministrator.productCatalog.find(
+      product => product.name === buyedProductName
+    );
+    if ( buyedProduct.stock <= buyedQuantity ) {
       buyedQuantity = buyedProduct.stock;
       Printer.print( this.logFileName, 'out of stock: ' + buyedProduct.name );
     }
@@ -78,12 +71,10 @@ export class WarehouseAdministrator {
     this.restockProduct( buyedProductName );
   }
 
-  private isOutOfStock( buyedProduct : Product, buyedQuantity : number ) {
-    return buyedProduct.stock <= buyedQuantity;
-  }
-
   public restockProduct( productName : string ) {
-    const productToRestoc = WarehouseAdministrator.findProductByName( productName );
+    const productToRestoc = WarehouseAdministrator.productCatalog.find(
+      product => product.name === productName
+    );
     productToRestoc.stock = productToRestoc.minimun;
     Printer.print( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
   }
