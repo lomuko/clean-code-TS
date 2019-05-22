@@ -1,6 +1,38 @@
 export class TaxCalculator {
   private static readonly decimalPlaces = 2;
 
+  private static readonly countryRegionTaxesTree = [
+    {
+      countryName: 'Spain',
+      countryTax: 21,
+      regionTaxes: [
+        {
+          regionName: 'Canary Islands',
+          regionTax: 7
+        }
+      ]
+    },
+    {
+      countryName: 'Portugal',
+      countryTax: 23,
+      regionTaxes: [
+        {
+          regionName: 'Madeira',
+          regionTax: 22
+        },
+        {
+          regionName: 'Azores',
+          regionTax: 18
+        }
+      ]
+    },
+    {
+      countryName: 'France',
+      countryTax: 20,
+      regionTaxes: []
+    }
+  ];
+
   public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
     return TaxCalculator.calculateTax( line.totalAmount, country, region, isStudent );
   }
@@ -38,30 +70,32 @@ export class TaxCalculator {
     return Number( roundedString );
   }
 
-  private static getCountryTax( country : string, region : string ) {
-    let countryTax = 0;
-    switch ( country ) {
-      case 'Spain':
-        if ( region === 'Canary Islands' ) {
-          countryTax = 7;
-        } else {
-          countryTax = 21;
-        }
-        break;
-      case 'Portugal':
-        if ( region === 'Madeira' ) {
-          countryTax = 22;
-        } else if ( region === 'Azores' ) {
-          countryTax = 18;
-        }
-        countryTax = 23;
-        break;
-      case 'France':
-        countryTax = 20;
-        break;
-      default:
-        break;
-    }
-    return countryTax;
+  private static getCountryTax( countryName : string, regionName : string ) {
+    TaxCalculator.countryRegionTaxesTree.forEach( countryRegionTaxNode => {
+      if ( countryRegionTaxNode.countryName === countryName ) {
+        countryRegionTaxNode.regionTaxes.forEach( regionTaxNode => {
+          if ( regionTaxNode.regionName === regionName ) {
+            return regionTaxNode.regionTax;
+          }
+        } );
+        return countryRegionTaxNode.countryTax;
+      }
+    } );
+
+    // const countryTaxes = TaxCalculator.countryRegionTaxesTree.find(
+    //   countryRegionTaxNode => countryRegionTaxNode.countryName === countryName
+    // );
+    // if ( countryTaxes !== undefined ) {
+    //   const regionTaxes = countryTaxes.regionTaxes.find(
+    //     regionTaxNode => regionTaxNode.regionName === regionName
+    //   );
+    //   if ( regionTaxes !== undefined ) {
+    //     return regionTaxes.regionTax;
+    //   } else {
+    //     return countryTaxes.countryTax;
+    //   }
+    // }
+
+    return 0;
   }
 }
