@@ -10,7 +10,7 @@ export class DocumentManager {
 
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.getInvoiceTemplate( shoppingCart );
-    this.printDocument( shoppingCart, invoiceTemplate );
+    this.printInvoice( shoppingCart, invoiceTemplate );
     this.emailInvoice( shoppingCart.email, invoiceTemplate );
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
@@ -50,7 +50,7 @@ export class DocumentManager {
     return orderTemplate;
   }
 
-  public printDocument( shoppingCart : ShoppingCart, documentContent : string ) {
+  private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
       Printer.print( fileName, documentContent );
@@ -70,11 +70,16 @@ export class DocumentManager {
   public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
     const orderMessageTemplate = this.getOrderMessageTemplate( orderContent );
     this.ensureEmailFolder();
-    const warehouse = this.getWarehouseAddressByCountry( customerCountry );
-    const orderFileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
-    const fileName = path.join( this.emailFolder, orderFileName );
-    this.writeDocument( fileName, orderMessageTemplate );
+    const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
+    this.writeDocument( orderFileName, orderMessageTemplate );
     this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
+  }
+
+  private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
+    const warehouseEmailAddress = this.getWarehouseAddressByCountry( customerCountry );
+    const orderFileName = `order-${shoppingCart.invoiceNumber}_${warehouseEmailAddress}.txt`;
+    const fileName = path.join( this.emailFolder, orderFileName );
+    return fileName;
   }
 
   private writeDocument( fileName : string, content : string ) {
@@ -105,9 +110,14 @@ export class DocumentManager {
   public emailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = this.getInvoiceMessageTemplate( invoiceContent );
     this.ensureEmailFolder();
+    const invliceFileName = this.getInvoiceFileName( emailAddress );
+    this.writeDocument( invliceFileName, invoiceMessageTemplate );
+  }
+
+  private getInvoiceFileName( emailAddress : string ) {
     const invoiceFileName = `invoice-${emailAddress}.txt`;
     const fileName = path.join( this.emailFolder, invoiceFileName );
-    this.writeDocument( fileName, invoiceMessageTemplate );
+    return fileName;
   }
 
   private getInvoiceMessageTemplate( invoiceContent : string ) {
