@@ -79,10 +79,10 @@ export class ShoppingCart {
       ]
     }
   ];
-  private static readonly paymentsConfigurations : [
+  private static paymentsConfigurations = [
     {
-      paymentMethod : 'PayPal';
-      extraFactor : 1.15;
+      paymentMethod: 'PayPal',
+      extraFactor: 1.15
     }
   ];
   public lineItems : any[] = [];
