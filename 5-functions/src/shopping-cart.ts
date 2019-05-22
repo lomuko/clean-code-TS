@@ -41,30 +41,55 @@ export class ShoppingCart {
   }
 
   public saveToStorage() {
+    this.ensureDataFolder();
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.ensureWriteFile( shoppingFilePath, JSON.stringify( this.lineItems ) );
+  }
+
+  private ensureWriteFile( filePath : string, fileContent : string ) {
+    if ( !fs.existsSync( filePath ) ) {
+      fs.writeFileSync( filePath, fileContent );
+    }
+  }
+
+  private getShoppingFilePath() {
+    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
+    return shoppingFilePath;
+  }
+
+  private ensureDataFolder() {
     if ( !fs.existsSync( this.dataFolder() ) ) {
       fs.mkdirSync( this.dataFolder() );
-    }
-    const shoppingFileName = `shopping-${this.clientName}.json`;
-    const fileName = path.join( this.dataFolder(), shoppingFileName );
-    if ( !fs.existsSync( fileName ) ) {
-      fs.writeFileSync( fileName, JSON.stringify( this.lineItems ) );
     }
   }
 
   public loadFromStorage() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
-    const fileName = path.join( this.dataFolder(), shoppingFileName );
-    if ( fs.existsSync( fileName ) ) {
-      const file = fs.readFileSync( fileName, 'utf8' );
-      this.lineItems = JSON.parse( file );
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.lineItems = this.ensureReadFile( shoppingFilePath, [] );
+  }
+
+  private ensureReadFile( shoppingFilePath : string, defaultValue : any ) {
+    if ( fs.existsSync( shoppingFilePath ) ) {
+      try {
+        const file = fs.readFileSync( shoppingFilePath, 'utf8' );
+        return JSON.parse( file );
+      } catch ( error ) {
+        return defaultValue;
+      }
+    } else {
+      return defaultValue;
     }
   }
 
   public deleteFromStorage() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
-    const fileName = path.join( this.dataFolder(), shoppingFileName );
-    if ( fs.existsSync( fileName ) ) {
-      fs.unlinkSync( fileName );
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.ensureDeleteFile( shoppingFilePath );
+  }
+
+  private ensureDeleteFile( filePath : string ) {
+    if ( fs.existsSync( filePath ) ) {
+      fs.unlinkSync( filePath );
     }
   }
 
@@ -74,29 +99,46 @@ export class ShoppingCart {
     shippingAddress : string,
     billingAddress? : string
   ) {
-    this.shippingAddress = shippingAddress;
-    this.billingAddress = billingAddress || shippingAddress;
-    this.paymentMethod = paymentMethod;
-    this.paymentId = paymentId;
-
+    this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
     this.calculateTotalAmount();
-
     this.calculateShippingCosts();
-
     this.applyPaymentMethodExtra( paymentMethod );
-
     this.applyDiscount();
-
     this.taxesAmount += TaxCalculator.calculateTotal(
       this.totalAmount,
       this.country,
       this.region,
       this.isStudent
     );
-
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
+  }
+
+  private setCheckOutData(
+    shippingAddress : string,
+    billingAddress : string | undefined,
+    paymentMethod : string,
+    paymentId : string
+  ) {
+    this.shippingAddress = shippingAddress;
+    this.billingAddress = this.getBillingAddress( shippingAddress, billingAddress );
+    this.paymentMethod = paymentMethod;
+    this.paymentId = paymentId;
+  }
+
+  private getBillingAddress( shippingAddress : string, billingAddress? : string ) : string {
+    if ( this.hasContent( billingAddress ) ) {
+      return billingAddress as string;
+    }
+    if ( this.hasContent( shippingAddress ) ) {
+      return shippingAddress;
+    }
+    return '';
+  }
+
+  private hasContent( content? : string ) {
+    return content !== undefined && content !== null && content.length > 0;
   }
 
   private setInvoiceNumber() {
