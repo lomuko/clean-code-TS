@@ -34,7 +34,8 @@ export class TaxCalculator {
   private static calculateCountryTax( base : number, country : string, region : string ) {
     const countryTax = TaxCalculator.getCountryTax( country, region );
     const baseTax = ( base * countryTax ) / 100;
-    return baseTax.toFixed( TaxCalculator.decimalPlaces );
+    const roundedString = baseTax.toFixed( TaxCalculator.decimalPlaces );
+    return Number( roundedString );
   }
 
   private static getCountryTax( country : string, region : string ) {
