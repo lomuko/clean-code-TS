@@ -3,7 +3,7 @@ export class Product {
     public name : string,
     public price : number,
     public stock : number,
-    minimumStock : number,
-    isTaxFree : boolean
+    public minimumStock : number,
+    public isTaxFree : boolean
   ) { }
 }

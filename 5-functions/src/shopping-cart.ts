@@ -257,7 +257,7 @@ export class ShoppingCart {
   }
 
   private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : any ) {
-    warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
+    line.quantity = warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
     line.totalAmount = line.price * line.quantity;
     this.totalAmount += line.totalAmount;
     this.addTaxesByProduct( line );

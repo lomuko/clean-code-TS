@@ -4,31 +4,34 @@ import { Printer } from './printer';
 import { Product } from './product';
 
 export class WarehouseAdministrator {
-  public static productCatalog : any[] = [
+  public static productCatalog : Product[] = [
     {
       name: 'monitor',
       price: 1000,
       stock: 50,
-      minimun: 20
+      minimumStock: 20,
+      isTaxFree: false
     },
     {
       name: 'computer',
       price: 200,
       stock: 20,
-      minimun: 3
+      minimumStock: 3,
+      isTaxFree: false
     },
     {
       name: 'printer',
       price: 1000,
       stock: 10,
-      minimun: 5
+      minimumStock: 5,
+      isTaxFree: false
     },
     {
       name: 'course',
       price: 100,
       stock: 1000000,
-      minimun: 1000000,
-      taxFree: true
+      minimumStock: 1000000,
+      isTaxFree: true
     }
   ];
   private readonly logFileName = `log.txt`;
@@ -39,7 +42,14 @@ export class WarehouseAdministrator {
   }
 
   public processOrders() {
-    const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
+    const ordersFolder = this.getOrdersFolder();
+    this.processOrdesFolder( ordersFolder );
+  }
+  private getOrdersFolder() {
+    return path.join( __dirname, '..', 'data', 'email' );
+  }
+
+  private processOrdesFolder( ordersFolder : string ) {
     if ( fs.existsSync( ordersFolder ) ) {
       fs.readdirSync( ordersFolder ).forEach( fileName => {
         this.processFileInOrderFolder( fileName, ordersFolder );
@@ -70,21 +80,39 @@ export class WarehouseAdministrator {
 
   public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
     const buyedProduct = WarehouseAdministrator.findProductByName( buyedProductName );
-    if ( this.isOutOfStock( buyedProduct, buyedQuantity ) ) {
-      buyedQuantity = buyedProduct.stock;
-      Printer.print( this.logFileName, 'out of stock: ' + buyedProduct.name );
+    if ( buyedProduct !== undefined ) {
+      let realBuyedQuantity = this.getRealBuyedQuantity( buyedProduct, buyedQuantity );
+      this.updateStock( buyedProduct, realBuyedQuantity );
+      return realBuyedQuantity;
+    } else {
+      return 0;
     }
-    buyedProduct.stock = buyedProduct.stock - buyedQuantity;
-    this.restockProduct( buyedProductName );
   }
 
-  private isOutOfStock( buyedProduct : Product, buyedQuantity : number ) {
+  private getRealBuyedQuantity( buyedProduct : Product, buyedQuantity : number ) {
+    let realBuyedQuantity = buyedQuantity;
+    if ( this.isNotEnouht( buyedProduct, buyedQuantity ) ) {
+      Printer.print( this.logFileName, 'not have enough: ' + buyedProduct.name );
+      realBuyedQuantity = buyedProduct.stock;
+    }
+    return realBuyedQuantity;
+  }
+  private updateStock( buyedProduct : any, realBuyedQuantity : number ) {
+    buyedProduct.stock = buyedProduct.stock - realBuyedQuantity;
+    if ( this.isOutOfStock( buyedProduct ) ) {
+      this.restockProduct( buyedProduct );
+    }
+    return realBuyedQuantity;
+  }
+
+  private isNotEnouht( buyedProduct : Product, buyedQuantity : number ) {
     return buyedProduct.stock <= buyedQuantity;
   }
-
-  public restockProduct( productName : string ) {
-    const productToRestoc = WarehouseAdministrator.findProductByName( productName );
-    productToRestoc.stock = productToRestoc.minimun;
-    Printer.print( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
+  private isOutOfStock( buyedProduct : Product ) {
+    return buyedProduct.stock < buyedProduct.minimumStock;
+  }
+  private restockProduct( productToRestoc : Product ) {
+    productToRestoc.stock = productToRestoc.minimumStock;
+    Printer.print( 'restock-' + productToRestoc.name + '.json', JSON.stringify( productToRestoc ) );
   }
 }
