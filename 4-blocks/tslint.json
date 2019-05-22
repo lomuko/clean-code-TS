@@ -3,7 +3,7 @@
   "rules": {
     "align": [true, "arguments", "elements", "members", "parameters", "statements"],
     "class-name": true,
-    "cyclomatic-complexity": [true, 4],
+    "cyclomatic-complexity": [true, 8],
     "curly": true,
     "file-name-casing": [true, "kebab-case"],
     "id-length": [
@@ -27,8 +27,7 @@
     "no-console": true,
     "no-irregular-whitespace": true,
     "no-empty": false,
-    // "no-magic-numbers": [true, 0, 1, 100],
-    "strict-boolean-expressions": true,
+    "no-magic-numbers": [true, 0, 1, 100],
     "space-within-parens": [true, 1],
     "triple-equals": [true, "allow-null-check"],
     "typedef-whitespace": [
