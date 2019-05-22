@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Printer } from './Printer';
+import { Printer } from './printer';
 import { ShoppingCart } from './shopping-cart';
 
 export class DocumentManager {
