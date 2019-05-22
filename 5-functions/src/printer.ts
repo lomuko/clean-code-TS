@@ -10,14 +10,16 @@ export class Printer {
 
   private static ensurePrintFolder() {
     const dataFolder = path.join( __dirname, '..', 'data' );
+    Printer.ensureFolder( dataFolder );
     const printFolder = path.join( dataFolder, 'print' );
+    Printer.ensureFolder( printFolder );
+    return printFolder;
+  }
+
+  private static ensureFolder( dataFolder : string ) {
     if ( !fs.existsSync( dataFolder ) ) {
       fs.mkdirSync( dataFolder );
     }
-    if ( !fs.existsSync( printFolder ) ) {
-      fs.mkdirSync( printFolder );
-    }
-    return printFolder;
   }
 
   private static appendOrCreateFile(
