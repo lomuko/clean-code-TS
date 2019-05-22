@@ -5,6 +5,86 @@ import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
+  constructor(
+    public clientName : string,
+    private isStudent : boolean,
+    public region : string,
+    public country : string,
+    public email : string,
+    private isVip : boolean,
+    public taxNumber? : string
+  ) { }
+  private static countryConfigurations = [
+    {
+      contryName: 'Spain',
+      thresholdForDiscount: 1000,
+      shippingCost: [
+        {
+          upTo: 100,
+          factor: 0.1,
+          plus: 0
+        },
+        {
+          upTo: 1000,
+          factor: 0,
+          plus: 10
+        },
+        {
+          upTo: Infinity,
+          factor: 0,
+          plus: 0
+        }
+      ]
+    },
+    {
+      contryName: 'Portugal',
+      thresholdForDiscount: 3000,
+      shippingCost: [
+        {
+          upTo: 100,
+          factor: 0.15,
+          plus: 0
+        },
+        {
+          upTo: 1000,
+          factor: 0,
+          plus: 15
+        },
+        {
+          upTo: Infinity,
+          factor: 0,
+          plus: 10
+        }
+      ]
+    },
+    {
+      contryName: 'France',
+      thresholdForDiscount: 2000,
+      shippingCost: [
+        {
+          upTo: 100,
+          factor: 0.2,
+          plus: 0
+        },
+        {
+          upTo: 1000,
+          factor: 0,
+          plus: 20
+        },
+        {
+          upTo: Infinity,
+          factor: 0,
+          plus: 15
+        }
+      ]
+    }
+  ];
+  private static readonly paymentsConfigurations : [
+    {
+      paymentMethod : 'PayPal';
+      extraFactor : 1.15;
+    }
+  ];
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -15,16 +95,6 @@ export class ShoppingCart {
   public billingAddress : string = '';
   public invoiceNumber : number = 0;
   public documentManager = new DocumentManager();
-
-  constructor(
-    public clientName : string,
-    private isStudent : boolean,
-    public region : string,
-    public country : string,
-    public email : string,
-    private isVip : boolean,
-    public taxNumber? : string
-  ) { }
 
   public addLineItem(
     productName : string,
@@ -164,8 +234,11 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    if ( payment === 'PayPal' ) {
-      this.totalAmount = this.totalAmount * 1.05;
+    const paymentConfiguration = ShoppingCart.paymentsConfigurations.find(
+      paymentConfiguration => paymentConfiguration.paymentMethod === payment
+    );
+    if ( paymentConfiguration !== undefined ) {
+      this.totalAmount = this.totalAmount * paymentConfiguration.extraFactor;
     }
   }
 
@@ -180,72 +253,28 @@ export class ShoppingCart {
   }
 
   private hasCountryDiscount() {
-    return (
-      ( this.totalAmount > 3000 && this.country === 'Portugal' ) ||
-      ( this.totalAmount > 2000 && this.country === 'France' ) ||
-      ( this.totalAmount > 1000 && this.country === 'Spain' )
+    const countryConfiguration = ShoppingCart.countryConfigurations.find(
+      countryConfiguration => countryConfiguration.contryName === this.country
     );
+    if ( countryConfiguration !== undefined ) {
+      return this.totalAmount > countryConfiguration.thresholdForDiscount;
+    } else {
+      return false;
+    }
   }
 
   private calculateShippingCosts() {
-    if ( this.totalAmount < 100 ) {
-      this.calculateShippingSmallOrders();
-    } else if ( this.totalAmount < 1000 ) {
-      this.calculateShippingMediumOrders();
-    } else {
-      this.calculateShippingBigOrders();
-    }
-    this.totalAmount += this.shippingCost;
-  }
-
-  private calculateShippingSmallOrders() {
-    switch ( this.country ) {
-      case 'Spain':
-        this.shippingCost = this.totalAmount * 0.1;
-        break;
-      case 'Portugal':
-        this.shippingCost = this.totalAmount * 0.15;
-        break;
-      case 'France':
-        this.shippingCost = this.totalAmount * 0.2;
-        break;
-      default:
-        this.shippingCost = this.totalAmount * 0.25;
-        break;
-    }
-  }
-
-  private calculateShippingMediumOrders() {
-    switch ( this.country ) {
-      case 'Spain':
-        this.shippingCost = 10;
-        break;
-      case 'Portugal':
-        this.shippingCost = 15;
-        break;
-      case 'France':
-        this.shippingCost = 20;
-        break;
-      default:
-        this.shippingCost = 25;
-        break;
-    }
-  }
-
-  private calculateShippingBigOrders() {
-    switch ( this.country ) {
-      case 'Spain':
-        this.shippingCost = 0;
-        break;
-      case 'Portugal':
-        this.shippingCost = 10;
-        break;
-      case 'France':
-        this.shippingCost = 15;
-        break;
-      default:
-        this.shippingCost = 20;
-        break;
+    const countryConfiguration = ShoppingCart.countryConfigurations.find(
+      countryConfiguration => countryConfiguration.contryName === this.country
+    );
+    if ( countryConfiguration !== undefined ) {
+      countryConfiguration.shippingCost.forEach( shippingCost => {
+        if ( this.totalAmount < shippingCost.upTo ) {
+          const shippingCostAmount = this.totalAmount * shippingCost.factor + shippingCost.plus;
+          this.totalAmount += shippingCostAmount;
+          return;
+        }
+      } );
     }
   }
 
