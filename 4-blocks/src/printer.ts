@@ -3,32 +3,29 @@ import * as path from 'path';
 
 export class Printer {
   public static print( fileName : string, textContent : string ) {
+    Printer.ensureDataFolder();
+    Printer.ensurePrintFolder();
     textContent += '\n';
-    const printFolder = Printer.ensurePrintFolder();
-    Printer.appendOrCreateFile( printFolder, fileName, textContent );
+    Printer.appendOrCreateFile( fileName, textContent );
+  }
+
+  private static ensureDataFolder() {
+    if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
+      fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
+    }
   }
 
   private static ensurePrintFolder() {
-    const dataFolder = path.join( __dirname, '..', 'data' );
-    const printFolder = path.join( dataFolder, 'print' );
-    if ( !fs.existsSync( dataFolder ) ) {
-      fs.mkdirSync( dataFolder );
+    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'print' ) ) ) {
+      fs.mkdirSync( path.join( __dirname, '..', 'data', 'print' ) );
     }
-    if ( !fs.existsSync( printFolder ) ) {
-      fs.mkdirSync( printFolder );
-    }
-    return printFolder;
   }
 
-  private static appendOrCreateFile(
-    printFolder : string,
-    fileName : string,
-    textContent : string
-  ) {
-    if ( !fs.existsSync( path.join( printFolder, fileName ) ) ) {
-      fs.writeFileSync( path.join( printFolder, fileName ), textContent );
+  private static appendOrCreateFile( fileName : string, textContent : string ) {
+    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'print', fileName ) ) ) {
+      fs.writeFileSync( path.join( __dirname, '..', 'data', 'print', fileName ), textContent );
     } else {
-      fs.appendFileSync( path.join( printFolder, fileName ), textContent );
+      fs.appendFileSync( path.join( __dirname, '..', 'data', 'print', fileName ), textContent );
     }
   }
 }
