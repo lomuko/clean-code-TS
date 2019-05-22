@@ -2,15 +2,7 @@ export class TaxCalculator {
   private static readonly decimalPlaces = 2;
 
   public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
-    if ( isStudent || region === 'St Pierre' ) {
-      return 0;
-    } else {
-      return Number(
-        ( ( line.totalAmount * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
-          TaxCalculator.decimalPlaces
-        )
-      );
-    }
+    return TaxCalculator.calculateTax( line.totalAmount, country, region, isStudent );
   }
 
   public static calculateTotal(
@@ -19,41 +11,56 @@ export class TaxCalculator {
     region : string,
     isStudent : boolean
   ) {
-    if ( isStudent || region === 'St Pierre' ) {
+    return TaxCalculator.calculateTax( base, country, region, isStudent );
+  }
+
+  private static calculateTax(
+    base : number,
+    country : string,
+    region : string,
+    isStudent : boolean
+  ) {
+    if ( TaxCalculator.isTaxFree( isStudent, region ) ) {
       return 0;
     } else {
-      return Number(
-        ( ( base * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
-          TaxCalculator.decimalPlaces
-        )
-      );
+      return TaxCalculator.calculateCountryTax( base, country, region );
     }
   }
 
-  private static coutryTax( country : string, region : string ) {
-    let countryVAT = 0;
+  private static isTaxFree( isStudent : boolean, region : string ) {
+    return isStudent || region === 'St Pierre';
+  }
+
+  private static calculateCountryTax( base : number, country : string, region : string ) {
+    const countryTax = TaxCalculator.getCountryTax( country, region );
+    const baseTax = ( base * countryTax ) / 100;
+    return baseTax.toFixed( TaxCalculator.decimalPlaces );
+  }
+
+  private static getCountryTax( country : string, region : string ) {
+    let countryTax = 0;
     switch ( country ) {
       case 'Spain':
         if ( region === 'Canary Islands' ) {
-          countryVAT = 7;
+          countryTax = 7;
         } else {
-          countryVAT = 21;
+          countryTax = 21;
         }
         break;
       case 'Portugal':
         if ( region === 'Madeira' ) {
-          countryVAT = 22;
+          countryTax = 22;
         } else if ( region === 'Azores' ) {
-          countryVAT = 18;
+          countryTax = 18;
         }
-        countryVAT = 23;
+        countryTax = 23;
         break;
       case 'France':
-        countryVAT = 20;
+        countryTax = 20;
         break;
       default:
         break;
     }
-    return countryVAT;
+    return countryTax;
   }
 }
