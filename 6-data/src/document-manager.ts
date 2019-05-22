@@ -7,12 +7,12 @@ export class DocumentManager {
   private readonly logFileName = `log.txt`;
   private readonly countryWarehouseAdresses = [
     {
-      country: 'Spain',
-      warehouseAddress: 'warehouse@acme.es'
-    },
-    {
       country: '*',
       warehouseAddress: 'warehouse@acme.com'
+    },
+    {
+      country: 'Spain',
+      warehouseAddress: 'warehouse@acme.es'
     }
   ];
   private readonly emailFolder = path.join( __dirname, '..', 'data', 'email' );
@@ -109,9 +109,13 @@ export class DocumentManager {
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
-    return this.countryWarehouseAdresses.find(
-      adress => adress.country === customerCountry || adress.country === '*'
+    let warehouseAddressConfig = this.countryWarehouseAdresses.find(
+      adress => adress.country === customerCountry
     );
+    if ( warehouseAddressConfig === undefined ) {
+      warehouseAddressConfig = this.countryWarehouseAdresses[0];
+    }
+    return warehouseAddressConfig.warehouseAddress;
   }
 
   public emailInvoice( emailAddress : string, invoiceContent : string ) {

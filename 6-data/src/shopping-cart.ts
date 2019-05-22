@@ -16,6 +16,27 @@ export class ShoppingCart {
   ) { }
   private static countryConfigurations = [
     {
+      contryName: '*',
+      thresholdForDiscount: Infinity,
+      shippingCost: [
+        {
+          upTo: 100,
+          factor: 0.25,
+          plus: 0
+        },
+        {
+          upTo: 1000,
+          factor: 0,
+          plus: 25
+        },
+        {
+          upTo: Infinity,
+          factor: 0,
+          plus: 20
+        }
+      ]
+    },
+    {
       contryName: 'Spain',
       thresholdForDiscount: 1000,
       shippingCost: [
@@ -82,7 +103,7 @@ export class ShoppingCart {
   private static paymentsConfigurations = [
     {
       paymentMethod: 'PayPal',
-      extraFactor: 1.15
+      extraFactor: 1.05
     }
   ];
   public lineItems : any[] = [];
@@ -253,29 +274,29 @@ export class ShoppingCart {
   }
 
   private hasCountryDiscount() {
-    const countryConfiguration = ShoppingCart.countryConfigurations.find(
+    let countryConfiguration = ShoppingCart.countryConfigurations.find(
       countryConfiguration => countryConfiguration.contryName === this.country
     );
-    if ( countryConfiguration !== undefined ) {
-      return this.totalAmount > countryConfiguration.thresholdForDiscount;
-    } else {
-      return false;
+    if ( countryConfiguration === undefined ) {
+      countryConfiguration = ShoppingCart.countryConfigurations[0];
     }
+    return this.totalAmount > countryConfiguration.thresholdForDiscount;
   }
 
   private calculateShippingCosts() {
-    const countryConfiguration = ShoppingCart.countryConfigurations.find(
+    let countryConfiguration = ShoppingCart.countryConfigurations.find(
       countryConfiguration => countryConfiguration.contryName === this.country
     );
-    if ( countryConfiguration !== undefined ) {
-      countryConfiguration.shippingCost.forEach( shippingCost => {
-        if ( this.totalAmount < shippingCost.upTo ) {
-          const shippingCostAmount = this.totalAmount * shippingCost.factor + shippingCost.plus;
-          this.totalAmount += shippingCostAmount;
-          return;
-        }
-      } );
+    if ( countryConfiguration === undefined ) {
+      countryConfiguration = ShoppingCart.countryConfigurations[0];
     }
+    countryConfiguration.shippingCost.forEach( shippingCost => {
+      if ( this.totalAmount < shippingCost.upTo ) {
+        const shippingCostAmount = this.totalAmount * shippingCost.factor + shippingCost.plus;
+        this.totalAmount += shippingCostAmount;
+        return;
+      }
+    } );
   }
 
   private calculateTotalAmount() {
