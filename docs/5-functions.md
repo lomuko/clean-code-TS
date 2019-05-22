@@ -43,6 +43,9 @@ class: impact
 
 - Si usas _P.O.O._, entonces cuantos **menos argumentos** mejor.
 
+  - delega en funciones privadas
+
+
 --
 
 - En todo caso retornando datos; no errores.
