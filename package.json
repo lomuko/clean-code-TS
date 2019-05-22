@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node ./0-jelou/src/automatic.ts",
-    "test": "jest 4-",
+    "test": "jest --runInBand 5-",
     "lint": "tslint  '4-*/**/*.ts'"
   },
   "devDependencies": {
