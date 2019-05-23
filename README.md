@@ -96,7 +96,7 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 
 ---
 
-![La métrica real del buen código](./assets/clean-code_wtf.jpg)
+![La métrica real del buen código](https://academiabinaria.github.io/clean-code-TS/assets/clean-code_wtf.jpg)
 
 ---
 
