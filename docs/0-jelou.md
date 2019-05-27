@@ -81,7 +81,3 @@ class: impact
 - [Siguiente ->](./1-test.html)
 
 - [<- Vuelta al índice ](./)
-
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/0-jelou)

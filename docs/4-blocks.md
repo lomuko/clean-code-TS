@@ -24,9 +24,9 @@ class: impact
 
 ### Objetivo
 
-- _Reducir_ el numero de líneas por bloque
-- _Reducir_ el anidamiento
-- _Reducir_ la complejidad ciclomática (4 - 8)
+- _Reducir_ el numero de instrucciones por bloque a 4
+- _Reducir_ el anidamiento a 2 niveles
+- _Reducir_ la complejidad ciclomática (ideal: 4 - máxima:8)
 
 > Afecta a los `if/else` a los `for` a los `switch`...
 
@@ -75,9 +75,3 @@ class: impact
 - [Siguiente ->](./5-functions.html)
 
 - [<- Vuelta al índice ](./)
-
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/4-blocks)
-
-- [Game Of Life](./4-blocks/)

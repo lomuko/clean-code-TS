@@ -26,7 +26,7 @@ class: impact
 
 ---
 
-## Las clases, como las funciones, Pequeñas y Claras
+## Las clases, como las funciones: Pequeñas y Claras
 
 - Los objetos encapsulan la **lógica**.
 
@@ -96,9 +96,3 @@ Depender de abstracciones, no de implementaciones concretas. Resolver en ejecuci
 - [Siguiente ->](./8-systems.html)
 
 - [<- Vuelta al índice ](./)
-
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/7-objects)
-
-- [Game Of Life](./7-objects/)

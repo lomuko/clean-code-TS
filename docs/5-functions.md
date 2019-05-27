@@ -33,32 +33,40 @@ class: impact
 
 ### Estilos
 
-- Si NO usas _P.O.O._, entonces usa **funciones puras**:
+- Si **NO** usas _P.O.O._, entonces usa **funciones puras**:
 
-  - predecibles
-  - sin dependencias del entorno
-  - sin efectos secundarios en el entorno
-
---
-
-- Si usas _P.O.O._, entonces cuantos **menos argumentos** mejor.
-
-  - delega en funciones privadas
-
+    - predecibles
+    - sin dependencias del entorno
+    - sin efectos secundarios en el entorno
 
 --
 
-- En todo caso retornando datos; no errores.
+- Si usas _P.O.O._, entonces:
 
-  - Si el lenguaje no lo permite, usar convenio.
+    - ## cuantos menos argumentos mejor.
+
+        - especialmente evita argumentos _flag_ usando múltiples funciones específicas
+
+    - ## delega en funciones privadas
+
+        - las instrucciones de las funciones públicas deberían ser llamadas a funciones privadas
+
+--
+
+- En todo caso retornando datos; nunca errores.
+
+    - los errores tienen su propio flujo mediante `try-catch throw`
+    - Si el lenguaje no lo permite, usar convenio tipo `(err, data)`.
 
 ---
 
 ### Objetivo: Muchas Pequeñas Funciones Organizadas
 
-- Una función, un sólo propósito.
+- Una función,
 
-  - ... o al menos un mismo nivel de abstracción.
+    - ## un sólo propósito.
+
+    - ... o al menos un mismo nivel de abstracción.
 
 --
 
@@ -88,9 +96,3 @@ class: impact
 - [Siguiente ->](./6-data.html)
 
 - [<- Vuelta al índice ](./)
-
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/5-functions)
-
-- [Game Of Life](./5-functions/)

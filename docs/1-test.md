@@ -80,8 +80,3 @@ describe('sum()', async assert => {
 
 - [<- Vuelta al índice ](./)
 
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/1-test)
-
-- [Game Of Life](./1-test/)

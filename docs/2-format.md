@@ -32,7 +32,8 @@ class: impact
 
 - Belleza **vertical**
 
-  - **Orden** de las funciones
+  - **Orden** de las variables o propiedades
+  - **Orden** de las funciones o métodos
 
         - público -> privado
 
@@ -79,8 +80,3 @@ class: impact
 
 - [<- Vuelta al índice ](./)
 
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/2-format)
-
-- [Game Of Life](./2-format/)
