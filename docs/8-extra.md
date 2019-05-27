@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## Bibliografía, entrenamiento y consejos
+## ¿Errores?, Bibliografía y consejos
 
 > "Si la depuración es el proceso de eliminar errores, entonces la programación debe ser el proceso de ponerlos".
 >
@@ -99,7 +99,7 @@ class: impact
 >
 > -- **Robert C. Martin**
 
-- [Siguiente ->](./b-biblio.html)
+- [Siguiente ->](./9-artisan.html)
 
 - [<- Vuelta al índice ](./)
 

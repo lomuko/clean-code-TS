@@ -65,6 +65,6 @@ class: impact
 >
 > -- **Robert C. Martin**
 
-- [Siguiente ->](./8-components.html)
+- [Siguiente ->](./8-extra.html)
 
 - [<- Vuelta al índice ](./)

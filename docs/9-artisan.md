@@ -1,4 +1,4 @@
-title: d - End
+title: 9 - Artisan
 class: animation-fade
 layout: true
 
@@ -18,7 +18,7 @@ class: impact
 
 > "Primero hazlo, luego hazlo bien, luego hazlo mejor."
 >
-> -- _Addy Osmani_.
+> -- **Addy Osmani**
 
 ---
 
