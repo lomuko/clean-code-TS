@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## Errores, excepciones, usuarios y programadores
+## Bibliografía, entrenamiento y consejos
 
 > "Si la depuración es el proceso de eliminar errores, entonces la programación debe ser el proceso de ponerlos".
 >
@@ -31,12 +31,6 @@ class: impact
 
 --
 
-> "Hay dos maneras de escribir programas sin fallos; sólo funciona la tercera.".
->
-> -- **Alan Perlis**.
-
---
-
 #### En ejecución
 
 - Recuperar mucha información técnica para el **diagnóstico**.
@@ -45,7 +39,9 @@ class: impact
 
 ---
 
-> [Como escribir buenos mensajes de error](https://uxplanet.org/how-to-write-good-error-messages-858e4551cd4)
+> "Hay dos maneras de escribir programas sin fallos; sólo funciona la tercera.".
+>
+> -- **Alan Perlis**.
 
 ![No veo errores](./assets/no-bug.jpg)
 
@@ -55,21 +51,43 @@ class: impact
 
 ---
 
-#### Detectar y eliminar los Malos Olores
+### Consejos y trucos
 
-```javascript
-try {
-  functionThatMightThrow();
-} catch (error) {
-  // One option (more noisy than console.log):
-  console.error(error);
-  // Another option:
-  notifyUserOfError(error);
-  // Another option:
-  reportErrorToService(error);
-  // OR do all three!
-}
-```
+[10 buenas prácticas para código más legible](https://dev.to/gonedark/10-practices-for-readable-code-143a)
+
+[Refactoring GURÚ. Incluye La biblia de los patrones de diseño](https://refactoring.guru/)
+
+[Malos olores comunes en el código](https://dev.to/apium_hub/code-smells-that-are-found-the-most-aal)
+
+[4 consejos fundamentales de código limpio](https://engineering.videoblocks.com/these-four-clean-code-tips-will-dramatically-improve-your-engineering-teams-productivity-b5bd121dd150)
+
+[Refactorizar en JS](https://medium.com/@amartinezaguilar6/aprendiendo-a-refactorizar-en-javascript-consejos-y-pautas-4452bcb6890c)
+
+[Video: 10 consejos de Código Limpio](https://www.youtube.com/watch?v=UjhX2sVf0eg)
+
+[Buenos mensajes de error](https://uxplanet.org/how-to-write-good-error-messages-858e4551cd4)
+
+[Funciones Arrow, cuándo y cuándo no](https://codeburst.io/javascript-arrow-functions-how-why-when-and-when-not-to-use-them-fb8c2de9dbdc)
+
+
+---
+
+> "Es mucho más fácil hablar de código que escribir código".
+>
+> -- _John O'Nolan_.
+
+---
+
+![How to Draw a Horse](./assets/draw_horse.jpg)
+
+---
+
+## Ejemplos y prácticas propuestas
+
+- [Algoritmos y estructuras de datos](https://github.com/trekhleb/javascript-algorithms)
+- [Más algoritmos...](https://github.com/mgechev/javascript-algorithms)
+- [Code snippets](https://30secondsofcode.org/)
+- [Game of Life](https://editor.p5js.org/p5/sketches/B1Yl4eJQOm)
 
 ---
 
@@ -85,4 +103,3 @@ try {
 
 - [<- Vuelta al índice ](./)
 
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)

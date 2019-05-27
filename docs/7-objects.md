@@ -47,9 +47,13 @@ class: impact
 ## El tamaño y el pudor
 
 
+### Responsabilidad
+
 - Reduce la cantidad de métodos públicos
 
 - Decanta métodos privados hacia clases de capas inferiores
+
+### Cohesión
 
 - Haz que tus métodos usen tus propiedades, no las de otros
 
