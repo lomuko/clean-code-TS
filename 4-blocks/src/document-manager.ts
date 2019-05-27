@@ -46,13 +46,13 @@ export class DocumentManager {
   public printDocument( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
-      Printer.print( fileName, documentContent );
+      Printer.printContentToFile( fileName, documentContent );
     }
   }
 
   public printLog( logContent : string ) {
     if ( this.hasContent( logContent ) ) {
-      Printer.print( this.logFileName, logContent );
+      Printer.printContentToFile( this.logFileName, logContent );
     }
   }
 
@@ -70,12 +70,11 @@ export class DocumentManager {
     Regards, the shop.acme.com
     ---`;
     const fileName = `order-${shoppingCart.invoiceNumber}_${warehouse}.txt`;
-    this.ensureEmailFolder();
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', 'email', fileName ),
-        orderMessageTemplate
-      );
+    if ( this.notExistsEmailFolder() ) {
+      fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
+    }
+    if ( this.notExistsFileInEmailFolder( fileName ) ) {
+      fs.writeFileSync( path.join( __dirname, '..', 'data', 'email', fileName ), orderMessageTemplate );
     }
     this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
   }
@@ -97,18 +96,18 @@ export class DocumentManager {
     Thanks for your purchasing, the shop.acme.com
     ---`;
     const fileName = `invoice-${emailAddress}.txt`;
-    this.ensureEmailFolder();
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', 'email', fileName ),
-        invoiceMessageTemplate
-      );
+    if ( this.notExistsEmailFolder() ) {
+      fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
+    }
+    if ( this.notExistsFileInEmailFolder( fileName ) ) {
+      fs.writeFileSync( path.join( __dirname, '..', 'data', 'email', fileName ), invoiceMessageTemplate );
     }
   }
 
-  private ensureEmailFolder() {
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data', 'email' ) ) ) {
-      fs.mkdirSync( path.join( __dirname, '..', 'data', 'email' ) );
-    }
+  private notExistsEmailFolder() {
+    return !fs.existsSync( path.join( __dirname, '..', 'data', 'email' );
+  }
+  private notExistsFileInEmailFolder( fileName : string ) {
+    return !fs.existsSync( path.join( __dirname, '..', 'data', 'email', fileName ) );
   }
 }

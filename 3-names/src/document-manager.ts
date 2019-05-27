@@ -46,13 +46,13 @@ export class DocumentManager {
   public printDocument( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
     if ( documentContent ) {
-      Printer.print( fileName, documentContent );
+      Printer.printContentToFile( fileName, documentContent );
     }
   }
 
   public printLog( logContent : string ) {
     if ( logContent ) {
-      Printer.print( this.logFileName, logContent );
+      Printer.printContentToFile( this.logFileName, logContent );
     }
   }
 

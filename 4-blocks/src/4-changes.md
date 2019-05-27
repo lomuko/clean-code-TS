@@ -1,0 +1,2 @@
+- una sola instrucción por bloque
+- una función para las expresiones condicionales complejas

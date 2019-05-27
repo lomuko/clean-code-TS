@@ -1,0 +1,1 @@
+- reducir condicionales mediante búsquedas en arrays

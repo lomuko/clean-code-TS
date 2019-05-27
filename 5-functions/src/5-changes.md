@@ -1,0 +1,3 @@
+- evitar redundancias mediante funciones comunes
+- organizar funciones public - private
+- las instrucciones de las funciones públicas son invocaciones a funciones privadas

@@ -2,18 +2,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class Printer {
-  public static print( fileName : string, textContent : string ) {
+  private static readonly dataFolder = path.join( __dirname, '..', 'data' );
+  private static readonly printFolder = path.join( Printer.dataFolder, 'print' );
+  public static printContentToFile( fileName : string, textContent : string ) {
     textContent += '\n';
-    const printFolder = Printer.ensurePrintFolder();
-    Printer.appendOrCreateFile( printFolder, fileName, textContent );
+    Printer.ensurePrintFolder();
+    Printer.appendOrCreateFile( fileName, textContent );
   }
 
   private static ensurePrintFolder() {
-    const dataFolder = path.join( __dirname, '..', 'data' );
-    Printer.ensureFolder( dataFolder );
-    const printFolder = path.join( dataFolder, 'print' );
-    Printer.ensureFolder( printFolder );
-    return printFolder;
+    Printer.ensureFolder( Printer.dataFolder );
+    Printer.ensureFolder( Printer.printFolder );
   }
 
   private static ensureFolder( dataFolder : string ) {
@@ -22,15 +21,19 @@ export class Printer {
     }
   }
 
-  private static appendOrCreateFile(
-    printFolder : string,
-    fileName : string,
-    textContent : string
-  ) {
-    if ( !fs.existsSync( path.join( printFolder, fileName ) ) ) {
-      fs.writeFileSync( path.join( printFolder, fileName ), textContent );
+  private static appendOrCreateFile( fileName : string, textContent : string ) {
+    if ( Printer.notExistsFileNameInPrintFolder( fileName ) ) {
+      fs.writeFileSync( Printer.getPrintFilePath( fileName ), textContent );
     } else {
-      fs.appendFileSync( path.join( printFolder, fileName ), textContent );
+      fs.appendFileSync( Printer.getPrintFilePath( fileName ), textContent );
     }
+  }
+
+  private static notExistsFileNameInPrintFolder( fileName : string ) {
+    return !fs.existsSync( Printer.getPrintFilePath( fileName ) );
+  }
+
+  private static getPrintFilePath( fileName : string ) {
+    return path.join( Printer.printFolder, fileName );
   }
 }

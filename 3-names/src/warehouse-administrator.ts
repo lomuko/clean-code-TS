@@ -43,7 +43,7 @@ export class WarehouseAdministrator {
             path.join( __dirname, '..', 'data', 'email', orderFileName ),
             path.join( __dirname, '..', 'data', 'email', shippmentFileName )
           );
-          Printer.print( this.logFileName, 'processed: ' + orderFileName );
+          Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
         }
       } );
     }
@@ -57,7 +57,7 @@ export class WarehouseAdministrator {
     );
     if ( buyedProduct.stock <= buyedQuantity ) {
       buyedQuantity = buyedProduct.stock;
-      Printer.print( this.logFileName, 'out of stock: ' + buyedProduct.name );
+      Printer.printContentToFile( this.logFileName, 'out of stock: ' + buyedProduct.name );
       buyedProduct.stock = 0;
     } else {
       buyedProduct.stock = buyedProduct.stock - buyedQuantity;
@@ -70,6 +70,9 @@ export class WarehouseAdministrator {
       product => product.name === productName
     );
     productToRestoc.stock = productToRestoc.minimun;
-    Printer.print( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
+    Printer.printContentToFile(
+      'restock-' + productName + '.json',
+      JSON.stringify( productToRestoc )
+    );
   }
 }

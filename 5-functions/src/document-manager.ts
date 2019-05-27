@@ -15,6 +15,38 @@ export class DocumentManager {
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
 
+  public emailInvoice( emailAddress : string, invoiceContent : string ) {
+    const invoiceMessageTemplate = this.getInvoiceMessageTemplate( invoiceContent );
+    this.ensureEmailFolder();
+    const invliceFileName = this.getInvoiceFileName( emailAddress );
+    this.writeDocument( invliceFileName, invoiceMessageTemplate );
+  }
+
+  public getOrderTemplate( shoppingCart : ShoppingCart ) {
+    const orderTemplate = `
+    Invoice Number: ${shoppingCart.invoiceNumber}
+    ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
+    ${shoppingCart.shippingAddress}
+    Items purchased:
+    ${this.getDocumentItemLines( shoppingCart )}
+    `;
+    return orderTemplate;
+  }
+
+  public printLog( logContent : string ) {
+    if ( this.hasContent( logContent ) ) {
+      Printer.printContentToFile( this.logFileName, logContent );
+    }
+  }
+
+  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+    const orderMessageTemplate = this.getOrderMessageTemplate( orderContent );
+    this.ensureEmailFolder();
+    const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
+    this.writeDocument( orderFileName, orderMessageTemplate );
+    this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
+  }
+
   private getInvoiceTemplate( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = `
     LEGAL INVOICE FROM acme!
@@ -39,40 +71,15 @@ export class DocumentManager {
     return JSON.stringify( shoppingCart.lineItems );
   }
 
-  public getOrderTemplate( shoppingCart : ShoppingCart ) {
-    const orderTemplate = `
-    Invoice Number: ${shoppingCart.invoiceNumber}
-    ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
-    ${shoppingCart.shippingAddress}
-    Items purchased:
-    ${this.getDocumentItemLines( shoppingCart )}
-    `;
-    return orderTemplate;
-  }
-
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
-      Printer.print( fileName, documentContent );
-    }
-  }
-
-  public printLog( logContent : string ) {
-    if ( this.hasContent( logContent ) ) {
-      Printer.print( this.logFileName, logContent );
+      Printer.printContentToFile( fileName, documentContent );
     }
   }
 
   private hasContent( content : string ) {
     return content !== null && content.length > 0;
-  }
-
-  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
-    const orderMessageTemplate = this.getOrderMessageTemplate( orderContent );
-    this.ensureEmailFolder();
-    const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
-    this.writeDocument( orderFileName, orderMessageTemplate );
-    this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
   }
 
   private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
@@ -105,13 +112,6 @@ export class DocumentManager {
       warehouseAddress = 'warehouse@acme.es';
     }
     return warehouseAddress;
-  }
-
-  public emailInvoice( emailAddress : string, invoiceContent : string ) {
-    const invoiceMessageTemplate = this.getInvoiceMessageTemplate( invoiceContent );
-    this.ensureEmailFolder();
-    const invliceFileName = this.getInvoiceFileName( emailAddress );
-    this.writeDocument( invliceFileName, invoiceMessageTemplate );
   }
 
   private getInvoiceFileName( emailAddress : string ) {

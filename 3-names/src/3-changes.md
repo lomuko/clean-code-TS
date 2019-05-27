@@ -1,0 +1,4 @@
+- clases con roles/actores en sus nombres
+- todos los métodos llevan un verbo y un sustantivo
+- todas las variables y argumentos tienen nombre explícitos
+- las cadenas y los números mágicos se evitan en lo posible

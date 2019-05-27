@@ -5,9 +5,9 @@ import { ShoppingCart } from './shopping-cart';
 
 export class DocumentManager {
   private readonly logFileName = `log.txt`;
-  private readonly countryWarehouseAdresses = [
+  private readonly countryWarehouseAddresses = [
     {
-      country: '*',
+      country: '*default*',
       warehouseAddress: 'warehouse@acme.com'
     },
     {
@@ -62,13 +62,13 @@ export class DocumentManager {
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
-      Printer.print( fileName, documentContent );
+      Printer.printContentToFile( fileName, documentContent );
     }
   }
 
   public printLog( logContent : string ) {
     if ( this.hasContent( logContent ) ) {
-      Printer.print( this.logFileName, logContent );
+      Printer.printContentToFile( this.logFileName, logContent );
     }
   }
 
@@ -109,11 +109,11 @@ export class DocumentManager {
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
-    let warehouseAddressConfig = this.countryWarehouseAdresses.find(
-      adress => adress.country === customerCountry
+    let warehouseAddressConfig = this.countryWarehouseAddresses.find(
+      address => address.country === customerCountry
     );
     if ( warehouseAddressConfig === undefined ) {
-      warehouseAddressConfig = this.countryWarehouseAdresses[0];
+      warehouseAddressConfig = this.countryWarehouseAddresses[0];
     }
     return warehouseAddressConfig.warehouseAddress;
   }

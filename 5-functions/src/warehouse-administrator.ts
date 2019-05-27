@@ -69,7 +69,7 @@ export class WarehouseAdministrator {
       path.join( ordersFolder, orderFileName ),
       path.join( ordersFolder, shippmentFileName )
     );
-    Printer.print( this.logFileName, 'processed: ' + orderFileName );
+    Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
   }
 
   private isAnOrderFile( orderFileName : string ) {
@@ -92,7 +92,7 @@ export class WarehouseAdministrator {
   private getRealBuyedQuantity( buyedProduct : Product, buyedQuantity : number ) {
     let realBuyedQuantity = buyedQuantity;
     if ( this.isNotEnouht( buyedProduct, buyedQuantity ) ) {
-      Printer.print( this.logFileName, 'not have enough: ' + buyedProduct.name );
+      Printer.printContentToFile( this.logFileName, 'not have enough: ' + buyedProduct.name );
       realBuyedQuantity = buyedProduct.stock;
     }
     return realBuyedQuantity;
@@ -113,6 +113,9 @@ export class WarehouseAdministrator {
   }
   private restockProduct( productToRestoc : Product ) {
     productToRestoc.stock = productToRestoc.minimumStock;
-    Printer.print( 'restock-' + productToRestoc.name + '.json', JSON.stringify( productToRestoc ) );
+    Printer.printContentToFile(
+      'restock-' + productToRestoc.name + '.json',
+      JSON.stringify( productToRestoc )
+    );
   }
 }
