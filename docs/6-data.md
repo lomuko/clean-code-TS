@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## Abstracciones
+## Abstracciones de información
 
 > "Los malos programadores se preocupan por el código.
 

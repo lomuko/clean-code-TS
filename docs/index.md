@@ -84,19 +84,19 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 
 ---
 
-## 6- DATA [Abstracciones](./6-data.html)
+## 6- DATA [Abstracciones de información](./6-data.html)
 
 - Estructuras de datos
 - Entidades
 
-## 7- OBJECTS [Arquitectura limpia](./7-objects.html)
+## 7- OBJECTS [Abstracciones de lógica](./7-objects.html)
 
 - Las clases, como las funciones, Pequeñas y Organizadas
 - Capas: niveles de abstracción
 
 ---
 
-## 8- EXTRA [Bibliografía y prácticas](./a-extra.html)
+## 8- EXTRA [Bibliografía y prácticas](./8-extra.html)
 
 - Consejos y trucos
 - Programación Orientada a objetos
@@ -104,7 +104,7 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 - Fragmentos
 
 
-## 9- ARTISAN [Artesanía del software](./d-end.html)
+## 9- ARTISAN [Artesanía del software](./9-artisan.html)
 
 - Manifiesto ágil
 - Manifiesto artesano

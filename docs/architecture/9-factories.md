@@ -16,9 +16,10 @@ class: impact
 
 ## Construcción de sistemas
 
-> "La simplicidad consiste en quitar lo obvio y agregar lo significativo.".
+
+> "Dentro de cada gran programa hay un pequeño programa tratando de salir.".
 >
-> -- **John Maeda**.
+> -- **Tony Hoare**.
 
 ---
 
@@ -32,15 +33,19 @@ class: impact
 
 
 
-# Arquitecturas para construir software de tamaño medio-grande.
+# Arquitecturas para construir software de tamaño medio.
 
-> Entre 2 y 5 años de tiempo de desarrollo y explotación con equipos de 5 o más integrantes.
+> Entre 2 y 5 años de tiempo de desarrollo y mantenimiento evolutivo activo con equipos de 5 o más integrantes.
 
 **Ejemplos**: Productos de start-up que ya han funcionado. Automatización de procesos de negocio de empresas consolidadas. Renovación de sistemas de información en organizaciones con sistemas legacy.
+
+---
 
 **Situación**: Si algo hay seguro para los próximos años es que las reglas del negocio informatizado van a cambiar. Por si fuera poco, lo harán ya con el sistema en producción dando servicio ininterrumpido a clientes o sistemas críticos para la empresa. Así que el cambio ha de integrarse de manera transparente y sin oposición. Impactando lo menos posible en el código ya hecho y en los paquetes ya desplegados.
 
 **Objetivo**: La extensibilidad de un sistema en producción, que se consigue facilitando el desarrollo y despliegue por partes conectadas pero independientes.
+
+---
 
 ## Reglas:
 

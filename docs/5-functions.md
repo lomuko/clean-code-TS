@@ -51,7 +51,7 @@ class: impact
 
         - las instrucciones de las funciones públicas deberían ser llamadas a funciones privadas
 
---
+---
 
 - En todo caso retornando datos; nunca errores.
 

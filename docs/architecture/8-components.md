@@ -16,9 +16,9 @@ class: impact
 
 ## Responsabilidad repartida
 
-> "Dentro de cada gran programa hay un pequeño programa tratando de salir.".
+> "La simplicidad consiste en quitar lo obvio y agregar lo significativo.".
 >
-> -- **Tony Hoare**.
+> -- **John Maeda**.
 
 ---
 
@@ -36,11 +36,8 @@ class: impact
 
 # Los objetos se organizan en sistemas.
 
---
-
-[La biblia de los patrones de diseño](https://refactoring.guru/design-patterns)
-
 ---
+
 
 ##1
 
@@ -67,16 +64,19 @@ class: impact
 
 ---
 
-# Arquitecturas para construir software de tamaño medio
+# Arquitecturas para construir software de tamaño reducido
 
-> Menos de 2 años de tiempo de desarrollo y explotación con equipos estables de menos de 5 integrantes.
+>Hasta 2 años de tiempo de desarrollo y mantenimiento evolutivo activo con equipos estables de menos de 5 integrantes.
 
 **Ejemplos**: Producto mínimo viable en una start-up que no se sabe si vivirán lo suficiente. Proyectos para campañas o negocios de duración limitada y conocida. Herramientas _adhoc_ para integración temporal entre sistemas. Otros desarrollos técnica y funcionalmente simples.
+
+---
 
 **Situación**: Los tiempos y presupuestos serán muy rigurosos, por tanto debemos abaratar y reducir el desarrollo. Los cambios funcionales serán muy frecuentes, aunque afortunadamente muchos ocurrirán antes de la puesta en producción con cliente y riesgo real. La reducción del coste del cambio está en la reducción del coste de entender y manipular el código.
 
 **Objetivo**: Reutilizar código, principio DRY, pero sin complicarlo demasiado para facilitar el cambio constante: principios YAGNI y KISS.
---
+
+---
 
 ## Reglas:
 
@@ -85,7 +85,6 @@ class: impact
 **Test**: Garantizar que el software sigue funcionando a pesar de los frecuentes cambios mediante smoke-test o pruebas de integración sencillas.
 **Componentes**: Separar el código en capas lógicas (packages, namespaces, modules… según el lenguaje). Ej.: `presentación -> lógica -> persistencia`.
 **Despliegue**: Mantener mientras sea posible un despliegue sencillo, tendente al monolito en cada capa física. Ej. : `cliente — servidor`
-
 
 ---
 
