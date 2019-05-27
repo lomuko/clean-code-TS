@@ -68,7 +68,7 @@ export class ShoppingCart {
     }
   }
 
-  public calculate(
+  public calculateCheckOut(
     payment : string,
     paymentId : string,
     shippingAddress : string,

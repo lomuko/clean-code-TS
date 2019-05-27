@@ -1,1 +1,3 @@
 - reducir condicionales mediante búsquedas en arrays
+- tipificar todas las variables
+- data files

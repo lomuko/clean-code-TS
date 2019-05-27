@@ -46,6 +46,16 @@ export class ShoppingCart {
     this.ensureWriteFile( shoppingFilePath, JSON.stringify( this.lineItems ) );
   }
 
+  public loadFromStorage() {
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.lineItems = this.ensureReadFile( shoppingFilePath, [] );
+  }
+
+  public deleteFromStorage() {
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.ensureDeleteFile( shoppingFilePath );
+  }
+
   private ensureWriteFile( filePath : string, fileContent : string ) {
     if ( !fs.existsSync( filePath ) ) {
       fs.writeFileSync( filePath, fileContent );
@@ -64,11 +74,6 @@ export class ShoppingCart {
     }
   }
 
-  public loadFromStorage() {
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.lineItems = this.ensureReadFile( shoppingFilePath, [] );
-  }
-
   private ensureReadFile( shoppingFilePath : string, defaultValue : any ) {
     if ( fs.existsSync( shoppingFilePath ) ) {
       try {
@@ -82,18 +87,13 @@ export class ShoppingCart {
     }
   }
 
-  public deleteFromStorage() {
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.ensureDeleteFile( shoppingFilePath );
-  }
-
   private ensureDeleteFile( filePath : string ) {
     if ( fs.existsSync( filePath ) ) {
       fs.unlinkSync( filePath );
     }
   }
 
-  public calculate(
+  public calculateCheckOut(
     paymentMethod : string,
     paymentId : string,
     shippingAddress : string,
@@ -113,6 +113,10 @@ export class ShoppingCart {
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
+  }
+
+  public sendInvoiceToCustomer() {
+    this.documentManager.sendInvoice( this );
   }
 
   private setCheckOutData(
@@ -158,7 +162,9 @@ export class ShoppingCart {
       try {
         const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
         lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
-      } catch ( error ) { }
+      } catch ( error ) {
+        lastInvoiceNumber = 0;
+      }
     }
     return lastInvoiceNumber;
   }
@@ -278,10 +284,6 @@ export class ShoppingCart {
   private sendOrderToWarehouse() {
     const orderMessage = this.documentManager.getOrderTemplate( this );
     this.documentManager.emailOrder( this, orderMessage, this.country );
-  }
-
-  public sendInvoiceToCustomer() {
-    this.documentManager.sendInvoice( this );
   }
 
   private dataFolder() {

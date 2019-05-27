@@ -1,2 +1,3 @@
-- una sola instrucción por bloque
+- una sola instrucción significativa por bloque
 - una función para las expresiones condicionales complejas
+- extraer funciones para lograr bloques sin comentarios

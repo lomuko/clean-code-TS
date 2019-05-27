@@ -1,6 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { CountryConfiguration } from './CountryConfiguration';
+import { COUNTRY_CONFIGURATIONS } from './COUNTRY_CONFIGURATIONS';
 import { DocumentManager } from './document-manager';
+import { PaymentConfiguration } from './PaymentConfiguration';
+import { PAYMENTS_CONFIGURATIONS } from './PAYMENTS_CONFIGURATIONS';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
@@ -14,98 +18,8 @@ export class ShoppingCart {
     private isVip : boolean,
     public taxNumber? : string
   ) { }
-  private static countryConfigurations = [
-    {
-      contryName: '*',
-      thresholdForDiscount: Infinity,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.25,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 25
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 20
-        }
-      ]
-    },
-    {
-      contryName: 'Spain',
-      thresholdForDiscount: 1000,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.1,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 10
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 0
-        }
-      ]
-    },
-    {
-      contryName: 'Portugal',
-      thresholdForDiscount: 3000,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.15,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 15
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 10
-        }
-      ]
-    },
-    {
-      contryName: 'France',
-      thresholdForDiscount: 2000,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.2,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 20
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 15
-        }
-      ]
-    }
-  ];
-  private static paymentsConfigurations = [
-    {
-      paymentMethod: 'PayPal',
-      extraFactor: 1.05
-    }
-  ];
+  private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
+  private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -184,7 +98,7 @@ export class ShoppingCart {
     }
   }
 
-  public calculate(
+  public calculateCheckOut(
     paymentMethod : string,
     paymentId : string,
     shippingAddress : string,
@@ -255,7 +169,9 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    const paymentConfiguration = ShoppingCart.paymentsConfigurations.find(
+    const paymentConfiguration :
+      | PaymentConfiguration
+      | undefined = ShoppingCart.paymentsConfigurations.find(
       paymentConfiguration => paymentConfiguration.paymentMethod === payment
     );
     if ( paymentConfiguration !== undefined ) {
@@ -274,7 +190,9 @@ export class ShoppingCart {
   }
 
   private hasCountryDiscount() {
-    let countryConfiguration = ShoppingCart.countryConfigurations.find(
+    let countryConfiguration :
+      | CountryConfiguration
+      | undefined = ShoppingCart.countryConfigurations.find(
       countryConfiguration => countryConfiguration.contryName === this.country
     );
     if ( countryConfiguration === undefined ) {
@@ -284,7 +202,9 @@ export class ShoppingCart {
   }
 
   private calculateShippingCosts() {
-    let countryConfiguration = ShoppingCart.countryConfigurations.find(
+    let countryConfiguration :
+      | CountryConfiguration
+      | undefined = ShoppingCart.countryConfigurations.find(
       countryConfiguration => countryConfiguration.contryName === this.country
     );
     if ( countryConfiguration === undefined ) {

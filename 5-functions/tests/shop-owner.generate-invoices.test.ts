@@ -12,7 +12,7 @@ describe( `As a shop owner, I want to generate invoices, so I can legally sell p
   shoppingCart.addLineItem( 'computer', 1000, 1, shoppingCart.country );
   shoppingCart.addLineItem( 'monitor', 200, 25, shoppingCart.country );
   shoppingCart.addLineItem( 'course', 100, 10, shoppingCart.country );
-  shoppingCart.calculate( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
+  shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
   shoppingCart.sendInvoiceToCustomer();
   const invoiceFilePath = mocks.invoiceFilePath();
   const invoicePrintingFilePath = mocks.invoicePrintingFilePath( shoppingCart.invoiceNumber );

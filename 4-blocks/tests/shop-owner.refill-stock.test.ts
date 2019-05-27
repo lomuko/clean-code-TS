@@ -15,7 +15,7 @@ describe( `As a shop owner, I want to have my product stock refilled, so I can c
   test( `given ${assert.given} should ${assert.should}`, () => {
     const shoppingCart = mocks.newShoppingCart;
     shoppingCart.addLineItem( 'monitor', 200, 40, shoppingCart.country );
-    shoppingCart.calculate( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
+    shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
 
     assert.actual = mocks.theWarehouse.productCatalog[0].stock;
     assert.expected = mocks.theWarehouse.productCatalog[0].minimun;
