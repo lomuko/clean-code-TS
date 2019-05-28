@@ -1,27 +1,33 @@
 export class TaxCalculator {
   private static readonly decimalPlaces = 2;
+  private static readonly taxExemptRegion = 'St Pierre';
 
   public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
-    return isStudent || region === 'St Pierre'
+    return isStudent || region === TaxCalculator.taxExemptRegion
       ? 0
       : Number(
-          ( ( line.totalAmount * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
+          ( ( line.totalAmount * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed(
             TaxCalculator.decimalPlaces
           )
         );
   }
 
-  public static calculate( base : number, country : string, region : string, isStudent : boolean ) {
-    return isStudent || region === 'St Pierre'
+  public static calculateTotal(
+    base : number,
+    country : string,
+    region : string,
+    isStudent : boolean
+  ) {
+    return isStudent || region === TaxCalculator.taxExemptRegion
       ? 0
       : Number(
-          ( ( base * TaxCalculator.coutryTax( country, region ) ) / 100 ).toFixed(
+          ( ( base * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed(
             TaxCalculator.decimalPlaces
           )
         );
   }
 
-  private static coutryTax( country : string, region : string ) {
+  private static getCountryVAT( country : string, region : string ) {
     let countryVAT = 0;
     switch ( country ) {
       case 'Spain':

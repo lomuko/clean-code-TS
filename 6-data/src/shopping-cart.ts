@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { CountryConfiguration } from './CountryConfiguration';
-import { COUNTRY_CONFIGURATIONS } from './COUNTRY_CONFIGURATIONS';
+import { COUNTRY_CONFIGURATIONS } from './country_configurations';
 import { DocumentManager } from './document-manager';
 import { PaymentConfiguration } from './PaymentConfiguration';
-import { PAYMENTS_CONFIGURATIONS } from './PAYMENTS_CONFIGURATIONS';
+import { PAYMENTS_CONFIGURATIONS } from './payments_configurations';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 

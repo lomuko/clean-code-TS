@@ -162,7 +162,7 @@ export class ShoppingCart {
       this.totalAmount *= 0.9;
     }
 
-    this.taxesAmount += TaxCalculator.calculate(
+    this.taxesAmount += TaxCalculator.calculateTotal(
       this.totalAmount,
       this.country,
       this.region,
