@@ -23,25 +23,25 @@ export class DocumentManager {
     const invoiceTemplate = this.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
     this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
-    this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
+    this.printLog( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
   private getInvoiceTemplate( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = `
     LEGAL INVOICE FROM acme!
     ========================
-    Invoice Number: ${shoppingCart.invoiceNumber}#
+    Invoice Number: ${shoppingCart.legalAmounts.invoiceNumber}#
     ----------------------------------------------
     ${shoppingCart.client.name} - ${shoppingCart.client.taxNumber}
     ${shoppingCart.checkOut.billingAddress}
     ${shoppingCart.client.country} - ${shoppingCart.client.region}
     Items purchased:
     ${this.getDocumentItemLines( shoppingCart )}
-    Amount: #${shoppingCart.totalAmount - shoppingCart.shippingCost}Euros
-    Shipping Cost: #${shoppingCart.shippingCost}Euros
-    Base Amount: #${shoppingCart.totalAmount}Euros
-    Tax: #${shoppingCart.taxesAmount}Euros
-    Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxesAmount}Euros
+    Amount: #${shoppingCart.legalAmounts.total - shoppingCart.legalAmounts.shippingCost}Euros
+    Shipping Cost: #${shoppingCart.legalAmounts.shippingCost}Euros
+    Base Amount: #${shoppingCart.legalAmounts.total}Euros
+    Tax: #${shoppingCart.legalAmounts.taxes}Euros
+    Total Amount: #${shoppingCart.legalAmounts.total + shoppingCart.legalAmounts.taxes}Euros
     `;
     return invoiceTemplate;
   }
@@ -52,7 +52,7 @@ export class DocumentManager {
 
   public getOrderTemplate( shoppingCart : ShoppingCart ) {
     const orderTemplate = `
-    Invoice Number: ${shoppingCart.invoiceNumber}
+    Invoice Number: ${shoppingCart.legalAmounts.invoiceNumber}
     ${shoppingCart.client.name} - ${shoppingCart.client.taxNumber}
     ${shoppingCart.checkOut.shippingAddress}
     Items purchased:
@@ -62,7 +62,7 @@ export class DocumentManager {
   }
 
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
-    const fileName = `${this.invoicePrefix}${shoppingCart.invoiceNumber}.txt`;
+    const fileName = `${this.invoicePrefix}${shoppingCart.legalAmounts.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
       Printer.printContentToFile( { fileName, textContent: documentContent } );
     }
@@ -83,12 +83,12 @@ export class DocumentManager {
     this.ensureEmailFolder();
     const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
     this.writeDocument( orderFileName, orderMessageTemplate );
-    this.printLog( 'Sent Order: ' + shoppingCart.invoiceNumber );
+    this.printLog( 'Sent Order: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
   private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
     const warehouseEmailAddress = this.getWarehouseAddressByCountry( customerCountry );
-    const orderFileName = `${this.orderPrefix}${shoppingCart.invoiceNumber}_${warehouseEmailAddress}.txt`;
+    const orderFileName = `${this.orderPrefix}${shoppingCart.legalAmounts.invoiceNumber}_${warehouseEmailAddress}.txt`;
     const fileName = path.join( this.emailFolder, orderFileName );
     return fileName;
   }
