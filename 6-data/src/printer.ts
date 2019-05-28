@@ -1,13 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { FileToPrint } from './models/file-to-print';
 
 export class Printer {
   private static readonly dataFolder = path.join( __dirname, '..', 'data' );
   private static readonly printFolder = path.join( Printer.dataFolder, 'print' );
-  public static printContentToFile( fileName : string, textContent : string ) {
-    textContent += '\n';
+  public static printContentToFile( fileToPrint : FileToPrint ) {
+    fileToPrint.textContent += '\n';
     Printer.ensurePrintFolder();
-    Printer.appendOrCreateFile( fileName, textContent );
+    Printer.appendOrCreateFile( fileToPrint );
   }
 
   private static ensurePrintFolder() {
@@ -21,11 +22,11 @@ export class Printer {
     }
   }
 
-  private static appendOrCreateFile( fileName : string, textContent : string ) {
-    if ( Printer.notExistsFileNameInPrintFolder( fileName ) ) {
-      fs.writeFileSync( Printer.getPrintFilePath( fileName ), textContent );
+  private static appendOrCreateFile( fileToPrint : FileToPrint ) {
+    if ( Printer.notExistsFileNameInPrintFolder( fileToPrint.fileName ) ) {
+      fs.writeFileSync( Printer.getPrintFilePath( fileToPrint.fileName ), fileToPrint.textContent );
     } else {
-      fs.appendFileSync( Printer.getPrintFilePath( fileName ), textContent );
+      fs.appendFileSync( Printer.getPrintFilePath( fileToPrint.fileName ), fileToPrint.textContent );
     }
   }
 

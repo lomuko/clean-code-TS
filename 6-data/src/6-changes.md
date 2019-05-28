@@ -1,3 +1,7 @@
 - reducir condicionales mediante búsquedas en arrays
 - tipificar todas las variables
-- data files
+- interfaces para tipos de configuración
+- data files para configuración
+- tipos para comunicación pública entre objetos
+- _tipos para constructores (cliente)_
+- _tipos internos (línea de producto)_

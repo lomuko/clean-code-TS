@@ -1,25 +1,18 @@
-import { CountryTaxNode } from './country-tax-node';
-import { LOCAL_TAXES_TREE } from './local-taxes-tree';
-import { RegionTaxNode } from './region-tax-node';
+import { LOCAL_TAXES_TREE } from './config/local-taxes-tree';
+import { CountryTaxNode } from './models/country-tax-node';
+import { RegionTaxNode } from './models/region-tax-node';
+import { TaxBaseInfo } from './models/tax-base-info';
 
 export class TaxCalculator {
   private static readonly decimalPlaces = 2;
   private static readonly taxExemptRegion = 'St Pierre';
   private static readonly localTaxesTree : CountryTaxNode[] = LOCAL_TAXES_TREE;
 
-  public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
-    return TaxCalculator.calculateTax( line.totalAmount, country, region, isStudent );
-  }
-
-  public static calculateTotal( base : number, country : string, region : string, isStudent : boolean ) {
-    return TaxCalculator.calculateTax( base, country, region, isStudent );
-  }
-
-  private static calculateTax( base : number, country : string, region : string, isStudent : boolean ) {
-    if ( TaxCalculator.isTaxExempt( isStudent, region ) ) {
+  public static calculateTax( taxBaseInfo : TaxBaseInfo ) {
+    if ( TaxCalculator.isTaxExempt( taxBaseInfo.isStudent, taxBaseInfo.region ) ) {
       return 0;
     } else {
-      return TaxCalculator.calculateLocalTax( base, country, region );
+      return TaxCalculator.calculateLocalTax( taxBaseInfo.base, taxBaseInfo.country, taxBaseInfo.region );
     }
   }
 

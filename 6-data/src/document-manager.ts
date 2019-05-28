@@ -64,13 +64,13 @@ export class DocumentManager {
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `${this.invoicePrefix}${shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
-      Printer.printContentToFile( fileName, documentContent );
+      Printer.printContentToFile( { fileName, textContent: documentContent } );
     }
   }
 
   public printLog( logContent : string ) {
     if ( this.hasContent( logContent ) ) {
-      Printer.printContentToFile( this.logFileName, logContent );
+      Printer.printContentToFile( { fileName: this.logFileName, textContent: logContent } );
     }
   }
 

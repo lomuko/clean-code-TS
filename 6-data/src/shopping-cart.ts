@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { CountryConfiguration } from './country-configuration';
-import { COUNTRY_CONFIGURATIONS } from './country-configurations';
+import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
+import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { DocumentManager } from './document-manager';
-import { PaymentConfiguration } from './PaymentConfiguration';
-import { PAYMENTS_CONFIGURATIONS } from './payments_configurations';
+import { CountryConfiguration } from './models/country-configuration';
+import { PaymentConfiguration } from './models/payment-configuration';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
@@ -100,7 +100,13 @@ export class ShoppingCart {
     this.calculateShippingCosts();
     this.applyPaymentMethodExtra( paymentMethod );
     this.applyDiscount();
-    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
+    const totalTaxInfo = {
+      base: this.totalAmount,
+      country: this.country,
+      region: this.region,
+      isStudent: this.isStudent
+    };
+    this.taxesAmount += TaxCalculator.calculateTax( totalTaxInfo );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
@@ -207,7 +213,7 @@ export class ShoppingCart {
   }
 
   private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : any ) {
-    line.quantity = warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
+    line.quantity = warehouseAdministrator.updatePurchasedProduct( { productName: line.productName, quantity: line.quantity } );
     line.totalAmount = line.price * line.quantity;
     this.totalAmount += line.totalAmount;
     this.addTaxesByProduct( line );
@@ -215,7 +221,13 @@ export class ShoppingCart {
 
   private addTaxesByProduct( line : any ) {
     if ( this.hasTaxes( line ) ) {
-      line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
+      const lineTaxInfo = {
+        base: line.totalAmount,
+        country: this.country,
+        region: this.region,
+        isStudent: this.isStudent
+      };
+      line.taxes = TaxCalculator.calculateTax( lineTaxInfo );
       this.taxesAmount += line.taxes;
       let lineTotal = line.totalAmount + line.taxes;
     }

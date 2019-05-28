@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { PRODUCT_CATALOG } from './data/product-catalog';
+import { Product } from './models/product';
+import { PurchasedItem } from './models/purchased-item';
 import { Printer } from './printer';
-import { Product } from './product';
-import { PRODUCT_CATALOG } from './product-catalog';
 
 export class WarehouseAdministrator {
   public static productCatalog : Product[] = PRODUCT_CATALOG;
@@ -20,6 +21,20 @@ export class WarehouseAdministrator {
     const ordersFolder = this.getOrdersFolder();
     this.processOrdesFolder( ordersFolder );
   }
+
+  public addProduct() { }
+
+  public updatePurchasedProduct( purchasedItem : PurchasedItem ) {
+    const purchasedProduct = WarehouseAdministrator.findProductByName( purchasedItem.productName );
+    if ( purchasedProduct !== undefined ) {
+      let realPurchasedQuantity = this.getRealPurchasedQuantity( purchasedProduct, purchasedItem.quantity );
+      this.updateStock( purchasedProduct, realPurchasedQuantity );
+      return realPurchasedQuantity;
+    } else {
+      return 0;
+    }
+  }
+
   private getOrdersFolder() {
     return path.join( __dirname, '..', 'data', 'email' );
   }
@@ -41,50 +56,41 @@ export class WarehouseAdministrator {
   private processOrder( orderFileName : string, ordersFolder : string ) {
     const shippmentFileName = orderFileName.replace( this.orderPrefix, this.shipmentPrefix );
     fs.renameSync( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
-    Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
+    Printer.printContentToFile( { fileName: this.logFileName, textContent: 'processed: ' + orderFileName } );
   }
 
   private isAnOrderFile( orderFileName : string ) {
     return path.basename( orderFileName ).startsWith( this.orderPrefix );
   }
 
-  public addProduct() { }
-
-  public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.findProductByName( buyedProductName );
-    if ( buyedProduct !== undefined ) {
-      let realBuyedQuantity = this.getRealBuyedQuantity( buyedProduct, buyedQuantity );
-      this.updateStock( buyedProduct, realBuyedQuantity );
-      return realBuyedQuantity;
-    } else {
-      return 0;
+  private getRealPurchasedQuantity( purchasedProduct : Product, buyedQuantity : number ) {
+    let realPurchasedQuantity = buyedQuantity;
+    if ( this.isNotEnouht( purchasedProduct, buyedQuantity ) ) {
+      Printer.printContentToFile( { fileName: this.logFileName, textContent: 'not have enough: ' + purchasedProduct.name } );
+      realPurchasedQuantity = purchasedProduct.stock;
     }
+    return realPurchasedQuantity;
   }
-
-  private getRealBuyedQuantity( buyedProduct : Product, buyedQuantity : number ) {
-    let realBuyedQuantity = buyedQuantity;
-    if ( this.isNotEnouht( buyedProduct, buyedQuantity ) ) {
-      Printer.printContentToFile( this.logFileName, 'not have enough: ' + buyedProduct.name );
-      realBuyedQuantity = buyedProduct.stock;
+  private updateStock( purchasedProduct : any, realPurchasedQuantity : number ) {
+    purchasedProduct.stock = purchasedProduct.stock - realPurchasedQuantity;
+    if ( this.isOutOfStock( purchasedProduct ) ) {
+      this.restockProduct( purchasedProduct );
     }
-    return realBuyedQuantity;
-  }
-  private updateStock( buyedProduct : any, realBuyedQuantity : number ) {
-    buyedProduct.stock = buyedProduct.stock - realBuyedQuantity;
-    if ( this.isOutOfStock( buyedProduct ) ) {
-      this.restockProduct( buyedProduct );
-    }
-    return realBuyedQuantity;
+    return realPurchasedQuantity;
   }
 
-  private isNotEnouht( buyedProduct : Product, buyedQuantity : number ) {
-    return buyedProduct.stock <= buyedQuantity;
+  private isNotEnouht( purchasedProduct : Product, quantity : number ) {
+    return purchasedProduct.stock <= quantity;
   }
-  private isOutOfStock( buyedProduct : Product ) {
-    return buyedProduct.stock < buyedProduct.minimumStock;
+  private isOutOfStock( purchasedProduct : Product ) {
+    return purchasedProduct.stock < purchasedProduct.minimumStock;
   }
   private restockProduct( productToRestoc : Product ) {
     productToRestoc.stock = productToRestoc.minimumStock;
-    Printer.printContentToFile( this.restockPrefix + productToRestoc.name + '.json', JSON.stringify( productToRestoc ) );
+    const fileToPrint = {
+      fileName: this.restockPrefix + productToRestoc.name + '.json',
+      textContent: JSON.stringify( productToRestoc )
+    };
+    Printer.printContentToFile( fileToPrint );
   }
 }
