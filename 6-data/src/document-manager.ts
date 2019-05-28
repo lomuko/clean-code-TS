@@ -1,20 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
+import { CountryConfiguration } from './models/country-configuration';
 import { Printer } from './printer';
 import { ShoppingCart } from './shopping-cart';
 
 export class DocumentManager {
+  private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private readonly logFileName = `log.txt`;
-  private readonly countryWarehouseAddresses = [
-    {
-      country: '*default*',
-      warehouseAddress: 'warehouse@acme.com'
-    },
-    {
-      country: 'Spain',
-      warehouseAddress: 'warehouse@acme.es'
-    }
-  ];
   private readonly emailFolder = path.join( __dirname, '..', 'data', 'email' );
   private readonly invoicePrefix = `invoice-`;
   private readonly orderPrefix = `order-`;
@@ -111,11 +104,11 @@ export class DocumentManager {
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
-    let warehouseAddressConfig = this.countryWarehouseAddresses.find( address => address.country === customerCountry );
-    if ( warehouseAddressConfig === undefined ) {
-      warehouseAddressConfig = this.countryWarehouseAddresses[0];
+    let countryConfig = this.countryConfigurations.find( country => country.contryName === customerCountry );
+    if ( countryConfig === undefined ) {
+      countryConfig = this.countryConfigurations[0];
     }
-    return warehouseAddressConfig.warehouseAddress;
+    return countryConfig.warehouseAddress;
   }
 
   public emailInvoice( emailAddress : string, invoiceContent : string ) {

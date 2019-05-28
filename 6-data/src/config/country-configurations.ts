@@ -19,7 +19,8 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
         factor: 0,
         plus: 20
       }
-    ]
+    ],
+    warehouseAddress: 'warehouse@acme.com'
   },
   {
     contryName: 'Spain',
@@ -40,7 +41,8 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
         factor: 0,
         plus: 0
       }
-    ]
+    ],
+    warehouseAddress: 'warehouse@acme.es'
   },
   {
     contryName: 'Portugal',
@@ -61,7 +63,8 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
         factor: 0,
         plus: 10
       }
-    ]
+    ],
+    warehouseAddress: 'warehouse@acme.com'
   },
   {
     contryName: 'France',
@@ -82,6 +85,7 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
         factor: 0,
         plus: 15
       }
-    ]
+    ],
+    warehouseAddress: 'warehouse@acme.com'
   }
 ];

@@ -3,4 +3,5 @@ export interface CountryConfiguration {
   contryName : string;
   thresholdForDiscount : number;
   shippingCost : ShippingCost[];
+  warehouseAddress : string;
 }
