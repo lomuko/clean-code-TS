@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { CountryConfiguration } from './CountryConfiguration';
-import { COUNTRY_CONFIGURATIONS } from './country_configurations';
+import { CountryConfiguration } from './country-configuration';
+import { COUNTRY_CONFIGURATIONS } from './country-configurations';
 import { DocumentManager } from './document-manager';
 import { PaymentConfiguration } from './PaymentConfiguration';
 import { PAYMENTS_CONFIGURATIONS } from './payments_configurations';
@@ -31,13 +31,7 @@ export class ShoppingCart {
   public invoiceNumber : number = 0;
   public documentManager = new DocumentManager();
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addLineItem( productName : string, price : number, quantity : number, country? : string, taxFree? : boolean ) {
     this.lineItems.push( { productName, price, quantity } );
   }
 
@@ -98,23 +92,13 @@ export class ShoppingCart {
     }
   }
 
-  public calculateCheckOut(
-    paymentMethod : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
+  public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
     this.calculateTotalAmount();
     this.calculateShippingCosts();
     this.applyPaymentMethodExtra( paymentMethod );
     this.applyDiscount();
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
@@ -169,9 +153,7 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    const paymentConfiguration :
-      | PaymentConfiguration
-      | undefined = ShoppingCart.paymentsConfigurations.find(
+    const paymentConfiguration : PaymentConfiguration | undefined = ShoppingCart.paymentsConfigurations.find(
       paymentConfiguration => paymentConfiguration.paymentMethod === payment
     );
     if ( paymentConfiguration !== undefined ) {
@@ -190,9 +172,7 @@ export class ShoppingCart {
   }
 
   private hasCountryDiscount() {
-    let countryConfiguration :
-      | CountryConfiguration
-      | undefined = ShoppingCart.countryConfigurations.find(
+    let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
       countryConfiguration => countryConfiguration.contryName === this.country
     );
     if ( countryConfiguration === undefined ) {
@@ -202,9 +182,7 @@ export class ShoppingCart {
   }
 
   private calculateShippingCosts() {
-    let countryConfiguration :
-      | CountryConfiguration
-      | undefined = ShoppingCart.countryConfigurations.find(
+    let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
       countryConfiguration => countryConfiguration.contryName === this.country
     );
     if ( countryConfiguration === undefined ) {

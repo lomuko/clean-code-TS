@@ -2,38 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Printer } from './printer';
 import { Product } from './product';
+import { PRODUCT_CATALOG } from './product-catalog';
 
 export class WarehouseAdministrator {
-  public static productCatalog : Product[] = [
-    {
-      name: 'monitor',
-      price: 1000,
-      stock: 50,
-      minimumStock: 20,
-      isTaxFree: false
-    },
-    {
-      name: 'computer',
-      price: 200,
-      stock: 20,
-      minimumStock: 3,
-      isTaxFree: false
-    },
-    {
-      name: 'printer',
-      price: 1000,
-      stock: 10,
-      minimumStock: 5,
-      isTaxFree: false
-    },
-    {
-      name: 'course',
-      price: 100,
-      stock: 1000000,
-      minimumStock: 1000000,
-      isTaxFree: true
-    }
-  ];
+  public static productCatalog : Product[] = PRODUCT_CATALOG;
   private readonly logFileName = `log.txt`;
   public stock : any[] = [];
 
@@ -65,10 +37,7 @@ export class WarehouseAdministrator {
 
   private processOrder( orderFileName : string, ordersFolder : string ) {
     const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
-    fs.renameSync(
-      path.join( ordersFolder, orderFileName ),
-      path.join( ordersFolder, shippmentFileName )
-    );
+    fs.renameSync( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
     Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
   }
 
@@ -113,9 +82,6 @@ export class WarehouseAdministrator {
   }
   private restockProduct( productToRestoc : Product ) {
     productToRestoc.stock = productToRestoc.minimumStock;
-    Printer.printContentToFile(
-      'restock-' + productToRestoc.name + '.json',
-      JSON.stringify( productToRestoc )
-    );
+    Printer.printContentToFile( 'restock-' + productToRestoc.name + '.json', JSON.stringify( productToRestoc ) );
   }
 }

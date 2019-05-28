@@ -1,4 +1,4 @@
-import { ShippingCost } from './ShippingCost';
+import { ShippingCost } from './shipping-cost';
 export interface CountryConfiguration {
   contryName : string;
   thresholdForDiscount : number;

@@ -52,9 +52,7 @@ export class WarehouseAdministrator {
   public addProduct() { }
 
   public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.productCatalog.find(
-      product => product.name === buyedProductName
-    );
+    const buyedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === buyedProductName );
     if ( buyedProduct.stock <= buyedQuantity ) {
       buyedQuantity = buyedProduct.stock;
       Printer.printContentToFile( this.logFileName, 'out of stock: ' + buyedProduct.name );
@@ -66,13 +64,8 @@ export class WarehouseAdministrator {
   }
 
   public restockProduct( productName : string ) {
-    const productToRestoc = WarehouseAdministrator.productCatalog.find(
-      product => product.name === productName
-    );
+    const productToRestoc = WarehouseAdministrator.productCatalog.find( product => product.name === productName );
     productToRestoc.stock = productToRestoc.minimun;
-    Printer.printContentToFile(
-      'restock-' + productName + '.json',
-      JSON.stringify( productToRestoc )
-    );
+    Printer.printContentToFile( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
   }
 }

@@ -1,4 +1,4 @@
-import { CountryConfiguration } from './CountryConfiguration';
+import { CountryConfiguration } from './country-configuration';
 export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
   {
     contryName: '*default*',

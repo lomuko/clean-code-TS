@@ -36,34 +36,37 @@ export class WarehouseAdministrator {
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if ( fs.existsSync( ordersFolder ) ) {
-      fs.readdirSync( ordersFolder ).forEach( fileName => {
-        this.processFileInOrderFolder( fileName, ordersFolder );
-      } );
+      this.processOrdersFolder( ordersFolder );
     }
   }
 
+  private processOrdersFolder( ordersFolder : string ) {
+    fs.readdirSync( ordersFolder ).forEach( fileName => {
+      this.processFileInOrderFolder( fileName, ordersFolder );
+    } );
+  }
+
   private processFileInOrderFolder( fileName : string, ordersFolder : string ) {
-    if ( path.basename( fileName ).startsWith( 'order-' ) ) {
+    if ( this.isAnOrderFile( fileName ) ) {
       this.processOrder( fileName, ordersFolder );
     }
   }
 
+  private isAnOrderFile( fileName : string ) {
+    return path.basename( fileName ).startsWith( 'order-' );
+  }
+
   private processOrder( orderFileName : string, ordersFolder : string ) {
     const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
-    fs.renameSync(
-      path.join( ordersFolder, orderFileName ),
-      path.join( ordersFolder, shippmentFileName )
-    );
+    fs.renameSync( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
     Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
   }
 
   public addProduct() { }
 
   public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.productCatalog.find(
-      product => product.name === buyedProductName
-    );
-    if ( buyedProduct.stock <= buyedQuantity ) {
+    const buyedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === buyedProductName );
+    if ( this.isNotEnouht( buyedProduct, buyedQuantity ) ) {
       buyedQuantity = buyedProduct.stock;
       Printer.printContentToFile( this.logFileName, 'out of stock: ' + buyedProduct.name );
     }
@@ -71,14 +74,13 @@ export class WarehouseAdministrator {
     this.restockProduct( buyedProductName );
   }
 
+  private isNotEnouht( buyedProduct : any, buyedQuantity : number ) {
+    return buyedProduct.stock <= buyedQuantity;
+  }
+
   public restockProduct( productName : string ) {
-    const productToRestoc = WarehouseAdministrator.productCatalog.find(
-      product => product.name === productName
-    );
+    const productToRestoc = WarehouseAdministrator.productCatalog.find( product => product.name === productName );
     productToRestoc.stock = productToRestoc.minimun;
-    Printer.printContentToFile(
-      'restock-' + productName + '.json',
-      JSON.stringify( productToRestoc )
-    );
+    Printer.printContentToFile( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
   }
 }

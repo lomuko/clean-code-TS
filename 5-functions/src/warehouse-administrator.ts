@@ -43,37 +43,9 @@ export class WarehouseAdministrator {
 
   public processOrders() {
     const ordersFolder = this.getOrdersFolder();
-    this.processOrdesFolder( ordersFolder );
-  }
-  private getOrdersFolder() {
-    return path.join( __dirname, '..', 'data', 'email' );
-  }
-
-  private processOrdesFolder( ordersFolder : string ) {
-    if ( fs.existsSync( ordersFolder ) ) {
-      fs.readdirSync( ordersFolder ).forEach( fileName => {
-        this.processFileInOrderFolder( fileName, ordersFolder );
-      } );
+    if ( this.exsitsOrderFolder( ordersFolder ) ) {
+      this.processOrdesFolder( ordersFolder );
     }
-  }
-
-  private processFileInOrderFolder( fileName : string, ordersFolder : string ) {
-    if ( this.isAnOrderFile( fileName ) ) {
-      this.processOrder( fileName, ordersFolder );
-    }
-  }
-
-  private processOrder( orderFileName : string, ordersFolder : string ) {
-    const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
-    fs.renameSync(
-      path.join( ordersFolder, orderFileName ),
-      path.join( ordersFolder, shippmentFileName )
-    );
-    Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
-  }
-
-  private isAnOrderFile( orderFileName : string ) {
-    return path.basename( orderFileName ).startsWith( 'order-' );
   }
 
   public addProduct() { }
@@ -89,6 +61,36 @@ export class WarehouseAdministrator {
     }
   }
 
+  private exsitsOrderFolder( ordersFolder : string ) {
+    return fs.existsSync( ordersFolder );
+  }
+
+  private getOrdersFolder() {
+    return path.join( __dirname, '..', 'data', 'email' );
+  }
+
+  private processOrdesFolder( ordersFolder : string ) {
+    fs.readdirSync( ordersFolder ).forEach( fileName => {
+      this.processFileInOrderFolder( fileName, ordersFolder );
+    } );
+  }
+
+  private processFileInOrderFolder( fileName : string, ordersFolder : string ) {
+    if ( this.isAnOrderFile( fileName ) ) {
+      this.processOrder( fileName, ordersFolder );
+    }
+  }
+
+  private processOrder( orderFileName : string, ordersFolder : string ) {
+    const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
+    fs.renameSync( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
+    Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
+  }
+
+  private isAnOrderFile( orderFileName : string ) {
+    return path.basename( orderFileName ).startsWith( 'order-' );
+  }
+
   private getRealBuyedQuantity( buyedProduct : Product, buyedQuantity : number ) {
     let realBuyedQuantity = buyedQuantity;
     if ( this.isNotEnouht( buyedProduct, buyedQuantity ) ) {
@@ -97,6 +99,7 @@ export class WarehouseAdministrator {
     }
     return realBuyedQuantity;
   }
+
   private updateStock( buyedProduct : any, realBuyedQuantity : number ) {
     buyedProduct.stock = buyedProduct.stock - realBuyedQuantity;
     if ( this.isOutOfStock( buyedProduct ) ) {
@@ -108,14 +111,13 @@ export class WarehouseAdministrator {
   private isNotEnouht( buyedProduct : Product, buyedQuantity : number ) {
     return buyedProduct.stock <= buyedQuantity;
   }
+
   private isOutOfStock( buyedProduct : Product ) {
     return buyedProduct.stock < buyedProduct.minimumStock;
   }
+
   private restockProduct( productToRestoc : Product ) {
     productToRestoc.stock = productToRestoc.minimumStock;
-    Printer.printContentToFile(
-      'restock-' + productToRestoc.name + '.json',
-      JSON.stringify( productToRestoc )
-    );
+    Printer.printContentToFile( 'restock-' + productToRestoc.name + '.json', JSON.stringify( productToRestoc ) );
   }
 }
