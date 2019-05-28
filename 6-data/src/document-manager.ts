@@ -22,7 +22,7 @@ export class DocumentManager {
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.email, invoiceTemplate );
+    this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
 
@@ -32,9 +32,9 @@ export class DocumentManager {
     ========================
     Invoice Number: ${shoppingCart.invoiceNumber}#
     ----------------------------------------------
-    ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
+    ${shoppingCart.client.name} - ${shoppingCart.client.taxNumber}
     ${shoppingCart.billingAddress}
-    ${shoppingCart.country} - ${shoppingCart.region}
+    ${shoppingCart.client.country} - ${shoppingCart.client.region}
     Items purchased:
     ${this.getDocumentItemLines( shoppingCart )}
     Amount: #${shoppingCart.totalAmount - shoppingCart.shippingCost}Euros
@@ -53,7 +53,7 @@ export class DocumentManager {
   public getOrderTemplate( shoppingCart : ShoppingCart ) {
     const orderTemplate = `
     Invoice Number: ${shoppingCart.invoiceNumber}
-    ${shoppingCart.clientName} - ${shoppingCart.taxNumber}
+    ${shoppingCart.client.name} - ${shoppingCart.client.taxNumber}
     ${shoppingCart.shippingAddress}
     Items purchased:
     ${this.getDocumentItemLines( shoppingCart )}

@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { PRODUCT_CATALOG } from './data/product-catalog';
+import { PRODUCT_CATALOG } from './config/product-catalog';
+import { LineItem } from './models/line-item';
 import { Product } from './models/product';
-import { PurchasedItem } from './models/purchased-item';
 import { Printer } from './printer';
 
 export class WarehouseAdministrator {
@@ -24,7 +24,7 @@ export class WarehouseAdministrator {
 
   public addProduct() { }
 
-  public updatePurchasedProduct( purchasedItem : PurchasedItem ) {
+  public updatePurchasedProduct( purchasedItem : LineItem ) {
     const purchasedProduct = WarehouseAdministrator.findProductByName( purchasedItem.productName );
     if ( purchasedProduct !== undefined ) {
       let realPurchasedQuantity = this.getRealPurchasedQuantity( purchasedProduct, purchasedItem.quantity );
@@ -63,9 +63,9 @@ export class WarehouseAdministrator {
     return path.basename( orderFileName ).startsWith( this.orderPrefix );
   }
 
-  private getRealPurchasedQuantity( purchasedProduct : Product, buyedQuantity : number ) {
-    let realPurchasedQuantity = buyedQuantity;
-    if ( this.isNotEnouht( purchasedProduct, buyedQuantity ) ) {
+  private getRealPurchasedQuantity( purchasedProduct : Product, quantity : number ) {
+    let realPurchasedQuantity = quantity;
+    if ( this.isNotEnouht( purchasedProduct, quantity ) ) {
       Printer.printContentToFile( { fileName: this.logFileName, textContent: 'not have enough: ' + purchasedProduct.name } );
       realPurchasedQuantity = purchasedProduct.stock;
     }

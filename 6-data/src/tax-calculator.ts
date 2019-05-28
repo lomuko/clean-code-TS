@@ -4,35 +4,35 @@ import { RegionTaxNode } from './models/region-tax-node';
 import { TaxBaseInfo } from './models/tax-base-info';
 
 export class TaxCalculator {
-  private static readonly decimalPlaces = 2;
-  private static readonly taxExemptRegion = 'St Pierre';
+  private static readonly decimalPlaces : number = 2;
+  private static readonly taxExemptRegion : string = 'St Pierre';
   private static readonly localTaxesTree : CountryTaxNode[] = LOCAL_TAXES_TREE;
 
   public static calculateTax( taxBaseInfo : TaxBaseInfo ) {
-    if ( TaxCalculator.isTaxExempt( taxBaseInfo.isStudent, taxBaseInfo.region ) ) {
+    if ( TaxCalculator.isTaxExempt( taxBaseInfo ) ) {
       return 0;
     } else {
-      return TaxCalculator.calculateLocalTax( taxBaseInfo.base, taxBaseInfo.country, taxBaseInfo.region );
+      return TaxCalculator.calculateLocalTax( taxBaseInfo );
     }
   }
 
-  private static isTaxExempt( isStudent : boolean, region : string ) {
-    return isStudent || region === TaxCalculator.taxExemptRegion;
+  private static isTaxExempt( taxBaseInfo : TaxBaseInfo ) {
+    return taxBaseInfo.isStudent || taxBaseInfo.region === TaxCalculator.taxExemptRegion;
   }
 
-  private static calculateLocalTax( base : number, country : string, region : string ) {
-    const localTax = TaxCalculator.getLocalVAT( country, region );
-    const baseTax = ( base * localTax ) / 100;
+  private static calculateLocalTax( taxBaseInfo : TaxBaseInfo ) {
+    const localTax = TaxCalculator.getLocalVAT( taxBaseInfo );
+    const baseTax = ( taxBaseInfo.base * localTax ) / 100;
     const roundedTax = baseTax.toFixed( TaxCalculator.decimalPlaces );
     return Number( roundedTax );
   }
 
-  private static getLocalVAT( countryName : string, regionName : string ) {
+  private static getLocalVAT( taxBaseInfo : TaxBaseInfo ) {
     let countryTaxNode : CountryTaxNode | undefined = TaxCalculator.localTaxesTree.find(
-      ( countryTaxNode : CountryTaxNode ) => countryTaxNode.countryName === countryName
+      ( countryTaxNode : CountryTaxNode ) => countryTaxNode.countryName === taxBaseInfo.country
     );
     if ( countryTaxNode !== undefined ) {
-      return TaxCalculator.getCountryVAT( countryTaxNode, regionName );
+      return TaxCalculator.getCountryVAT( countryTaxNode, taxBaseInfo.region );
     } else {
       return 0;
     }
