@@ -54,16 +54,16 @@ export class WarehouseAdministrator {
 
   public addProduct() { }
 
-  public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === buyedProductName );
-    if ( buyedProduct.stock <= buyedQuantity ) {
-      buyedQuantity = buyedProduct.stock;
-      Printer.printContentToFile( this.logFileName, 'out of stock: ' + buyedProduct.name );
-      buyedProduct.stock = 0;
+  public updatePurchasedProduct( purchasedProductName : string, purchasedQuantity : number ) {
+    const purchasedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === purchasedProductName );
+    if ( purchasedProduct.stock <= purchasedQuantity ) {
+      purchasedQuantity = purchasedProduct.stock;
+      Printer.printContentToFile( this.logFileName, 'out of stock: ' + purchasedProduct.name );
+      purchasedProduct.stock = 0;
     } else {
-      buyedProduct.stock = buyedProduct.stock - buyedQuantity;
+      purchasedProduct.stock = purchasedProduct.stock - purchasedQuantity;
     }
-    this.restockProduct( buyedProductName );
+    this.restockProduct( purchasedProductName );
   }
 
   public restockProduct( productName : string ) {

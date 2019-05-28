@@ -67,18 +67,18 @@ export class WarehouseAdministrator {
 
   public addProduct() { }
 
-  public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === buyedProductName );
-    if ( this.isNotEnouht( buyedProduct, buyedQuantity ) ) {
-      buyedQuantity = buyedProduct.stock;
-      Printer.printContentToFile( this.logFileName, 'out of stock: ' + buyedProduct.name );
+  public updatePurchasedProduct( purchasedProductName : string, purchasedQuantity : number ) {
+    const purchasedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === purchasedProductName );
+    if ( this.isNotEnouht( purchasedProduct, purchasedQuantity ) ) {
+      purchasedQuantity = purchasedProduct.stock;
+      Printer.printContentToFile( this.logFileName, 'out of stock: ' + purchasedProduct.name );
     }
-    buyedProduct.stock = buyedProduct.stock - buyedQuantity;
-    this.restockProduct( buyedProductName );
+    purchasedProduct.stock = purchasedProduct.stock - purchasedQuantity;
+    this.restockProduct( purchasedProductName );
   }
 
-  private isNotEnouht( buyedProduct : any, buyedQuantity : number ) {
-    return buyedProduct.stock <= buyedQuantity;
+  private isNotEnouht( purchasedProduct : any, purchasedQuantity : number ) {
+    return purchasedProduct.stock <= purchasedQuantity;
   }
 
   public restockProduct( productName : string ) {

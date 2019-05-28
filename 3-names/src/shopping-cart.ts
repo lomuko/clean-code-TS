@@ -70,7 +70,7 @@ export class ShoppingCart {
     const warehouseAdministrator = new WarehouseAdministrator();
     // calculate total price
     this.lineItems.forEach( line => {
-      warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
+      warehouseAdministrator.updatePurchasedProduct( line.productName, line.quantity );
       line.totalAmount = line.price * line.quantity;
       this.totalAmount += line.totalAmount;
       // add taxes by product
