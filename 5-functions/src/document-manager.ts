@@ -5,6 +5,8 @@ import { ShoppingCart } from './shopping-cart';
 
 export class DocumentManager {
   private readonly logFileName = `log.txt`;
+  private readonly invoicePrefix = `invoice-`;
+  private readonly orderPrefix = `order-`;
 
   private readonly emailFolder = path.join( __dirname, '..', 'data', 'email' );
 
@@ -72,7 +74,7 @@ export class DocumentManager {
   }
 
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
-    const fileName = `invoice-${shoppingCart.invoiceNumber}.txt`;
+    const fileName = `${this.invoicePrefix}{shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
       Printer.printContentToFile( fileName, documentContent );
     }
@@ -84,7 +86,7 @@ export class DocumentManager {
 
   private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
     const warehouseEmailAddress = this.getWarehouseAddressByCountry( customerCountry );
-    const orderFileName = `order-${shoppingCart.invoiceNumber}_${warehouseEmailAddress}.txt`;
+    const orderFileName = `${this.orderPrefix}${shoppingCart.invoiceNumber}_${warehouseEmailAddress}.txt`;
     const fileName = path.join( this.emailFolder, orderFileName );
     return fileName;
   }
@@ -115,7 +117,7 @@ export class DocumentManager {
   }
 
   private getInvoiceFileName( emailAddress : string ) {
-    const invoiceFileName = `invoice-${emailAddress}.txt`;
+    const invoiceFileName = `${this.invoicePrefix}${emailAddress}.txt`;
     const fileName = path.join( this.emailFolder, invoiceFileName );
     return fileName;
   }

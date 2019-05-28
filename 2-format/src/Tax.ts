@@ -6,9 +6,7 @@ export class Tax {
   }
 
   public static calculate( base : number, country : string, region : string, student : boolean ) {
-    return student || region === 'St Pierre'
-      ? 0
-      : Number( ( ( base * Tax.coutryTax( country, region ) ) / 100 ).toFixed( 2 ) );
+    return student || region === 'St Pierre' ? 0 : Number( ( ( base * Tax.coutryTax( country, region ) ) / 100 ).toFixed( 2 ) );
   }
 
   private static coutryTax( country : string, region : string ) {

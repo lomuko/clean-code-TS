@@ -7,27 +7,16 @@ export class TaxCalculator {
       return 0;
     } else {
       return Number(
-        ( ( line.totalAmount * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed(
-          TaxCalculator.decimalPlaces
-        )
+        ( ( line.totalAmount * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed( TaxCalculator.decimalPlaces )
       );
     }
   }
 
-  public static calculateTotal(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
+  public static calculateTotal( base : number, country : string, region : string, isStudent : boolean ) {
     if ( TaxCalculator.isTaxExempt( isStudent, region ) ) {
       return 0;
     } else {
-      return Number(
-        ( ( base * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed(
-          TaxCalculator.decimalPlaces
-        )
-      );
+      return Number( ( ( base * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed( TaxCalculator.decimalPlaces ) );
     }
   }
 

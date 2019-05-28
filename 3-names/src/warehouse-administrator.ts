@@ -31,14 +31,17 @@ export class WarehouseAdministrator {
     }
   ];
   private readonly logFileName = `log.txt`;
+  private readonly shipmentPrefix = `shipment-`;
+  private readonly orderPrefix = `order-`;
+  private readonly restockPrefix = `restock-`;
   public stock : any[] = [];
 
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if ( fs.existsSync( ordersFolder ) ) {
       fs.readdirSync( ordersFolder ).forEach( orderFileName => {
-        if ( path.basename( orderFileName ).startsWith( 'order-' ) ) {
-          const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
+        if ( path.basename( orderFileName ).startsWith( this.orderPrefix ) ) {
+          const shippmentFileName = orderFileName.replace( this.orderPrefix, this.shipmentPrefix );
           fs.renameSync(
             path.join( __dirname, '..', 'data', 'email', orderFileName ),
             path.join( __dirname, '..', 'data', 'email', shippmentFileName )
@@ -66,6 +69,6 @@ export class WarehouseAdministrator {
   public restockProduct( productName : string ) {
     const productToRestoc = WarehouseAdministrator.productCatalog.find( product => product.name === productName );
     productToRestoc.stock = productToRestoc.minimun;
-    Printer.printContentToFile( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
+    Printer.printContentToFile( this.restockPrefix + productName + '.json', JSON.stringify( productToRestoc ) );
   }
 }

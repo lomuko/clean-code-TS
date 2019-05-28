@@ -31,6 +31,9 @@ export class WarehouseAdministrator {
     }
   ];
   private readonly logFileName = `log.txt`;
+  private readonly shipmentPrefix = `shipment-`;
+  private readonly orderPrefix = `order-`;
+  private readonly restockPrefix = `restock-`;
   public stock : any[] = [];
 
   public processOrders() {
@@ -53,11 +56,11 @@ export class WarehouseAdministrator {
   }
 
   private isAnOrderFile( fileName : string ) {
-    return path.basename( fileName ).startsWith( 'order-' );
+    return path.basename( fileName ).startsWith( this.orderPrefix );
   }
 
   private processOrder( orderFileName : string, ordersFolder : string ) {
-    const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
+    const shippmentFileName = orderFileName.replace( this.orderPrefix, this.shipmentPrefix );
     fs.renameSync( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
     Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
   }
@@ -81,6 +84,6 @@ export class WarehouseAdministrator {
   public restockProduct( productName : string ) {
     const productToRestoc = WarehouseAdministrator.productCatalog.find( product => product.name === productName );
     productToRestoc.stock = productToRestoc.minimun;
-    Printer.printContentToFile( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
+    Printer.printContentToFile( this.restockPrefix + productName + '.json', JSON.stringify( productToRestoc ) );
   }
 }

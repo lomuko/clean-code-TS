@@ -20,6 +20,8 @@ export class ShoppingCart {
   ) { }
   private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
+  private readonly shoppingPrefix = `shopping-`;
+  private readonly lastinvoiceFileName = `lastinvoice.txt`;
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -52,7 +54,7 @@ export class ShoppingCart {
   }
 
   private getShoppingFilePath() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
     const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
     return shoppingFilePath;
   }
@@ -131,7 +133,7 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), `lastinvoice.txt` );
+    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
     this.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );

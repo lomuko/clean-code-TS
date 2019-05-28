@@ -5,26 +5,13 @@ export class TaxCalculator {
   public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
     return isStudent || region === TaxCalculator.taxExemptRegion
       ? 0
-      : Number(
-          ( ( line.totalAmount * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed(
-            TaxCalculator.decimalPlaces
-          )
-        );
+      : Number( ( ( line.totalAmount * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed( TaxCalculator.decimalPlaces ) );
   }
 
-  public static calculateTotal(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
+  public static calculateTotal( base : number, country : string, region : string, isStudent : boolean ) {
     return isStudent || region === TaxCalculator.taxExemptRegion
       ? 0
-      : Number(
-          ( ( base * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed(
-            TaxCalculator.decimalPlaces
-          )
-        );
+      : Number( ( ( base * TaxCalculator.getCountryVAT( country, region ) ) / 100 ).toFixed( TaxCalculator.decimalPlaces ) );
   }
 
   private static getCountryVAT( country : string, region : string ) {

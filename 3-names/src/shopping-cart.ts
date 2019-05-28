@@ -5,6 +5,9 @@ import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
+  private readonly shoppingPrefix = `shopping-`;
+  private readonly lastinvoiceFileName = `lastinvoice.txt`;
+  private readonly paymentMethodExtra = 'PayPal';
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -26,13 +29,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addLineItem( productName : string, price : number, quantity : number, country? : string, taxFree? : boolean ) {
     this.lineItems.push( { productName, price, quantity } );
   }
 
@@ -44,17 +41,14 @@ export class ShoppingCart {
     if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
       fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
     }
-    const fileName = `shopping-${this.clientName}.json`;
+    const fileName = `${this.shoppingPrefix}${this.clientName}.json`;
     if ( !fs.existsSync( path.join( __dirname, '..', 'data', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', fileName ),
-        JSON.stringify( this.lineItems )
-      );
+      fs.writeFileSync( path.join( __dirname, '..', 'data', fileName ), JSON.stringify( this.lineItems ) );
     }
   }
 
   public loadFromStorage() {
-    const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
+    const fileName = path.join( __dirname, '..', 'data', `${this.shoppingPrefix}${this.clientName}.json` );
     if ( fs.existsSync( fileName ) ) {
       const file = fs.readFileSync( fileName, 'utf8' );
       this.lineItems = JSON.parse( file );
@@ -62,18 +56,13 @@ export class ShoppingCart {
   }
 
   public deleteFromStorage() {
-    const fileName = path.join( __dirname, '..', 'data', `shopping-${this.clientName}.json` );
+    const fileName = path.join( __dirname, '..', 'data', `${this.shoppingPrefix}${this.clientName}.json` );
     if ( fs.existsSync( fileName ) ) {
       fs.unlinkSync( fileName );
     }
   }
 
-  public calculateCheckOut(
-    payment : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
+  public calculateCheckOut( payment : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress || shippingAddress;
     this.paymentMethod = payment;
@@ -86,12 +75,7 @@ export class ShoppingCart {
       this.totalAmount += line.totalAmount;
       // add taxes by product
       if ( !line.taxFree ) {
-        line.taxes = TaxCalculator.calculateLine(
-          line,
-          this.country,
-          this.region,
-          this.isStudent
-        );
+        line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
         this.taxesAmount += line.taxes;
         let lineTotal = line.totalAmount + line.taxes;
       }
@@ -148,7 +132,7 @@ export class ShoppingCart {
       }
     }
     this.totalAmount += this.shippingCost;
-    if ( payment === 'PayPal' ) {
+    if ( payment === this.paymentMethodExtra ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
 
@@ -162,14 +146,9 @@ export class ShoppingCart {
       this.totalAmount *= 0.9;
     }
 
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
 
-    const invoiceNumberFileName = path.join( __dirname, '..', 'data', `lastinvoice.txt` );
+    const invoiceNumberFileName = path.join( __dirname, '..', 'data', this.lastinvoiceFileName );
     let lastInvoiceNumber = 0;
     if ( fs.existsSync( invoiceNumberFileName ) ) {
       lastInvoiceNumber = Number.parseInt( fs.readFileSync( invoiceNumberFileName, 'utf8' ) );

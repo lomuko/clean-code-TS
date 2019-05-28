@@ -5,6 +5,9 @@ import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
+  private readonly shoppingPrefix = `shopping-`;
+  private readonly lastinvoiceFileName = `lastinvoice.txt`;
+  private readonly paymentMethodExtra = 'PayPal';
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -26,13 +29,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addLineItem( productName : string, price : number, quantity : number, country? : string, taxFree? : boolean ) {
     this.lineItems.push( { productName, price, quantity } );
   }
 
@@ -44,12 +41,9 @@ export class ShoppingCart {
     if ( this.notExistsDataFolder() ) {
       fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
     }
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
     if ( this.notExitsFileInDataFolder( shoppingFileName ) ) {
-      fs.writeFileSync(
-        path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ),
-        JSON.stringify( this.lineItems )
-      );
+      fs.writeFileSync( path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ), JSON.stringify( this.lineItems ) );
     }
   }
 
@@ -62,17 +56,14 @@ export class ShoppingCart {
   }
 
   public loadFromStorage() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
     if ( this.exitsFileInDataFolder( shoppingFileName ) ) {
       this.readLineItemsFromFile( shoppingFileName );
     }
   }
 
   private readLineItemsFromFile( shoppingFileName : string ) {
-    const file = fs.readFileSync(
-      path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ),
-      'utf8'
-    );
+    const file = fs.readFileSync( path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ), 'utf8' );
     this.lineItems = JSON.parse( file );
   }
 
@@ -81,19 +72,14 @@ export class ShoppingCart {
   }
 
   public deleteFromStorage() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
     if ( this.exitsFileInDataFolder( shoppingFileName ) ) {
       const fileName = path.join( path.join( __dirname, '..', 'data' ), shoppingFileName );
       fs.unlinkSync( fileName );
     }
   }
 
-  public calculateCheckOut(
-    paymentMethod : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
+  public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress || shippingAddress;
     this.paymentMethod = paymentMethod;
@@ -107,12 +93,7 @@ export class ShoppingCart {
 
     this.applyDiscount();
 
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
 
     this.setInvoiceNumber();
     const orderMessage = this.documentManager.getOrderMessage( this );
@@ -121,16 +102,10 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join(
-      path.join( __dirname, '..', 'data' ),
-      `lastinvoice.txt`
-    );
+    const invoiceNumberFileName = path.join( path.join( __dirname, '..', 'data' ), this.lastinvoiceFileName );
     let lastInvoiceNumber = 0;
     if ( fs.existsSync( invoiceNumberFileName ) ) {
-      lastInvoiceNumber = this.readLastInvoiceFromFile(
-        invoiceNumberFileName,
-        lastInvoiceNumber
-      );
+      lastInvoiceNumber = this.readLastInvoiceFromFile( invoiceNumberFileName, lastInvoiceNumber );
     }
     this.invoiceNumber = lastInvoiceNumber + 1;
     fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
@@ -147,7 +122,7 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    if ( payment === 'PayPal' ) {
+    if ( payment === this.paymentMethodExtra ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
   }

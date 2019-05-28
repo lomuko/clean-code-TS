@@ -11,21 +11,11 @@ export class TaxCalculator {
     return TaxCalculator.calculateTax( line.totalAmount, country, region, isStudent );
   }
 
-  public static calculateTotal(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
+  public static calculateTotal( base : number, country : string, region : string, isStudent : boolean ) {
     return TaxCalculator.calculateTax( base, country, region, isStudent );
   }
 
-  private static calculateTax(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
+  private static calculateTax( base : number, country : string, region : string, isStudent : boolean ) {
     if ( TaxCalculator.isTaxExempt( isStudent, region ) ) {
       return 0;
     } else {

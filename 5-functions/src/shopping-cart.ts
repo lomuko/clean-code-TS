@@ -5,6 +5,9 @@ import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
+  private readonly shoppingPrefix = `shopping-`;
+  private readonly lastinvoiceFileName = `lastinvoice.txt`;
+  private readonly paymentMethodExtra = 'PayPal';
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -26,13 +29,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addLineItem( productName : string, price : number, quantity : number, country? : string, taxFree? : boolean ) {
     this.lineItems.push( { productName, price, quantity } );
   }
 
@@ -63,7 +60,7 @@ export class ShoppingCart {
   }
 
   private getShoppingFilePath() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
     const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
     return shoppingFilePath;
   }
@@ -93,23 +90,13 @@ export class ShoppingCart {
     }
   }
 
-  public calculateCheckOut(
-    paymentMethod : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
+  public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
     this.calculateTotalAmount();
     this.calculateShippingCosts();
     this.applyPaymentMethodExtra( paymentMethod );
     this.applyDiscount();
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
@@ -146,7 +133,7 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), `lastinvoice.txt` );
+    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
     this.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
@@ -170,7 +157,7 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    if ( payment === 'PayPal' ) {
+    if ( payment === this.paymentMethodExtra ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
   }
