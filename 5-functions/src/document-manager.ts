@@ -74,7 +74,7 @@ export class DocumentManager {
   }
 
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
-    const fileName = `${this.invoicePrefix}{shoppingCart.invoiceNumber}.txt`;
+    const fileName = `${this.invoicePrefix}${shoppingCart.invoiceNumber}.txt`;
     if ( this.hasContent( documentContent ) ) {
       Printer.printContentToFile( fileName, documentContent );
     }

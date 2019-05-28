@@ -1,6 +1,6 @@
 import { ShippingCost } from './shipping-cost';
 export interface CountryConfiguration {
-  contryName : string;
+  countryName : string;
   thresholdForDiscount : number;
   shippingCost : ShippingCost[];
   warehouseAddress : string;

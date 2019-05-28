@@ -3,7 +3,7 @@ import { Assert } from './assert';
 import * as mocks from './mocks';
 
 afterAll( () => {
-  // mocks.cleanCheckOuts();
+  mocks.cleanCheckOuts();
 } );
 
 describe( `As a shop owner, I want to generate invoices, so I can legally sell products`, () => {

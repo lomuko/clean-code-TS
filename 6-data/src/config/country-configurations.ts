@@ -1,7 +1,7 @@
 import { CountryConfiguration } from '../models/country-configuration';
 export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
   {
-    contryName: '*default*',
+    countryName: '*default*',
     thresholdForDiscount: Infinity,
     shippingCost: [
       {
@@ -23,7 +23,7 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
     warehouseAddress: 'warehouse@acme.com'
   },
   {
-    contryName: 'Spain',
+    countryName: 'Spain',
     thresholdForDiscount: 1000,
     shippingCost: [
       {
@@ -45,7 +45,7 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
     warehouseAddress: 'warehouse@acme.es'
   },
   {
-    contryName: 'Portugal',
+    countryName: 'Portugal',
     thresholdForDiscount: 3000,
     shippingCost: [
       {
@@ -67,7 +67,7 @@ export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
     warehouseAddress: 'warehouse@acme.com'
   },
   {
-    contryName: 'France',
+    countryName: 'France',
     thresholdForDiscount: 2000,
     shippingCost: [
       {

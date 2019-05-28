@@ -166,7 +166,7 @@ export class ShoppingCart {
 
   private hasCountryDiscount() {
     let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.contryName === this.client.country
+      countryConfiguration => countryConfiguration.countryName === this.client.country
     );
     if ( countryConfiguration === undefined ) {
       countryConfiguration = ShoppingCart.countryConfigurations[0];
@@ -176,7 +176,7 @@ export class ShoppingCart {
 
   private calculateShippingCosts() {
     let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.contryName === this.client.country
+      countryConfiguration => countryConfiguration.countryName === this.client.country
     );
     if ( countryConfiguration === undefined ) {
       countryConfiguration = ShoppingCart.countryConfigurations[0];

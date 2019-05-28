@@ -104,7 +104,7 @@ export class DocumentManager {
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
-    let countryConfig = this.countryConfigurations.find( country => country.contryName === customerCountry );
+    let countryConfig = this.countryConfigurations.find( country => country.countryName === customerCountry );
     if ( countryConfig === undefined ) {
       countryConfig = this.countryConfigurations[0];
     }

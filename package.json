@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node ./0-jelou/src/automatic.ts",
-    "test": "jest --runInBand 6-",
-    "lint": "tslint  '6-*/**/*.ts'"
+    "test": "jest --runInBand 6-data/tests/customer.add-products.test.ts",
+    "lint": "tslint  '6-*/**/*.add-*.ts'"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
