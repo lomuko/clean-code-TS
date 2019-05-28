@@ -3,6 +3,7 @@ import * as path from 'path';
 import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { DocumentManager } from './document-manager';
+import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
 import { CountryConfiguration } from './models/country-configuration';
 import { FileContent } from './models/file-content';
@@ -18,13 +19,15 @@ export class ShoppingCart {
   private readonly shoppingPrefix : string = `shopping-`;
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
   public lineItems : LineItem[] = [];
+  public checkOut : CheckOut = {
+    paymentMethod: '',
+    paymentId: '',
+    shippingAddress: '',
+    billingAddress: ''
+  };
   public totalAmount : number = 0;
   public shippingCost : number = 0;
   public taxesAmount : number = 0;
-  public paymentMethod : string = '';
-  public paymentId : string = '';
-  public shippingAddress : string = '';
-  public billingAddress : string = '';
   public invoiceNumber : number = 0;
   public documentManager : DocumentManager = new DocumentManager();
 
@@ -89,11 +92,11 @@ export class ShoppingCart {
     }
   }
 
-  public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
-    this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
+  public calculateCheckOut( checkOut : CheckOut ) {
+    this.setCheckOut( checkOut );
     this.calculateTotalAmount();
     this.calculateShippingCosts();
-    this.applyPaymentMethodExtra( paymentMethod );
+    this.applyPaymentMethodExtra( checkOut.paymentMethod );
     this.applyDiscount();
     const totalTaxInfo = {
       base: this.totalAmount,
@@ -107,26 +110,14 @@ export class ShoppingCart {
     this.deleteFromStorage();
   }
 
-  private setCheckOutData(
-    shippingAddress : string,
-    billingAddress : string | undefined,
-    paymentMethod : string,
-    paymentId : string
-  ) {
-    this.shippingAddress = shippingAddress;
-    this.billingAddress = this.getBillingAddress( shippingAddress, billingAddress );
-    this.paymentMethod = paymentMethod;
-    this.paymentId = paymentId;
-  }
-
-  private getBillingAddress( shippingAddress : string, billingAddress? : string ) : string {
-    if ( this.hasContent( billingAddress ) ) {
-      return billingAddress as string;
+  private setCheckOut( checkOut : CheckOut ) {
+    this.checkOut = checkOut;
+    if ( !this.hasContent( this.checkOut.billingAddress ) ) {
+      if ( this.hasContent( this.checkOut.shippingAddress ) ) {
+        this.checkOut.billingAddress = this.checkOut.shippingAddress;
+      }
     }
-    if ( this.hasContent( shippingAddress ) ) {
-      return shippingAddress;
-    }
-    return '';
+    this.checkOut.billingAddress = '';
   }
 
   private hasContent( content? : string ) {

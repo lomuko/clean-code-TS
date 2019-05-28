@@ -3,5 +3,5 @@
 - interfaces para tipos de configuración
 - data files para configuración
 - tipos para comunicación pública entre objetos
-- _tipos para constructores (cliente)_
-- _tipos internos (línea de producto)_
+- tipos para constructores
+- tipos internos

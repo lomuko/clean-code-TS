@@ -33,7 +33,7 @@ export class DocumentManager {
     Invoice Number: ${shoppingCart.invoiceNumber}#
     ----------------------------------------------
     ${shoppingCart.client.name} - ${shoppingCart.client.taxNumber}
-    ${shoppingCart.billingAddress}
+    ${shoppingCart.checkOut.billingAddress}
     ${shoppingCart.client.country} - ${shoppingCart.client.region}
     Items purchased:
     ${this.getDocumentItemLines( shoppingCart )}
@@ -54,7 +54,7 @@ export class DocumentManager {
     const orderTemplate = `
     Invoice Number: ${shoppingCart.invoiceNumber}
     ${shoppingCart.client.name} - ${shoppingCart.client.taxNumber}
-    ${shoppingCart.shippingAddress}
+    ${shoppingCart.checkOut.shippingAddress}
     Items purchased:
     ${this.getDocumentItemLines( shoppingCart )}
     `;
