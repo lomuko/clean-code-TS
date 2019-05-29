@@ -18,11 +18,11 @@ export class DocumentManager {
   private readonly logger = new Logger();
   private readonly emailFolder = this.pathManager.emailFolder;
 
-  public emailOrder( shoppingCart : ShoppingCart, customerCountry : string ) {
+  public sendOrder( shoppingCart : ShoppingCart ) {
     const orderContent = this.templateManager.getOrderTemplate( shoppingCart );
     const orderMessageTemplate = this.templateManager.getOrderMessageTemplate( orderContent );
     this.fileManager.ensureFolder( this.emailFolder );
-    const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
+    const orderFileName = this.getOrderFileName( shoppingCart );
     this.fileManager.writeFile( { path: orderFileName, content: orderMessageTemplate } );
     this.logger.print( 'Sent Order: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
@@ -34,7 +34,7 @@ export class DocumentManager {
     this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
-  public emailInvoice( emailAddress : string, invoiceContent : string ) {
+  private emailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = this.templateManager.getInvoiceMessageTemplate( invoiceContent );
     this.fileManager.ensureFolder( this.emailFolder );
     const invoiceFileName = this.getInvoiceFileName( emailAddress );
@@ -46,7 +46,8 @@ export class DocumentManager {
     Printer.printContentToFile( { fileName, textContent: documentContent } );
   }
 
-  private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
+  private getOrderFileName( shoppingCart : ShoppingCart ) {
+    const customerCountry : string = shoppingCart.client.country;
     const warehouseEmailAddress = this.getWarehouseAddressByCountry( customerCountry );
     const orderFileName = `${this.orderPrefix}${shoppingCart.legalAmounts.invoiceNumber}_${warehouseEmailAddress}.txt`;
     const fileName = this.pathManager.join( this.emailFolder, orderFileName );

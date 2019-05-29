@@ -39,20 +39,18 @@ export class ShoppingCartManager {
   public addLineItem( purchasedItem : LineItem ) {
     this.shoppingCart.lineItems.push( purchasedItem );
   }
-
   public removeLineItem( productName : string ) {
     this.shoppingCart.lineItems = this.shoppingCart.lineItems.filter( lineItem => lineItem.productName !== productName );
-  }
-
-  public saveToStorage() {
-    this.fileManager.ensureFolder( this.pathManager.dataFolder );
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.shoppingCart.lineItems ) } );
   }
 
   public loadFromStorage() {
     const shoppingFilePath = this.getShoppingFilePath();
     this.shoppingCart.lineItems = this.getLinesFromFile( shoppingFilePath, [] );
+  }
+  public saveToStorage() {
+    this.fileManager.ensureFolder( this.pathManager.dataFolder );
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.shoppingCart.lineItems ) } );
   }
   public deleteFromStorage() {
     const shoppingFilePath = this.getShoppingFilePath();
@@ -76,9 +74,8 @@ export class ShoppingCartManager {
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
   }
-
   public sendInvoiceToCustomer() {
-    this.documentManager.sendInvoice( this );
+    this.documentManager.sendInvoice( this.shoppingCart );
   }
 
   private getShoppingFilePath() {
@@ -213,6 +210,6 @@ export class ShoppingCartManager {
   }
 
   private sendOrderToWarehouse() {
-    this.documentManager.emailOrder( this, this.shoppingCart.client.country );
+    this.documentManager.sendOrder( this.shoppingCart );
   }
 }
