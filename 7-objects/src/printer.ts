@@ -9,9 +9,11 @@ export class Printer {
   private static readonly printFolder = Printer.pathManager.printFolder;
 
   public static printContentToFile( fileToPrint : FileToPrint ) {
-    fileToPrint.textContent += '\n';
-    Printer.ensurePrintFolder();
-    Printer.appendOrCreateFile( fileToPrint );
+    if ( Printer.hasContent( fileToPrint.textContent ) ) {
+      fileToPrint.textContent += '\n';
+      Printer.ensurePrintFolder();
+      Printer.appendOrCreateFile( fileToPrint );
+    }
   }
 
   private static ensurePrintFolder() {
@@ -29,5 +31,8 @@ export class Printer {
 
   private static getPrintFilePath( fileName : string ) {
     return Printer.pathManager.join( Printer.printFolder, fileName );
+  }
+  private static hasContent( content : string ) {
+    return content !== null && content.length > 0;
   }
 }

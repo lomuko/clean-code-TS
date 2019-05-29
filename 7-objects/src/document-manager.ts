@@ -18,13 +18,6 @@ export class DocumentManager {
   private readonly logger = new Logger();
   private readonly emailFolder = this.pathManager.emailFolder;
 
-  public sendInvoice( shoppingCart : ShoppingCart ) {
-    const invoiceTemplate = this.templateManager.getInvoiceTemplate( shoppingCart );
-    this.printInvoice( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
-    this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
-  }
-
   public emailOrder( shoppingCart : ShoppingCart, customerCountry : string ) {
     const orderContent = this.templateManager.getOrderTemplate( shoppingCart );
     const orderMessageTemplate = this.templateManager.getOrderMessageTemplate( orderContent );
@@ -32,6 +25,13 @@ export class DocumentManager {
     const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
     this.fileManager.writeFile( { path: orderFileName, content: orderMessageTemplate } );
     this.logger.print( 'Sent Order: ' + shoppingCart.legalAmounts.invoiceNumber );
+  }
+
+  public sendInvoice( shoppingCart : ShoppingCart ) {
+    const invoiceTemplate = this.templateManager.getInvoiceTemplate( shoppingCart );
+    this.printInvoice( shoppingCart, invoiceTemplate );
+    this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
+    this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
   public emailInvoice( emailAddress : string, invoiceContent : string ) {
@@ -43,13 +43,7 @@ export class DocumentManager {
 
   private printInvoice( shoppingCart : ShoppingCart, documentContent : string ) {
     const fileName = `${this.invoicePrefix}${shoppingCart.legalAmounts.invoiceNumber}.txt`;
-    if ( this.hasContent( documentContent ) ) {
-      Printer.printContentToFile( { fileName, textContent: documentContent } );
-    }
-  }
-
-  private hasContent( content : string ) {
-    return content !== null && content.length > 0;
+    Printer.printContentToFile( { fileName, textContent: documentContent } );
   }
 
   private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
