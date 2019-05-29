@@ -38,7 +38,7 @@ class: impact
 
 --
 
-#### Sustantivos para variables / propiedades / clases
+#### Sustantivos para variables / propiedades
 
 - Vocabulario de **entidades y propiedades** de negocio
 
@@ -48,7 +48,12 @@ class: impact
 
 - is, has, get, set, can, must, do
 
---
+
+#### Sustantivos o roles para clases
+
+- manager, presenter, interactor, validator, mapper
+
+---
 
 #### Verbos para funciones / métodos
 
@@ -100,8 +105,3 @@ class: impact
 
 - [<- Vuelta al índice ](./)
 
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/3-names)
-
-- [Game Of Life](./3-names/)

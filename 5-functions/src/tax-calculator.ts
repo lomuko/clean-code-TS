@@ -1,67 +1,73 @@
 export class TaxCalculator {
   private static readonly decimalPlaces = 2;
+  private static readonly taxExemptRegion = 'St Pierre';
 
   public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
     return TaxCalculator.calculateTax( line.totalAmount, country, region, isStudent );
   }
 
-  public static calculateTotal(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
+  public static calculateTotal( base : number, country : string, region : string, isStudent : boolean ) {
     return TaxCalculator.calculateTax( base, country, region, isStudent );
   }
 
-  private static calculateTax(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
-    if ( TaxCalculator.isTaxFree( isStudent, region ) ) {
+  private static calculateTax( base : number, country : string, region : string, isStudent : boolean ) {
+    if ( TaxCalculator.isTaxExempt( isStudent, region ) ) {
       return 0;
     } else {
       return TaxCalculator.calculateCountryTax( base, country, region );
     }
   }
 
-  private static isTaxFree( isStudent : boolean, region : string ) {
-    return isStudent || region === 'St Pierre';
+  private static isTaxExempt( isStudent : boolean, region : string ) {
+    return isStudent || region === TaxCalculator.taxExemptRegion;
   }
 
   private static calculateCountryTax( base : number, country : string, region : string ) {
-    const countryTax = TaxCalculator.getCountryTax( country, region );
-    const baseTax = ( base * countryTax ) / 100;
-    const roundedString = baseTax.toFixed( TaxCalculator.decimalPlaces );
-    return Number( roundedString );
+    const countryVAT = TaxCalculator.getCountryVAT( country, region );
+    const baseTax = ( base * countryVAT ) / 100;
+    const roundedTax = baseTax.toFixed( TaxCalculator.decimalPlaces );
+    return Number( roundedTax );
   }
 
-  private static getCountryTax( country : string, region : string ) {
-    let countryTax = 0;
+  private static getCountryVAT( country : string, region : string ) {
+    let countryVAT = 0;
     switch ( country ) {
       case 'Spain':
-        if ( region === 'Canary Islands' ) {
-          countryTax = 7;
-        } else {
-          countryTax = 21;
-        }
+        countryVAT = TaxCalculator.getSpainVAT( region, countryVAT );
         break;
       case 'Portugal':
-        if ( region === 'Madeira' ) {
-          countryTax = 22;
-        } else if ( region === 'Azores' ) {
-          countryTax = 18;
-        }
-        countryTax = 23;
+        countryVAT = TaxCalculator.getPortugalVAT( region, countryVAT );
         break;
       case 'France':
-        countryTax = 20;
+        countryVAT = TaxCalculator.getFranceVAT( countryVAT );
         break;
       default:
         break;
     }
-    return countryTax;
+    return countryVAT;
+  }
+
+  private static getSpainVAT( region : string, countryVAT : number ) {
+    if ( region === 'Canary Islands' ) {
+      countryVAT = 7;
+    } else {
+      countryVAT = 21;
+    }
+    return countryVAT;
+  }
+
+  private static getPortugalVAT( region : string, countryVAT : number ) {
+    if ( region === 'Madeira' ) {
+      countryVAT = 22;
+    } else if ( region === 'Azores' ) {
+      countryVAT = 18;
+    }
+    countryVAT = 23;
+    return countryVAT;
+  }
+
+  private static getFranceVAT( countryVAT : number ) {
+    countryVAT = 20;
+    return countryVAT;
   }
 }

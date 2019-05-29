@@ -5,6 +5,9 @@ import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
+  private readonly shoppingPrefix = `shopping-`;
+  private readonly lastinvoiceFileName = `lastinvoice.txt`;
+  private readonly paymentMethodExtra = 'PayPal';
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -26,13 +29,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addLineItem( productName : string, price : number, quantity : number, country? : string, taxFree? : boolean ) {
     this.lineItems.push( { productName, price, quantity } );
   }
 
@@ -41,39 +38,48 @@ export class ShoppingCart {
   }
 
   public saveToStorage() {
-    if ( !fs.existsSync( path.join( __dirname, '..', 'data' ) ) ) {
+    if ( this.notExistsDataFolder() ) {
       fs.mkdirSync( path.join( __dirname, '..', 'data' ) );
     }
-    const shoppingFileName = `shopping-${this.clientName}.json`;
-    const fileName = path.join( path.join( __dirname, '..', 'data' ), shoppingFileName );
-    if ( !fs.existsSync( fileName ) ) {
-      fs.writeFileSync( fileName, JSON.stringify( this.lineItems ) );
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
+    if ( this.notExitsFileInDataFolder( shoppingFileName ) ) {
+      fs.writeFileSync( path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ), JSON.stringify( this.lineItems ) );
     }
+  }
+
+  private notExitsFileInDataFolder( shoppingFileName : string ) {
+    return !fs.existsSync( path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ) );
+  }
+
+  private notExistsDataFolder() {
+    return !fs.existsSync( path.join( __dirname, '..', 'data' ) );
   }
 
   public loadFromStorage() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
-    const fileName = path.join( path.join( __dirname, '..', 'data' ), shoppingFileName );
-    if ( fs.existsSync( fileName ) ) {
-      const file = fs.readFileSync( fileName, 'utf8' );
-      this.lineItems = JSON.parse( file );
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
+    if ( this.exitsFileInDataFolder( shoppingFileName ) ) {
+      this.readLineItemsFromFile( shoppingFileName );
     }
   }
 
+  private readLineItemsFromFile( shoppingFileName : string ) {
+    const file = fs.readFileSync( path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ), 'utf8' );
+    this.lineItems = JSON.parse( file );
+  }
+
+  private exitsFileInDataFolder( shoppingFileName : string ) {
+    return fs.existsSync( path.join( path.join( __dirname, '..', 'data' ), shoppingFileName ) );
+  }
+
   public deleteFromStorage() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
-    const fileName = path.join( path.join( __dirname, '..', 'data' ), shoppingFileName );
-    if ( fs.existsSync( fileName ) ) {
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
+    if ( this.exitsFileInDataFolder( shoppingFileName ) ) {
+      const fileName = path.join( path.join( __dirname, '..', 'data' ), shoppingFileName );
       fs.unlinkSync( fileName );
     }
   }
 
-  public calculate(
-    paymentMethod : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
+  public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress || shippingAddress;
     this.paymentMethod = paymentMethod;
@@ -87,12 +93,7 @@ export class ShoppingCart {
 
     this.applyDiscount();
 
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
 
     this.setInvoiceNumber();
     const orderMessage = this.documentManager.getOrderMessage( this );
@@ -101,36 +102,44 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join(
-      path.join( __dirname, '..', 'data' ),
-      `lastinvoice.txt`
-    );
+    const invoiceNumberFileName = path.join( path.join( __dirname, '..', 'data' ), this.lastinvoiceFileName );
     let lastInvoiceNumber = 0;
     if ( fs.existsSync( invoiceNumberFileName ) ) {
-      try {
-        const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
-        lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
-      } catch ( error ) { }
+      lastInvoiceNumber = this.readLastInvoiceFromFile( invoiceNumberFileName, lastInvoiceNumber );
     }
     this.invoiceNumber = lastInvoiceNumber + 1;
     fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
   }
 
+  private readLastInvoiceFromFile( invoiceNumberFileName : string, lastInvoiceNumber : number ) {
+    try {
+      const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
+      lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
+    } catch ( error ) {
+      lastInvoiceNumber = 0;
+    }
+    return lastInvoiceNumber;
+  }
+
   private applyPaymentMethodExtra( payment : string ) {
-    if ( payment === 'PayPal' ) {
+    if ( payment === this.paymentMethodExtra ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
   }
 
   private applyDiscount() {
-    if (
+    if ( this.hasDiscount() ) {
+      this.totalAmount *= 0.9;
+    }
+  }
+
+  private hasDiscount() {
+    return (
       this.isVip ||
       ( this.totalAmount > 3000 && this.country === 'Portugal' ) ||
       ( this.totalAmount > 2000 && this.country === 'France' ) ||
       ( this.totalAmount > 1000 && this.country === 'Spain' )
-    ) {
-      this.totalAmount *= 0.9;
-    }
+    );
   }
 
   private calculateShippingCosts() {
@@ -197,20 +206,30 @@ export class ShoppingCart {
 
   private calculateTotalAmount() {
     const warehouseAdministrator = new WarehouseAdministrator();
-    this.lineItems.forEach( line => {
-      warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
-      line.totalAmount = line.price * line.quantity;
-      this.totalAmount += line.totalAmount;
-      this.addTaxesByProduct( line );
-    } );
+    this.lineItems.forEach( line => this.processLineItem( warehouseAdministrator, line ) );
+  }
+
+  private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : any ) {
+    warehouseAdministrator.updatePurchasedProduct( line.productName, line.quantity );
+    line.totalAmount = line.price * line.quantity;
+    this.totalAmount += line.totalAmount;
+    this.addTaxesByProduct( line );
   }
 
   private addTaxesByProduct( line : any ) {
-    if ( !line.taxFree ) {
-      line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
-      this.taxesAmount += line.taxes;
-      let lineTotal = line.totalAmount + line.taxes;
+    if ( this.hasTaxes( line ) ) {
+      this.calculateAndSumTaxesPerLine( line );
     }
+  }
+
+  private calculateAndSumTaxesPerLine( line : any ) {
+    line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
+    this.taxesAmount += line.taxes;
+    let lineTotal = line.totalAmount + line.taxes;
+  }
+
+  private hasTaxes( line : any ) {
+    return !line.taxFree;
   }
 
   public sendInvoiceToCustomer() {

@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## Arquitectura limpia
+## Abstracciones de lógica
 
 > "La encapsulación es importante.
 
@@ -26,7 +26,7 @@ class: impact
 
 ---
 
-## Las clases, como las funciones, Pequeñas y Claras
+## Las clases, como las funciones: Pequeñas y Claras
 
 - Los objetos encapsulan la **lógica**.
 
@@ -44,48 +44,20 @@ class: impact
 
 ---
 
-![SOLID](./assets/solid.jpg)
+## El tamaño y el pudor
 
----
 
-### S : Single responsibility principle
+### Responsabilidad
 
-**Principio de responsabilidad única**
-Un objeto solo debería tener una única responsabilidad, o razón para cambiar.
+- Reduce la cantidad de métodos públicos
 
---
+- Decanta métodos privados hacia clases de capas inferiores
 
-### O : Open/closed principle
+### Cohesión
 
-**Principio de abierto/cerrado**
-Las entidades de software deben estar abiertas para su extensión, pero cerradas para su modificación.
+- Haz que tus métodos usen tus propiedades, no las de otros
 
---
-
-### L : Liskov substitution principle
-
-**Principio de sustitución de Liskov**
-Los objetos deberían ser reemplazables por subtipos sin alterar el funcionamiento del programa.
-
----
-
-### I : Interface segregation principle
-
-**Principio de segregación de la interfaz**
-Muchas interfaces específicas son mejores que una interfaz de propósito general.​
-
---
-
-### D : Dependency inversion principle
-
-**Principio de inversión de la dependencia**
-Depender de abstracciones, no de implementaciones concretas. Resolver en ejecución usando la Inyección de Dependencias.
-
---
-
-[Principios SOLID en JavaScript](https://medium.com/mindorks/solid-principles-explained-with-examples-79d1ce114ace)
-
-[Código mantenible y el principio Open/Close](https://medium.com/@severinperez/maintainable-code-and-the-open-closed-principle-b088c737262)
+- Haz que tus propiedades sean usadas por tus métodos, no por otros
 
 ---
 
@@ -93,12 +65,6 @@ Depender de abstracciones, no de implementaciones concretas. Resolver en ejecuci
 >
 > -- **Robert C. Martin**
 
-- [Siguiente ->](./8-systems.html)
+- [Siguiente ->](./8-extra.html)
 
 - [<- Vuelta al índice ](./)
-
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/7-objects)
-
-- [Game Of Life](./7-objects/)

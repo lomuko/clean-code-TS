@@ -3,10 +3,10 @@ import { Assert } from './assert';
 import * as mocks from './mocks';
 
 beforeAll( () => {
-  // mocks.cleanShoppingCart();
+  mocks.cleanShoppingCart();
 } );
 afterAll( () => {
-  // mocks.cleanShoppingCart();
+  mocks.cleanShoppingCart();
 } );
 
 describe( `As a customer, I want to save and restore my current shopping cart, so I can continue later`, () => {

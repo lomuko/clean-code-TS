@@ -1,130 +1,37 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
+import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { DocumentManager } from './document-manager';
+import { CheckOut } from './models/check-out';
+import { Client } from './models/client';
+import { CountryConfiguration } from './models/country-configuration';
+import { FileContent } from './models/file-content';
+import { LegalAmounts } from './models/legal-amounts';
+import { LineItem } from './models/line-item';
+import { PaymentConfiguration } from './models/payment-configuration';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
-  constructor(
-    public clientName : string,
-    private isStudent : boolean,
-    public region : string,
-    public country : string,
-    public email : string,
-    private isVip : boolean,
-    public taxNumber? : string
-  ) { }
-  private static countryConfigurations = [
-    {
-      contryName: '*',
-      thresholdForDiscount: Infinity,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.25,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 25
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 20
-        }
-      ]
-    },
-    {
-      contryName: 'Spain',
-      thresholdForDiscount: 1000,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.1,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 10
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 0
-        }
-      ]
-    },
-    {
-      contryName: 'Portugal',
-      thresholdForDiscount: 3000,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.15,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 15
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 10
-        }
-      ]
-    },
-    {
-      contryName: 'France',
-      thresholdForDiscount: 2000,
-      shippingCost: [
-        {
-          upTo: 100,
-          factor: 0.2,
-          plus: 0
-        },
-        {
-          upTo: 1000,
-          factor: 0,
-          plus: 20
-        },
-        {
-          upTo: Infinity,
-          factor: 0,
-          plus: 15
-        }
-      ]
-    }
-  ];
-  private static paymentsConfigurations = [
-    {
-      paymentMethod: 'PayPal',
-      extraFactor: 1.05
-    }
-  ];
-  public lineItems : any[] = [];
-  public totalAmount : number = 0;
-  public shippingCost = 0;
-  public taxesAmount : number = 0;
-  public paymentMethod : string = '';
-  public paymentId : string = '';
-  public shippingAddress : string = '';
-  public billingAddress : string = '';
-  public invoiceNumber : number = 0;
-  public documentManager = new DocumentManager();
+  constructor( public client : Client ) { }
+  private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
+  private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
+  private readonly shoppingPrefix : string = `shopping-`;
+  private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
+  public lineItems : LineItem[] = [];
+  public checkOut : CheckOut = {
+    paymentMethod: '',
+    paymentId: '',
+    shippingAddress: '',
+    billingAddress: ''
+  };
+  public legalAmounts : LegalAmounts = { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 };
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
-    this.lineItems.push( { productName, price, quantity } );
+  public documentManager : DocumentManager = new DocumentManager();
+
+  public addLineItem( purchasedItem : LineItem ) {
+    this.lineItems.push( purchasedItem );
   }
 
   public removeLineItem( productName : string ) {
@@ -134,17 +41,17 @@ export class ShoppingCart {
   public saveToStorage() {
     this.ensureDataFolder();
     const shoppingFilePath = this.getShoppingFilePath();
-    this.ensureWriteFile( shoppingFilePath, JSON.stringify( this.lineItems ) );
+    this.ensureWriteFile( { path: shoppingFilePath, content: JSON.stringify( this.lineItems ) } );
   }
 
-  private ensureWriteFile( filePath : string, fileContent : string ) {
-    if ( !fs.existsSync( filePath ) ) {
-      fs.writeFileSync( filePath, fileContent );
+  private ensureWriteFile( fileContent : FileContent ) {
+    if ( !fs.existsSync( fileContent.path ) ) {
+      fs.writeFileSync( fileContent.path, fileContent.content );
     }
   }
 
   private getShoppingFilePath() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.client.name}.json`;
     const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
     return shoppingFilePath;
   }
@@ -184,48 +91,32 @@ export class ShoppingCart {
     }
   }
 
-  public calculate(
-    paymentMethod : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
-    this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
+  public calculateCheckOut( checkOut : CheckOut ) {
+    this.setCheckOut( checkOut );
     this.calculateTotalAmount();
     this.calculateShippingCosts();
-    this.applyPaymentMethodExtra( paymentMethod );
+    this.applyPaymentMethodExtra( checkOut.paymentMethod );
     this.applyDiscount();
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    const totalTaxInfo = {
+      base: this.legalAmounts.total,
+      country: this.client.country,
+      region: this.client.region,
+      isStudent: this.client.isStudent
+    };
+    this.legalAmounts.taxes += TaxCalculator.calculateTax( totalTaxInfo );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
   }
 
-  private setCheckOutData(
-    shippingAddress : string,
-    billingAddress : string | undefined,
-    paymentMethod : string,
-    paymentId : string
-  ) {
-    this.shippingAddress = shippingAddress;
-    this.billingAddress = this.getBillingAddress( shippingAddress, billingAddress );
-    this.paymentMethod = paymentMethod;
-    this.paymentId = paymentId;
-  }
-
-  private getBillingAddress( shippingAddress : string, billingAddress? : string ) : string {
-    if ( this.hasContent( billingAddress ) ) {
-      return billingAddress as string;
+  private setCheckOut( checkOut : CheckOut ) {
+    this.checkOut = checkOut;
+    if ( !this.hasContent( this.checkOut.billingAddress ) ) {
+      if ( this.hasContent( this.checkOut.shippingAddress ) ) {
+        this.checkOut.billingAddress = this.checkOut.shippingAddress;
+      }
     }
-    if ( this.hasContent( shippingAddress ) ) {
-      return shippingAddress;
-    }
-    return '';
+    this.checkOut.billingAddress = '';
   }
 
   private hasContent( content? : string ) {
@@ -233,14 +124,14 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), `lastinvoice.txt` );
+    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
-    this.invoiceNumber = lastInvoiceNumber + 1;
+    this.legalAmounts.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
   }
 
   private writeLastInvoiceNumber( invoiceNumberFileName : string ) {
-    fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
+    fs.writeFileSync( invoiceNumberFileName, this.legalAmounts.invoiceNumber );
   }
 
   private readLastInvoiceNumber( invoiceNumberFileName : string ) {
@@ -255,45 +146,45 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    const paymentConfiguration = ShoppingCart.paymentsConfigurations.find(
+    const paymentConfiguration : PaymentConfiguration | undefined = ShoppingCart.paymentsConfigurations.find(
       paymentConfiguration => paymentConfiguration.paymentMethod === payment
     );
     if ( paymentConfiguration !== undefined ) {
-      this.totalAmount = this.totalAmount * paymentConfiguration.extraFactor;
+      this.legalAmounts.total = this.legalAmounts.total * paymentConfiguration.extraFactor;
     }
   }
 
   private applyDiscount() {
     if ( this.hasDiscount() ) {
-      this.totalAmount *= 0.9;
+      this.legalAmounts.total *= 0.9;
     }
   }
 
   private hasDiscount() {
-    return this.isVip || this.hasCountryDiscount();
+    return this.client.isVip || this.hasCountryDiscount();
   }
 
   private hasCountryDiscount() {
-    let countryConfiguration = ShoppingCart.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.contryName === this.country
+    let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
+      countryConfiguration => countryConfiguration.countryName === this.client.country
     );
     if ( countryConfiguration === undefined ) {
       countryConfiguration = ShoppingCart.countryConfigurations[0];
     }
-    return this.totalAmount > countryConfiguration.thresholdForDiscount;
+    return this.legalAmounts.total > countryConfiguration.thresholdForDiscount;
   }
 
   private calculateShippingCosts() {
-    let countryConfiguration = ShoppingCart.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.contryName === this.country
+    let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
+      countryConfiguration => countryConfiguration.countryName === this.client.country
     );
     if ( countryConfiguration === undefined ) {
       countryConfiguration = ShoppingCart.countryConfigurations[0];
     }
     countryConfiguration.shippingCost.forEach( shippingCost => {
-      if ( this.totalAmount < shippingCost.upTo ) {
-        const shippingCostAmount = this.totalAmount * shippingCost.factor + shippingCost.plus;
-        this.totalAmount += shippingCostAmount;
+      if ( this.legalAmounts.total < shippingCost.upTo ) {
+        const shippingCostAmount = this.legalAmounts.total * shippingCost.factor + shippingCost.plus;
+        this.legalAmounts.total += shippingCostAmount;
         return;
       }
     } );
@@ -306,18 +197,24 @@ export class ShoppingCart {
     } );
   }
 
-  private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : any ) {
-    line.quantity = warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
-    line.totalAmount = line.price * line.quantity;
-    this.totalAmount += line.totalAmount;
+  private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : LineItem ) {
+    line.quantity = warehouseAdministrator.updatePurchasedProduct( line );
+    line.amount = line.price * line.quantity;
+    this.legalAmounts.total += line.amount;
     this.addTaxesByProduct( line );
   }
 
-  private addTaxesByProduct( line : any ) {
+  private addTaxesByProduct( line : LineItem ) {
     if ( this.hasTaxes( line ) ) {
-      line.taxes = TaxCalculator.calculateLine( line, this.country, this.region, this.isStudent );
-      this.taxesAmount += line.taxes;
-      let lineTotal = line.totalAmount + line.taxes;
+      const lineTaxInfo = {
+        base: line.amount,
+        country: this.client.country,
+        region: this.client.region,
+        isStudent: this.client.isStudent
+      };
+      line.taxes = TaxCalculator.calculateTax( lineTaxInfo );
+      this.legalAmounts.taxes += line.taxes;
+      let lineTotal = line.amount + line.taxes;
     }
   }
 
@@ -327,7 +224,7 @@ export class ShoppingCart {
 
   private sendOrderToWarehouse() {
     const orderMessage = this.documentManager.getOrderTemplate( this );
-    this.documentManager.emailOrder( this, orderMessage, this.country );
+    this.documentManager.emailOrder( this, orderMessage, this.client.country );
   }
 
   public sendInvoiceToCustomer() {

@@ -26,13 +26,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addProduct(
-    product : string,
-    price : number,
-    q : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addProduct( product : string, price : number, q : number, country? : string, taxFree? : boolean ) {
     this.items.push( { product, price, q } );
   }
 
@@ -47,10 +41,7 @@ export class ShoppingCart {
     }
     const fileName = `shopping-${this.clientName}.json`;
     if ( !fs.existsSync( path.join( __dirname, '..', 'data', fileName ) ) ) {
-      fs.writeFileSync(
-        path.join( __dirname, '..', 'data', fileName ),
-        JSON.stringify( this.items )
-      );
+      fs.writeFileSync( path.join( __dirname, '..', 'data', fileName ), JSON.stringify( this.items ) );
     }
   }
 

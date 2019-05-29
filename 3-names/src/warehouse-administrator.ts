@@ -31,19 +31,22 @@ export class WarehouseAdministrator {
     }
   ];
   private readonly logFileName = `log.txt`;
+  private readonly shipmentPrefix = `shipment-`;
+  private readonly orderPrefix = `order-`;
+  private readonly restockPrefix = `restock-`;
   public stock : any[] = [];
 
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
     if ( fs.existsSync( ordersFolder ) ) {
       fs.readdirSync( ordersFolder ).forEach( orderFileName => {
-        if ( path.basename( orderFileName ).startsWith( 'order-' ) ) {
-          const shippmentFileName = orderFileName.replace( 'order-', 'shipment-' );
+        if ( path.basename( orderFileName ).startsWith( this.orderPrefix ) ) {
+          const shippmentFileName = orderFileName.replace( this.orderPrefix, this.shipmentPrefix );
           fs.renameSync(
             path.join( __dirname, '..', 'data', 'email', orderFileName ),
             path.join( __dirname, '..', 'data', 'email', shippmentFileName )
           );
-          Printer.print( this.logFileName, 'processed: ' + orderFileName );
+          Printer.printContentToFile( this.logFileName, 'processed: ' + orderFileName );
         }
       } );
     }
@@ -51,25 +54,21 @@ export class WarehouseAdministrator {
 
   public addProduct() { }
 
-  public updateBuyedProduct( buyedProductName : string, buyedQuantity : number ) {
-    const buyedProduct = WarehouseAdministrator.productCatalog.find(
-      product => product.name === buyedProductName
-    );
-    if ( buyedProduct.stock <= buyedQuantity ) {
-      buyedQuantity = buyedProduct.stock;
-      Printer.print( this.logFileName, 'out of stock: ' + buyedProduct.name );
-      buyedProduct.stock = 0;
+  public updatePurchasedProduct( purchasedProductName : string, purchasedQuantity : number ) {
+    const purchasedProduct = WarehouseAdministrator.productCatalog.find( product => product.name === purchasedProductName );
+    if ( purchasedProduct.stock <= purchasedQuantity ) {
+      purchasedQuantity = purchasedProduct.stock;
+      Printer.printContentToFile( this.logFileName, 'out of stock: ' + purchasedProduct.name );
+      purchasedProduct.stock = 0;
     } else {
-      buyedProduct.stock = buyedProduct.stock - buyedQuantity;
+      purchasedProduct.stock = purchasedProduct.stock - purchasedQuantity;
     }
-    this.restockProduct( buyedProductName );
+    this.restockProduct( purchasedProductName );
   }
 
   public restockProduct( productName : string ) {
-    const productToRestoc = WarehouseAdministrator.productCatalog.find(
-      product => product.name === productName
-    );
+    const productToRestoc = WarehouseAdministrator.productCatalog.find( product => product.name === productName );
     productToRestoc.stock = productToRestoc.minimun;
-    Printer.print( 'restock-' + productName + '.json', JSON.stringify( productToRestoc ) );
+    Printer.printContentToFile( this.restockPrefix + productName + '.json', JSON.stringify( productToRestoc ) );
   }
 }

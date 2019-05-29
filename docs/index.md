@@ -26,9 +26,9 @@ class: impact
 
 **Programar es expresar procesos con detalle en un lenguaje no ambiguo.** Un lenguaje se usa para comunicar, si se habla es para ser escuchado, si se escribe es para ser leído.
 
-Al escribir hay que pensar en el lector. Sobre todo porque en muchas ocasiones vas a ser tú mismo.
+Escribir programas para ser leídos, entendidos y mejorados es un difícil arte y una obligación ineludible.
 
-Escribir programas para ser leídos, entendidos y mejorados es un difícil arte pero una obligación ineludible. Pero también es una ciencia que se puede aprender y practicar.
+También es una ciencia que se puede aprender y practicar.
 
 Las **técnicas de código limpio** ayudan a escribir programas sencillos de entender, que aportan valor y que pueden evolucionar.
 
@@ -60,17 +60,19 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 - Limpiar requiere cambiar por dentro sin cambiar por fuera
 - Necesitamos pruebas para limpiar tranquilos
 
+---
+
 ## 2- FORMAT [Código bonito.](./2-format.html)
 
 - Reglas y herramientas de limpieza
 - Belleza vertical y horizontal
 
----
-
 ## 3- NAMES [Dar sentido mediante los nombres.](./3-names.html)
 
 - Claridad
 - Consistencia
+
+---
 
 ## 4- BLOCKS [Estructuras de control.](./4-blocks.html)
 
@@ -84,27 +86,24 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 
 ---
 
-## 6- DATA [Abstracciones](./6-data.html)
+## 6- DATA [Abstracciones de información](./6-data.html)
 
 - Estructuras de datos
 - Entidades
 
-## 7- OBJECTS [Arquitectura limpia](./7-objects.html)
+## 7- OBJECTS [Abstracciones de lógica](./7-objects.html)
 
 - Las clases, como las funciones, Pequeñas y Organizadas
 - Capas: niveles de abstracción
 
 ---
 
-## 8- EXTRA [Bibliografía y prácticas](./a-extra.html)
+## 8- EXTRA [¿Errores?, Bibliografía y consejos](./8-extra.html)
 
-- Consejos y trucos
-- Programación Orientada a objetos
-- Algoritmos
-- Fragmentos
+- ¿errores?
+- Bibliografía y consejos
 
-
-## 9- ARTISAN [Artesanía del software](./d-end.html)
+## 9- ARTISAN [Artesanía del software](./9-artisan.html)
 
 - Manifiesto ágil
 - Manifiesto artesano

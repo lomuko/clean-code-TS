@@ -14,11 +14,11 @@ class: impact
 
 # {{title}}
 
-## Abstracciones
+## Abstracciones de información
 
 > "Los malos programadores se preocupan por el código.
 
-> Los buenos programadores se preocupan por las estructuras de datos y sus relaciones".
+> Los buenos se preocupan por las estructuras de datos y sus relaciones".
 >
 > -- **Linus Torvalds**.
 
@@ -36,7 +36,7 @@ class: impact
 
 --
 
-- ## Suelen tener nombres de **Entidades**
+- ### Suelen tener nombres de **Entidades**
 
 --
 
@@ -44,7 +44,9 @@ class: impact
 
 ---
 
-Usar estructuras para evitar _if_ y _switch_ [Contra el switch](https://dev.to/jckuhl/a-case-against-switches-13pd)
+## Usar estructuras para evitar _if_ y _switch_
+
+- [Contra el switch](https://dev.to/jckuhl/a-case-against-switches-13pd)
 
 ---
 
@@ -60,8 +62,3 @@ Usar estructuras para evitar _if_ y _switch_ [Contra el switch](https://dev.to/j
 
 - [<- Vuelta al índice ](./)
 
-- [Repo](https://github.com/AcademiaBinaria/CleanCode)
-
-- [Fuente](https://github.com/AcademiaBinaria/CleanCode/tree/master/6-data)
-
-- [Game Of Life](./6-data/)

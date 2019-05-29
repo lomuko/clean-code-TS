@@ -1,101 +1,51 @@
+import { LOCAL_TAXES_TREE } from './config/local-taxes-tree';
+import { CountryTaxNode } from './models/country-tax-node';
+import { RegionTaxNode } from './models/region-tax-node';
+import { TaxBaseInfo } from './models/tax-base-info';
+
 export class TaxCalculator {
-  private static readonly decimalPlaces = 2;
+  private static readonly decimalPlaces : number = 2;
+  private static readonly taxExemptRegion : string = 'St Pierre';
+  private static readonly localTaxesTree : CountryTaxNode[] = LOCAL_TAXES_TREE;
 
-  private static readonly countryRegionTaxesTree = [
-    {
-      countryName: 'Spain',
-      countryTax: 21,
-      regionTaxes: [
-        {
-          regionName: 'Canary Islands',
-          regionTax: 7
-        }
-      ]
-    },
-    {
-      countryName: 'Portugal',
-      countryTax: 23,
-      regionTaxes: [
-        {
-          regionName: 'Madeira',
-          regionTax: 22
-        },
-        {
-          regionName: 'Azores',
-          regionTax: 18
-        }
-      ]
-    },
-    {
-      countryName: 'France',
-      countryTax: 20,
-      regionTaxes: []
-    }
-  ];
-
-  public static calculateLine( line : any, country : string, region : string, isStudent : boolean ) {
-    return TaxCalculator.calculateTax( line.totalAmount, country, region, isStudent );
-  }
-
-  public static calculateTotal(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
-    return TaxCalculator.calculateTax( base, country, region, isStudent );
-  }
-
-  private static calculateTax(
-    base : number,
-    country : string,
-    region : string,
-    isStudent : boolean
-  ) {
-    if ( TaxCalculator.isTaxFree( isStudent, region ) ) {
+  public static calculateTax( taxBaseInfo : TaxBaseInfo ) {
+    if ( TaxCalculator.isTaxExempt( taxBaseInfo ) ) {
       return 0;
     } else {
-      return TaxCalculator.calculateCountryTax( base, country, region );
+      return TaxCalculator.calculateLocalTax( taxBaseInfo );
     }
   }
 
-  private static isTaxFree( isStudent : boolean, region : string ) {
-    return isStudent || region === 'St Pierre';
+  private static isTaxExempt( taxBaseInfo : TaxBaseInfo ) {
+    return taxBaseInfo.isStudent || taxBaseInfo.region === TaxCalculator.taxExemptRegion;
   }
 
-  private static calculateCountryTax( base : number, country : string, region : string ) {
-    const countryTax = TaxCalculator.getCountryTax( country, region );
-    const baseTax = ( base * countryTax ) / 100;
-    const roundedString = baseTax.toFixed( TaxCalculator.decimalPlaces );
-    return Number( roundedString );
+  private static calculateLocalTax( taxBaseInfo : TaxBaseInfo ) {
+    const localTax = TaxCalculator.getLocalVAT( taxBaseInfo );
+    const baseTax = ( taxBaseInfo.base * localTax ) / 100;
+    const roundedTax = baseTax.toFixed( TaxCalculator.decimalPlaces );
+    return Number( roundedTax );
   }
 
-  private static getCountryTax( countryName : string, regionName : string ) {
-    TaxCalculator.countryRegionTaxesTree.forEach( countryRegionTaxNode => {
-      if ( countryRegionTaxNode.countryName === countryName ) {
-        countryRegionTaxNode.regionTaxes.forEach( regionTaxNode => {
-          if ( regionTaxNode.regionName === regionName ) {
-            return regionTaxNode.regionTax;
-          }
-        } );
-        return countryRegionTaxNode.countryTax;
-      }
-    } );
+  private static getLocalVAT( taxBaseInfo : TaxBaseInfo ) {
+    let countryTaxNode : CountryTaxNode | undefined = TaxCalculator.localTaxesTree.find(
+      ( countryTaxNode : CountryTaxNode ) => countryTaxNode.countryName === taxBaseInfo.country
+    );
+    if ( countryTaxNode !== undefined ) {
+      return TaxCalculator.getCountryVAT( countryTaxNode, taxBaseInfo.region );
+    } else {
+      return 0;
+    }
+  }
 
-    // const countryTaxes = TaxCalculator.countryRegionTaxesTree.find(
-    //   countryRegionTaxNode => countryRegionTaxNode.countryName === countryName
-    // );
-    // if ( countryTaxes !== undefined ) {
-    //   const regionTaxes = countryTaxes.regionTaxes.find(
-    //     regionTaxNode => regionTaxNode.regionName === regionName
-    //   );
-    //   if ( regionTaxes !== undefined ) {
-    //     return regionTaxes.regionTax;
-    //   } else {
-    //     return countryTaxes.countryTax;
-    //   }
-    // }
-
-    return 0;
+  private static getCountryVAT( countryTaxNode : CountryTaxNode, regionName : string ) {
+    let regionTaxNode : RegionTaxNode | undefined = countryTaxNode.regionTaxes.find(
+      ( regionTaxNode : RegionTaxNode ) => regionTaxNode.regionName === regionName
+    );
+    if ( regionTaxNode !== undefined ) {
+      return regionTaxNode.regionVAT;
+    } else {
+      return countryTaxNode.countryVAT;
+    }
   }
 }

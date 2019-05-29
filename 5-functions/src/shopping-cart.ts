@@ -5,6 +5,9 @@ import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
+  private readonly shoppingPrefix = `shopping-`;
+  private readonly lastinvoiceFileName = `lastinvoice.txt`;
+  private readonly paymentMethodExtra = 'PayPal';
   public lineItems : any[] = [];
   public totalAmount : number = 0;
   public shippingCost = 0;
@@ -26,13 +29,7 @@ export class ShoppingCart {
     public taxNumber? : string
   ) { }
 
-  public addLineItem(
-    productName : string,
-    price : number,
-    quantity : number,
-    country? : string,
-    taxFree? : boolean
-  ) {
+  public addLineItem( productName : string, price : number, quantity : number, country? : string, taxFree? : boolean ) {
     this.lineItems.push( { productName, price, quantity } );
   }
 
@@ -46,6 +43,16 @@ export class ShoppingCart {
     this.ensureWriteFile( shoppingFilePath, JSON.stringify( this.lineItems ) );
   }
 
+  public loadFromStorage() {
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.lineItems = this.ensureReadFile( shoppingFilePath, [] );
+  }
+
+  public deleteFromStorage() {
+    const shoppingFilePath = this.getShoppingFilePath();
+    this.ensureDeleteFile( shoppingFilePath );
+  }
+
   private ensureWriteFile( filePath : string, fileContent : string ) {
     if ( !fs.existsSync( filePath ) ) {
       fs.writeFileSync( filePath, fileContent );
@@ -53,7 +60,7 @@ export class ShoppingCart {
   }
 
   private getShoppingFilePath() {
-    const shoppingFileName = `shopping-${this.clientName}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
     const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
     return shoppingFilePath;
   }
@@ -62,11 +69,6 @@ export class ShoppingCart {
     if ( !fs.existsSync( this.dataFolder() ) ) {
       fs.mkdirSync( this.dataFolder() );
     }
-  }
-
-  public loadFromStorage() {
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.lineItems = this.ensureReadFile( shoppingFilePath, [] );
   }
 
   private ensureReadFile( shoppingFilePath : string, defaultValue : any ) {
@@ -82,37 +84,26 @@ export class ShoppingCart {
     }
   }
 
-  public deleteFromStorage() {
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.ensureDeleteFile( shoppingFilePath );
-  }
-
   private ensureDeleteFile( filePath : string ) {
     if ( fs.existsSync( filePath ) ) {
       fs.unlinkSync( filePath );
     }
   }
 
-  public calculate(
-    paymentMethod : string,
-    paymentId : string,
-    shippingAddress : string,
-    billingAddress? : string
-  ) {
+  public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
     this.calculateTotalAmount();
     this.calculateShippingCosts();
     this.applyPaymentMethodExtra( paymentMethod );
     this.applyDiscount();
-    this.taxesAmount += TaxCalculator.calculateTotal(
-      this.totalAmount,
-      this.country,
-      this.region,
-      this.isStudent
-    );
+    this.taxesAmount += TaxCalculator.calculateTotal( this.totalAmount, this.country, this.region, this.isStudent );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
+  }
+
+  public sendInvoiceToCustomer() {
+    this.documentManager.sendInvoice( this );
   }
 
   private setCheckOutData(
@@ -142,7 +133,7 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), `lastinvoice.txt` );
+    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
     this.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
@@ -158,13 +149,15 @@ export class ShoppingCart {
       try {
         const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
         lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
-      } catch ( error ) { }
+      } catch ( error ) {
+        lastInvoiceNumber = 0;
+      }
     }
     return lastInvoiceNumber;
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    if ( payment === 'PayPal' ) {
+    if ( payment === this.paymentMethodExtra ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
   }
@@ -257,7 +250,7 @@ export class ShoppingCart {
   }
 
   private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : any ) {
-    line.quantity = warehouseAdministrator.updateBuyedProduct( line.productName, line.quantity );
+    line.quantity = warehouseAdministrator.updatePurchasedProduct( line.productName, line.quantity );
     line.totalAmount = line.price * line.quantity;
     this.totalAmount += line.totalAmount;
     this.addTaxesByProduct( line );
@@ -278,10 +271,6 @@ export class ShoppingCart {
   private sendOrderToWarehouse() {
     const orderMessage = this.documentManager.getOrderTemplate( this );
     this.documentManager.emailOrder( this, orderMessage, this.country );
-  }
-
-  public sendInvoiceToCustomer() {
-    this.documentManager.sendInvoice( this );
   }
 
   private dataFolder() {
