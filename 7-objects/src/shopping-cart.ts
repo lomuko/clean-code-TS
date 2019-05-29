@@ -1,22 +1,23 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { DocumentManager } from './document-manager';
+import { FileManager } from './file-manager';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
 import { CountryConfiguration } from './models/country-configuration';
-import { FileContent } from './models/file-content';
 import { LegalAmounts } from './models/legal-amounts';
 import { LineItem } from './models/line-item';
 import { PaymentConfiguration } from './models/payment-configuration';
 import { TaxCalculator } from './tax-calculator';
+import { TemplateManager } from './template-manager';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
   constructor( public client : Client ) { }
   private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
+  private readonly fileManager = new FileManager();
   private readonly shoppingPrefix : string = `shopping-`;
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
   public lineItems : LineItem[] = [];
@@ -29,6 +30,7 @@ export class ShoppingCart {
   public legalAmounts : LegalAmounts = { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 };
 
   public documentManager : DocumentManager = new DocumentManager();
+  public templateManager : TemplateManager = new TemplateManager();
 
   public addLineItem( purchasedItem : LineItem ) {
     this.lineItems.push( purchasedItem );
@@ -39,56 +41,18 @@ export class ShoppingCart {
   }
 
   public saveToStorage() {
-    this.ensureDataFolder();
+    this.fileManager.ensureFolder( this.dataFolder() );
     const shoppingFilePath = this.getShoppingFilePath();
-    this.ensureWriteFile( { path: shoppingFilePath, content: JSON.stringify( this.lineItems ) } );
-  }
-
-  private ensureWriteFile( fileContent : FileContent ) {
-    if ( !fs.existsSync( fileContent.path ) ) {
-      fs.writeFileSync( fileContent.path, fileContent.content );
-    }
-  }
-
-  private getShoppingFilePath() {
-    const shoppingFileName = `${this.shoppingPrefix}${this.client.name}.json`;
-    const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
-    return shoppingFilePath;
-  }
-
-  private ensureDataFolder() {
-    if ( !fs.existsSync( this.dataFolder() ) ) {
-      fs.mkdirSync( this.dataFolder() );
-    }
+    this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.lineItems ) } );
   }
 
   public loadFromStorage() {
     const shoppingFilePath = this.getShoppingFilePath();
-    this.lineItems = this.ensureReadFile( shoppingFilePath, [] );
+    this.lineItems = this.getLinesFromFile( shoppingFilePath, [] );
   }
-
-  private ensureReadFile( shoppingFilePath : string, defaultValue : any ) {
-    if ( fs.existsSync( shoppingFilePath ) ) {
-      try {
-        const file = fs.readFileSync( shoppingFilePath, 'utf8' );
-        return JSON.parse( file );
-      } catch ( error ) {
-        return defaultValue;
-      }
-    } else {
-      return defaultValue;
-    }
-  }
-
   public deleteFromStorage() {
     const shoppingFilePath = this.getShoppingFilePath();
-    this.ensureDeleteFile( shoppingFilePath );
-  }
-
-  private ensureDeleteFile( filePath : string ) {
-    if ( fs.existsSync( filePath ) ) {
-      fs.unlinkSync( filePath );
-    }
+    this.fileManager.deleteFile( shoppingFilePath );
   }
 
   public calculateCheckOut( checkOut : CheckOut ) {
@@ -107,6 +71,26 @@ export class ShoppingCart {
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
+  }
+
+  public sendInvoiceToCustomer() {
+    this.documentManager.sendInvoice( this );
+  }
+
+  private getShoppingFilePath() {
+    const shoppingFileName = `${this.shoppingPrefix}${this.client.name}.json`;
+    const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
+    return shoppingFilePath;
+  }
+
+  private getLinesFromFile( shoppingFilePath : string, defaultValue : any ) {
+    const fileContent = { path: shoppingFilePath, content: '' };
+    this.fileManager.readFile( fileContent );
+    if ( fileContent.content.length > 0 ) {
+      return JSON.parse( fileContent.content );
+    } else {
+      return defaultValue;
+    }
   }
 
   private setCheckOut( checkOut : CheckOut ) {
@@ -131,17 +115,16 @@ export class ShoppingCart {
   }
 
   private writeLastInvoiceNumber( invoiceNumberFileName : string ) {
-    fs.writeFileSync( invoiceNumberFileName, this.legalAmounts.invoiceNumber );
+    this.fileManager.writeFile( { path: invoiceNumberFileName, content: this.legalAmounts.invoiceNumber.toString() } );
   }
 
   private readLastInvoiceNumber( invoiceNumberFileName : string ) {
     let lastInvoiceNumber = 0;
-    if ( fs.existsSync( invoiceNumberFileName ) ) {
-      try {
-        const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
-        lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
-      } catch ( error ) { }
-    }
+    const fileContent = { path: invoiceNumberFileName, content: '0' };
+    this.fileManager.readFile( fileContent );
+    try {
+      lastInvoiceNumber = Number.parseInt( fileContent.content );
+    } catch ( error ) { }
     return lastInvoiceNumber;
   }
 
@@ -223,12 +206,8 @@ export class ShoppingCart {
   }
 
   private sendOrderToWarehouse() {
-    const orderMessage = this.documentManager.getOrderTemplate( this );
+    const orderMessage = this.templateManager.getOrderTemplate( this );
     this.documentManager.emailOrder( this, orderMessage, this.client.country );
-  }
-
-  public sendInvoiceToCustomer() {
-    this.documentManager.sendInvoice( this );
   }
 
   private dataFolder() {

@@ -1,6 +1,6 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { PRODUCT_CATALOG } from './config/product-catalog';
+import { FileManager } from './file-manager';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
 import { Printer } from './printer';
@@ -11,6 +11,7 @@ export class WarehouseAdministrator {
   private readonly shipmentPrefix = `shipment-`;
   private readonly orderPrefix = `order-`;
   private readonly restockPrefix = `restock-`;
+  private readonly fileManager = new FileManager();
   public stock : any[] = [];
 
   private static findProductByName( productName : string ) {
@@ -40,11 +41,9 @@ export class WarehouseAdministrator {
   }
 
   private processOrdesFolder( ordersFolder : string ) {
-    if ( fs.existsSync( ordersFolder ) ) {
-      fs.readdirSync( ordersFolder ).forEach( fileName => {
-        this.processFileInOrderFolder( fileName, ordersFolder );
-      } );
-    }
+    this.fileManager.readFolderFileList( ordersFolder ).forEach( fileName => {
+      this.processFileInOrderFolder( fileName, ordersFolder );
+    } );
   }
 
   private processFileInOrderFolder( fileName : string, ordersFolder : string ) {
@@ -55,7 +54,7 @@ export class WarehouseAdministrator {
 
   private processOrder( orderFileName : string, ordersFolder : string ) {
     const shippmentFileName = orderFileName.replace( this.orderPrefix, this.shipmentPrefix );
-    fs.renameSync( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
+    this.fileManager.renameFile( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
     Printer.printContentToFile( { fileName: this.logFileName, textContent: 'processed: ' + orderFileName } );
   }
 
@@ -71,6 +70,7 @@ export class WarehouseAdministrator {
     }
     return realPurchasedQuantity;
   }
+
   private updateStock( purchasedProduct : any, realPurchasedQuantity : number ) {
     purchasedProduct.stock = purchasedProduct.stock - realPurchasedQuantity;
     if ( this.isOutOfStock( purchasedProduct ) ) {
@@ -82,9 +82,11 @@ export class WarehouseAdministrator {
   private isNotEnouht( purchasedProduct : Product, quantity : number ) {
     return purchasedProduct.stock <= quantity;
   }
+
   private isOutOfStock( purchasedProduct : Product ) {
     return purchasedProduct.stock < purchasedProduct.minimumStock;
   }
+
   private restockProduct( productToRestoc : Product ) {
     productToRestoc.stock = productToRestoc.minimumStock;
     const fileToPrint = {

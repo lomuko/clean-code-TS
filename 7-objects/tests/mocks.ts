@@ -173,12 +173,12 @@ function rimraf( dirPath : string ) {
         rimraf( entryPath );
       } else {
         try {
-          fs.unlinkSync( entryPath );
+          // fs.unlinkSync( entryPath );
         } catch ( error ) { }
       }
     } );
     try {
-      fs.rmdirSync( dirPath );
+      // fs.rmdirSync( dirPath );
     } catch ( error ) {
       rimraf( dirPath );
     }

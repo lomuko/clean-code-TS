@@ -1,10 +1,11 @@
-import * as fs from 'fs';
 import * as path from 'path';
+import { FileManager } from './file-manager';
 import { FileToPrint } from './models/file-to-print';
 
 export class Printer {
   private static readonly dataFolder = path.join( __dirname, '..', 'data' );
   private static readonly printFolder = path.join( Printer.dataFolder, 'print' );
+  private static readonly fileManager = new FileManager();
   public static printContentToFile( fileToPrint : FileToPrint ) {
     fileToPrint.textContent += '\n';
     Printer.ensurePrintFolder();
@@ -12,26 +13,16 @@ export class Printer {
   }
 
   private static ensurePrintFolder() {
-    Printer.ensureFolder( Printer.dataFolder );
-    Printer.ensureFolder( Printer.printFolder );
-  }
-
-  private static ensureFolder( dataFolder : string ) {
-    if ( !fs.existsSync( dataFolder ) ) {
-      fs.mkdirSync( dataFolder );
-    }
+    Printer.fileManager.ensureFolder( Printer.dataFolder );
+    Printer.fileManager.ensureFolder( Printer.printFolder );
   }
 
   private static appendOrCreateFile( fileToPrint : FileToPrint ) {
-    if ( Printer.notExistsFileNameInPrintFolder( fileToPrint.fileName ) ) {
-      fs.writeFileSync( Printer.getPrintFilePath( fileToPrint.fileName ), fileToPrint.textContent );
-    } else {
-      fs.appendFileSync( Printer.getPrintFilePath( fileToPrint.fileName ), fileToPrint.textContent );
-    }
-  }
-
-  private static notExistsFileNameInPrintFolder( fileName : string ) {
-    return !fs.existsSync( Printer.getPrintFilePath( fileName ) );
+    const fileContent = {
+      path: Printer.getPrintFilePath( fileToPrint.fileName ),
+      content: fileToPrint.textContent
+    };
+    Printer.fileManager.appendFile( fileContent );
   }
 
   private static getPrintFilePath( fileName : string ) {
