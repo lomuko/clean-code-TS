@@ -1,5 +1,5 @@
 - encapsular las dependencias de terceros
-- reducir la cantidad de métodos públicos
 - bajar métodos privados hacia clases de capas inferiores
+- reducir la cantidad de métodos y propiedades públicos
 - en cada clase hacer que los métodos usen sus propiedades, no las de otros
 - en cada clase hacer que las propiedades sean usadas por sus métodos, no por otros

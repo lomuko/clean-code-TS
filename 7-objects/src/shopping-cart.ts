@@ -21,17 +21,17 @@ export class ShoppingCart {
   private readonly pathManager = new PathManager();
   private readonly shoppingPrefix : string = `shopping-`;
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
-  public lineItems : LineItem[] = [];
-  public checkOut : CheckOut = {
+  private lineItems : LineItem[] = [];
+  private checkOut : CheckOut = {
     paymentMethod: '',
     paymentId: '',
     shippingAddress: '',
     billingAddress: ''
   };
-  public legalAmounts : LegalAmounts = { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 };
+  private legalAmounts : LegalAmounts = { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 };
 
-  public documentManager : DocumentManager = new DocumentManager();
-  public templateManager : TemplateManager = new TemplateManager();
+  private documentManager : DocumentManager = new DocumentManager();
+  private templateManager : TemplateManager = new TemplateManager();
 
   public addLineItem( purchasedItem : LineItem ) {
     this.lineItems.push( purchasedItem );

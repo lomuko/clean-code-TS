@@ -7,14 +7,14 @@ import { PathManager } from './path-manager';
 import { Printer } from './printer';
 
 export class WarehouseAdministrator {
-  public static productCatalog : Product[] = PRODUCT_CATALOG;
+  private static productCatalog : Product[] = PRODUCT_CATALOG;
   private readonly shipmentPrefix = `shipment-`;
   private readonly orderPrefix = `order-`;
   private readonly restockPrefix = `restock-`;
   private readonly fileManager = new FileManager();
   private readonly pathManager = new PathManager();
   private readonly logger = new Logger();
-  public stock : any[] = [];
+  private stock : any[] = [];
 
   private static findProductByName( productName : string ) {
     return WarehouseAdministrator.productCatalog.find( product => product.name === productName );
