@@ -1,5 +1,6 @@
 - encapsular las dependencias de terceros
 - bajar métodos privados hacia clases de capas inferiores
-- reducir la cantidad de métodos y propiedades públicos
+- reducir la cantidad de métodos públicos
+- eliminar propiedades públicas en objetos de lógica
 - en cada clase hacer que los métodos usen sus propiedades, no las de otros
 - en cada clase hacer que las propiedades sean usadas por sus métodos, no por otros

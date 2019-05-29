@@ -3,4 +3,5 @@ export interface TaxBaseInfo {
   country : string;
   region : string;
   isStudent : boolean;
+  isATaxFreeProduct : boolean | undefined;
 }

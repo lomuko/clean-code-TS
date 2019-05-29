@@ -17,7 +17,11 @@ export class TaxCalculator {
   }
 
   private static isTaxExempt( taxBaseInfo : TaxBaseInfo ) {
-    return taxBaseInfo.isStudent || taxBaseInfo.region === TaxCalculator.taxExemptRegion;
+    return (
+      taxBaseInfo.isATaxFreeProduct === true ||
+      taxBaseInfo.isStudent === true ||
+      taxBaseInfo.region === TaxCalculator.taxExemptRegion
+    );
   }
 
   private static calculateLocalTax( taxBaseInfo : TaxBaseInfo ) {

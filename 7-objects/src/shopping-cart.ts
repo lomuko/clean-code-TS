@@ -1,11 +1,8 @@
-import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
-import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
+import { CheckOutCalculator } from './check-out-calculator';
 import { DocumentManager } from './document-manager';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
-import { CountryConfiguration } from './models/country-configuration';
 import { LineItem } from './models/line-item';
-import { PaymentConfiguration } from './models/payment-configuration';
 import { ShoppingCart } from './models/shopping-cart';
 import { ShoppingCartSaver } from './shopping-cart-saver';
 import { TaxCalculator } from './tax-calculator';
@@ -24,12 +21,12 @@ export class ShoppingCartManager {
       },
       legalAmounts: { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 }
     };
+    this.checkOutCalculator = new CheckOutCalculator( this.shoppingCart );
   }
-  private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
-  private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
   private readonly shoppingCart : ShoppingCart;
   private readonly shoppingCartSaver = new ShoppingCartSaver();
   private readonly documentManager : DocumentManager = new DocumentManager();
+  private readonly checkOutCalculator : CheckOutCalculator;
 
   public addLineItem( purchasedItem : LineItem ) {
     this.shoppingCart.lineItems.push( purchasedItem );
@@ -47,14 +44,15 @@ export class ShoppingCartManager {
   public calculateCheckOut( checkOut : CheckOut ) {
     this.setCheckOut( checkOut );
     this.calculateTotalAmount();
-    this.calculateShippingCosts();
-    this.applyPaymentMethodExtra( checkOut.paymentMethod );
-    this.applyDiscount();
+    this.checkOutCalculator.calculateShippingCosts();
+    this.checkOutCalculator.applyPaymentMethodExtra( checkOut.paymentMethod );
+    this.checkOutCalculator.applyDiscount();
     const totalTaxInfo = {
       base: this.shoppingCart.legalAmounts.total,
       country: this.shoppingCart.client.country,
       region: this.shoppingCart.client.region,
-      isStudent: this.shoppingCart.client.isStudent
+      isStudent: this.shoppingCart.client.isStudent,
+      isATaxFreeProduct: false
     };
     this.shoppingCart.legalAmounts.taxes += TaxCalculator.calculateTax( totalTaxInfo );
     this.setInvoiceNumber();
@@ -86,51 +84,6 @@ export class ShoppingCartManager {
     this.shoppingCartSaver.writeLastInvoiceNumber( this.shoppingCart );
   }
 
-  private applyPaymentMethodExtra( payment : string ) {
-    const paymentConfiguration : PaymentConfiguration | undefined = ShoppingCartManager.paymentsConfigurations.find(
-      paymentConfiguration => paymentConfiguration.paymentMethod === payment
-    );
-    if ( paymentConfiguration !== undefined ) {
-      this.shoppingCart.legalAmounts.total = this.shoppingCart.legalAmounts.total * paymentConfiguration.extraFactor;
-    }
-  }
-
-  private applyDiscount() {
-    if ( this.hasDiscount() ) {
-      this.shoppingCart.legalAmounts.total *= 0.9;
-    }
-  }
-
-  private hasDiscount() {
-    return this.shoppingCart.client.isVip || this.hasCountryDiscount();
-  }
-
-  private hasCountryDiscount() {
-    let countryConfiguration : CountryConfiguration | undefined = ShoppingCartManager.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.countryName === this.shoppingCart.client.country
-    );
-    if ( countryConfiguration === undefined ) {
-      countryConfiguration = ShoppingCartManager.countryConfigurations[0];
-    }
-    return this.shoppingCart.legalAmounts.total > countryConfiguration.thresholdForDiscount;
-  }
-
-  private calculateShippingCosts() {
-    let countryConfiguration : CountryConfiguration | undefined = ShoppingCartManager.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.countryName === this.shoppingCart.client.country
-    );
-    if ( countryConfiguration === undefined ) {
-      countryConfiguration = ShoppingCartManager.countryConfigurations[0];
-    }
-    countryConfiguration.shippingCost.forEach( shippingCost => {
-      if ( this.shoppingCart.legalAmounts.total < shippingCost.upTo ) {
-        const shippingCostAmount = this.shoppingCart.legalAmounts.total * shippingCost.factor + shippingCost.plus;
-        this.shoppingCart.legalAmounts.total += shippingCostAmount;
-        return;
-      }
-    } );
-  }
-
   private calculateTotalAmount() {
     const warehouseAdministrator = new WarehouseAdministrator();
     this.shoppingCart.lineItems.forEach( line => {
@@ -146,21 +99,15 @@ export class ShoppingCartManager {
   }
 
   private addTaxesByProduct( line : LineItem ) {
-    if ( this.hasTaxes( line ) ) {
-      const lineTaxInfo = {
-        base: line.amount,
-        country: this.shoppingCart.client.country,
-        region: this.shoppingCart.client.region,
-        isStudent: this.shoppingCart.client.isStudent
-      };
-      line.taxes = TaxCalculator.calculateTax( lineTaxInfo );
-      this.shoppingCart.legalAmounts.taxes += line.taxes;
-      let lineTotal = line.amount + line.taxes;
-    }
-  }
-
-  private hasTaxes( line : any ) {
-    return !line.taxFree;
+    const lineTaxInfo = {
+      base: line.amount,
+      country: this.shoppingCart.client.country,
+      region: this.shoppingCart.client.region,
+      isStudent: this.shoppingCart.client.isStudent,
+      isATaxFreeProduct: line.taxFree
+    };
+    line.taxes = TaxCalculator.calculateTax( lineTaxInfo );
+    this.shoppingCart.legalAmounts.taxes += line.taxes;
   }
 
   private sendOrderToWarehouse() {
