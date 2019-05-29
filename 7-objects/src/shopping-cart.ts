@@ -61,6 +61,7 @@ export class ShoppingCartManager {
     this.sendOrderToWarehouse();
     this.shoppingCartSaver.deleteFromStorage( this.shoppingCart );
   }
+
   public sendInvoiceToCustomer() {
     this.documentManager.sendInvoice( this.shoppingCart );
   }
