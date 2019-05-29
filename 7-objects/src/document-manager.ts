@@ -2,9 +2,9 @@ import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { FileManager } from './file-manager';
 import { Logger } from './logger';
 import { CountryConfiguration } from './models/country-configuration';
+import { ShoppingCart } from './models/shopping-cart';
 import { PathManager } from './path-manager';
 import { Printer } from './printer';
-import { ShoppingCart } from './shopping-cart';
 import { TemplateManager } from './template-manager';
 
 export class DocumentManager {

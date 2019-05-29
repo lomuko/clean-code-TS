@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { ShoppingCart } from '../src/shopping-cart';
+import { ShoppingCartManager } from '../src/shopping-cart';
 import { WarehouseAdministrator } from '../src/warehouse-administrator';
 
-export const newShoppingCart = new ShoppingCart( {
+export const newShoppingCart = new ShoppingCartManager( {
   name: 'Alberto',
   isStudent: false,
   region: 'Galicia',

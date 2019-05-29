@@ -5,49 +5,54 @@ import { FileManager } from './file-manager';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
 import { CountryConfiguration } from './models/country-configuration';
-import { LegalAmounts } from './models/legal-amounts';
 import { LineItem } from './models/line-item';
 import { PaymentConfiguration } from './models/payment-configuration';
+import { ShoppingCart } from './models/shopping-cart';
 import { PathManager } from './path-manager';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
-export class ShoppingCart {
-  constructor( private client : Client ) { }
+export class ShoppingCartManager {
+  constructor( client : Client ) {
+    this.shoppingCart = {
+      client: client,
+      lineItems: [],
+      checkOut: {
+        paymentMethod: '',
+        paymentId: '',
+        shippingAddress: '',
+        billingAddress: ''
+      },
+      legalAmounts: { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 }
+    };
+  }
   private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
   private readonly fileManager = new FileManager();
   private readonly pathManager = new PathManager();
   private readonly shoppingPrefix : string = `shopping-`;
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
-  private lineItems : LineItem[] = [];
-  private checkOut : CheckOut = {
-    paymentMethod: '',
-    paymentId: '',
-    shippingAddress: '',
-    billingAddress: ''
-  };
-  private legalAmounts : LegalAmounts = { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 };
+  private shoppingCart : ShoppingCart;
 
   private documentManager : DocumentManager = new DocumentManager();
 
   public addLineItem( purchasedItem : LineItem ) {
-    this.lineItems.push( purchasedItem );
+    this.shoppingCart.lineItems.push( purchasedItem );
   }
 
   public removeLineItem( productName : string ) {
-    this.lineItems = this.lineItems.filter( lineItem => lineItem.productName !== productName );
+    this.shoppingCart.lineItems = this.shoppingCart.lineItems.filter( lineItem => lineItem.productName !== productName );
   }
 
   public saveToStorage() {
     this.fileManager.ensureFolder( this.pathManager.dataFolder );
     const shoppingFilePath = this.getShoppingFilePath();
-    this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.lineItems ) } );
+    this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.shoppingCart.lineItems ) } );
   }
 
   public loadFromStorage() {
     const shoppingFilePath = this.getShoppingFilePath();
-    this.lineItems = this.getLinesFromFile( shoppingFilePath, [] );
+    this.shoppingCart.lineItems = this.getLinesFromFile( shoppingFilePath, [] );
   }
   public deleteFromStorage() {
     const shoppingFilePath = this.getShoppingFilePath();
@@ -61,12 +66,12 @@ export class ShoppingCart {
     this.applyPaymentMethodExtra( checkOut.paymentMethod );
     this.applyDiscount();
     const totalTaxInfo = {
-      base: this.legalAmounts.total,
-      country: this.client.country,
-      region: this.client.region,
-      isStudent: this.client.isStudent
+      base: this.shoppingCart.legalAmounts.total,
+      country: this.shoppingCart.client.country,
+      region: this.shoppingCart.client.region,
+      isStudent: this.shoppingCart.client.isStudent
     };
-    this.legalAmounts.taxes += TaxCalculator.calculateTax( totalTaxInfo );
+    this.shoppingCart.legalAmounts.taxes += TaxCalculator.calculateTax( totalTaxInfo );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
     this.deleteFromStorage();
@@ -77,7 +82,7 @@ export class ShoppingCart {
   }
 
   private getShoppingFilePath() {
-    const shoppingFileName = `${this.shoppingPrefix}${this.client.name}.json`;
+    const shoppingFileName = `${this.shoppingPrefix}${this.shoppingCart.client.name}.json`;
     const shoppingFilePath = this.pathManager.join( this.pathManager.dataFolder, shoppingFileName );
     return shoppingFilePath;
   }
@@ -93,13 +98,13 @@ export class ShoppingCart {
   }
 
   private setCheckOut( checkOut : CheckOut ) {
-    this.checkOut = checkOut;
-    if ( !this.hasContent( this.checkOut.billingAddress ) ) {
-      if ( this.hasContent( this.checkOut.shippingAddress ) ) {
-        this.checkOut.billingAddress = this.checkOut.shippingAddress;
+    if ( !this.hasContent( checkOut.billingAddress ) ) {
+      if ( this.hasContent( checkOut.shippingAddress ) ) {
+        checkOut.billingAddress = checkOut.shippingAddress;
       }
     }
-    this.checkOut.billingAddress = '';
+    checkOut.billingAddress = '';
+    this.shoppingCart.checkOut = checkOut;
   }
 
   private hasContent( content? : string ) {
@@ -109,12 +114,15 @@ export class ShoppingCart {
   private setInvoiceNumber() {
     const invoiceNumberFileName = this.pathManager.join( this.pathManager.dataFolder, this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
-    this.legalAmounts.invoiceNumber = lastInvoiceNumber + 1;
+    this.shoppingCart.legalAmounts.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
   }
 
   private writeLastInvoiceNumber( invoiceNumberFileName : string ) {
-    this.fileManager.writeFile( { path: invoiceNumberFileName, content: this.legalAmounts.invoiceNumber.toString() } );
+    this.fileManager.writeFile( {
+      path: invoiceNumberFileName,
+      content: this.shoppingCart.legalAmounts.invoiceNumber.toString()
+    } );
   }
 
   private readLastInvoiceNumber( invoiceNumberFileName : string ) {
@@ -128,45 +136,45 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    const paymentConfiguration : PaymentConfiguration | undefined = ShoppingCart.paymentsConfigurations.find(
+    const paymentConfiguration : PaymentConfiguration | undefined = ShoppingCartManager.paymentsConfigurations.find(
       paymentConfiguration => paymentConfiguration.paymentMethod === payment
     );
     if ( paymentConfiguration !== undefined ) {
-      this.legalAmounts.total = this.legalAmounts.total * paymentConfiguration.extraFactor;
+      this.shoppingCart.legalAmounts.total = this.shoppingCart.legalAmounts.total * paymentConfiguration.extraFactor;
     }
   }
 
   private applyDiscount() {
     if ( this.hasDiscount() ) {
-      this.legalAmounts.total *= 0.9;
+      this.shoppingCart.legalAmounts.total *= 0.9;
     }
   }
 
   private hasDiscount() {
-    return this.client.isVip || this.hasCountryDiscount();
+    return this.shoppingCart.client.isVip || this.hasCountryDiscount();
   }
 
   private hasCountryDiscount() {
-    let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.countryName === this.client.country
+    let countryConfiguration : CountryConfiguration | undefined = ShoppingCartManager.countryConfigurations.find(
+      countryConfiguration => countryConfiguration.countryName === this.shoppingCart.client.country
     );
     if ( countryConfiguration === undefined ) {
-      countryConfiguration = ShoppingCart.countryConfigurations[0];
+      countryConfiguration = ShoppingCartManager.countryConfigurations[0];
     }
-    return this.legalAmounts.total > countryConfiguration.thresholdForDiscount;
+    return this.shoppingCart.legalAmounts.total > countryConfiguration.thresholdForDiscount;
   }
 
   private calculateShippingCosts() {
-    let countryConfiguration : CountryConfiguration | undefined = ShoppingCart.countryConfigurations.find(
-      countryConfiguration => countryConfiguration.countryName === this.client.country
+    let countryConfiguration : CountryConfiguration | undefined = ShoppingCartManager.countryConfigurations.find(
+      countryConfiguration => countryConfiguration.countryName === this.shoppingCart.client.country
     );
     if ( countryConfiguration === undefined ) {
-      countryConfiguration = ShoppingCart.countryConfigurations[0];
+      countryConfiguration = ShoppingCartManager.countryConfigurations[0];
     }
     countryConfiguration.shippingCost.forEach( shippingCost => {
-      if ( this.legalAmounts.total < shippingCost.upTo ) {
-        const shippingCostAmount = this.legalAmounts.total * shippingCost.factor + shippingCost.plus;
-        this.legalAmounts.total += shippingCostAmount;
+      if ( this.shoppingCart.legalAmounts.total < shippingCost.upTo ) {
+        const shippingCostAmount = this.shoppingCart.legalAmounts.total * shippingCost.factor + shippingCost.plus;
+        this.shoppingCart.legalAmounts.total += shippingCostAmount;
         return;
       }
     } );
@@ -174,7 +182,7 @@ export class ShoppingCart {
 
   private calculateTotalAmount() {
     const warehouseAdministrator = new WarehouseAdministrator();
-    this.lineItems.forEach( line => {
+    this.shoppingCart.lineItems.forEach( line => {
       this.processLineItem( warehouseAdministrator, line );
     } );
   }
@@ -182,7 +190,7 @@ export class ShoppingCart {
   private processLineItem( warehouseAdministrator : WarehouseAdministrator, line : LineItem ) {
     line.quantity = warehouseAdministrator.updatePurchasedProduct( line );
     line.amount = line.price * line.quantity;
-    this.legalAmounts.total += line.amount;
+    this.shoppingCart.legalAmounts.total += line.amount;
     this.addTaxesByProduct( line );
   }
 
@@ -190,12 +198,12 @@ export class ShoppingCart {
     if ( this.hasTaxes( line ) ) {
       const lineTaxInfo = {
         base: line.amount,
-        country: this.client.country,
-        region: this.client.region,
-        isStudent: this.client.isStudent
+        country: this.shoppingCart.client.country,
+        region: this.shoppingCart.client.region,
+        isStudent: this.shoppingCart.client.isStudent
       };
       line.taxes = TaxCalculator.calculateTax( lineTaxInfo );
-      this.legalAmounts.taxes += line.taxes;
+      this.shoppingCart.legalAmounts.taxes += line.taxes;
       let lineTotal = line.amount + line.taxes;
     }
   }
@@ -205,6 +213,6 @@ export class ShoppingCart {
   }
 
   private sendOrderToWarehouse() {
-    this.documentManager.emailOrder( this, this.client.country );
+    this.documentManager.emailOrder( this, this.shoppingCart.client.country );
   }
 }
