@@ -1,14 +1,13 @@
 import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { DocumentManager } from './document-manager';
-import { FileManager } from './file-manager';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
 import { CountryConfiguration } from './models/country-configuration';
 import { LineItem } from './models/line-item';
 import { PaymentConfiguration } from './models/payment-configuration';
 import { ShoppingCart } from './models/shopping-cart';
-import { PathManager } from './path-manager';
+import { ShoppingCartSaver } from './shopping-cart-saver';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
@@ -28,13 +27,9 @@ export class ShoppingCartManager {
   }
   private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
-  private readonly fileManager = new FileManager();
-  private readonly pathManager = new PathManager();
-  private readonly shoppingPrefix : string = `shopping-`;
-  private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
-  private shoppingCart : ShoppingCart;
-
-  private documentManager : DocumentManager = new DocumentManager();
+  private readonly shoppingCart : ShoppingCart;
+  private readonly shoppingCartSaver = new ShoppingCartSaver();
+  private readonly documentManager : DocumentManager = new DocumentManager();
 
   public addLineItem( purchasedItem : LineItem ) {
     this.shoppingCart.lineItems.push( purchasedItem );
@@ -44,19 +39,11 @@ export class ShoppingCartManager {
   }
 
   public loadFromStorage() {
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.shoppingCart.lineItems = this.getLinesFromFile( shoppingFilePath, [] );
+    this.shoppingCartSaver.loadFromStorage( this.shoppingCart );
   }
   public saveToStorage() {
-    this.fileManager.ensureFolder( this.pathManager.dataFolder );
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.shoppingCart.lineItems ) } );
+    this.shoppingCartSaver.saveToStorage( this.shoppingCart );
   }
-  public deleteFromStorage() {
-    const shoppingFilePath = this.getShoppingFilePath();
-    this.fileManager.deleteFile( shoppingFilePath );
-  }
-
   public calculateCheckOut( checkOut : CheckOut ) {
     this.setCheckOut( checkOut );
     this.calculateTotalAmount();
@@ -72,26 +59,10 @@ export class ShoppingCartManager {
     this.shoppingCart.legalAmounts.taxes += TaxCalculator.calculateTax( totalTaxInfo );
     this.setInvoiceNumber();
     this.sendOrderToWarehouse();
-    this.deleteFromStorage();
+    this.shoppingCartSaver.deleteFromStorage( this.shoppingCart );
   }
   public sendInvoiceToCustomer() {
     this.documentManager.sendInvoice( this.shoppingCart );
-  }
-
-  private getShoppingFilePath() {
-    const shoppingFileName = `${this.shoppingPrefix}${this.shoppingCart.client.name}.json`;
-    const shoppingFilePath = this.pathManager.join( this.pathManager.dataFolder, shoppingFileName );
-    return shoppingFilePath;
-  }
-
-  private getLinesFromFile( shoppingFilePath : string, defaultValue : any ) {
-    const fileContent = { path: shoppingFilePath, content: '' };
-    this.fileManager.readFile( fileContent );
-    if ( fileContent.content.length > 0 ) {
-      return JSON.parse( fileContent.content );
-    } else {
-      return defaultValue;
-    }
   }
 
   private setCheckOut( checkOut : CheckOut ) {
@@ -109,27 +80,9 @@ export class ShoppingCartManager {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = this.pathManager.join( this.pathManager.dataFolder, this.lastinvoiceFileName );
-    const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
+    const lastInvoiceNumber = this.shoppingCartSaver.readLastInvoiceNumber();
     this.shoppingCart.legalAmounts.invoiceNumber = lastInvoiceNumber + 1;
-    this.writeLastInvoiceNumber( invoiceNumberFileName );
-  }
-
-  private writeLastInvoiceNumber( invoiceNumberFileName : string ) {
-    this.fileManager.writeFile( {
-      path: invoiceNumberFileName,
-      content: this.shoppingCart.legalAmounts.invoiceNumber.toString()
-    } );
-  }
-
-  private readLastInvoiceNumber( invoiceNumberFileName : string ) {
-    let lastInvoiceNumber = 0;
-    const fileContent = { path: invoiceNumberFileName, content: '0' };
-    this.fileManager.readFile( fileContent );
-    try {
-      lastInvoiceNumber = Number.parseInt( fileContent.content );
-    } catch ( error ) { }
-    return lastInvoiceNumber;
+    this.shoppingCartSaver.writeLastInvoiceNumber( this.shoppingCart );
   }
 
   private applyPaymentMethodExtra( payment : string ) {
