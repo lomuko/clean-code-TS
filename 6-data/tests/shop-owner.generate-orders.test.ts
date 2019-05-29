@@ -10,11 +10,37 @@ describe( `As a shop owner, I want to generate orders, so I can send products to
   let assert : Assert;
 
   const shoppingCart = mocks.newShoppingCart;
-  shoppingCart.addLineItem( 'computer', 1000, 1, shoppingCart.country );
-  shoppingCart.addLineItem( 'monitor', 200, 25, shoppingCart.country );
-  shoppingCart.addLineItem( 'course', 100, 10, shoppingCart.country );
-  shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
-  const orderFilePath = mocks.orderFilePath( shoppingCart.invoiceNumber );
+  shoppingCart.addLineItem( {
+    productName: 'computer',
+    price: 1000,
+    quantity: 1,
+    country: shoppingCart.client.country,
+    amount: 0,
+    taxes: 0
+  } );
+  shoppingCart.addLineItem( {
+    productName: 'monitor',
+    price: 200,
+    quantity: 25,
+    country: shoppingCart.client.country,
+    amount: 0,
+    taxes: 0
+  } );
+  shoppingCart.addLineItem( {
+    productName: 'course',
+    price: 100,
+    quantity: 10,
+    country: shoppingCart.client.country,
+    amount: 0,
+    taxes: 0
+  } );
+  shoppingCart.calculateCheckOut( {
+    paymentMethod: 'PayPal',
+    paymentId: 'x-le/159',
+    shippingAddress: 'One Street',
+    billingAddress: 'Corp. Building'
+  } );
+  const orderFilePath = mocks.orderFilePath( shoppingCart.legalAmounts.invoiceNumber );
 
   assert = {
     given: 'a shopping cart with line items',

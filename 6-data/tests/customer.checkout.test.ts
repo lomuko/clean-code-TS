@@ -15,11 +15,37 @@ describe( `As a customer, I want to check out, so I can pay and get the products
     should: 'calculate check out'
   };
   test( `given ${assert.given} should ${assert.should}`, () => {
-    shoppingCart.addLineItem( 'computer', 1000, 1, shoppingCart.country );
-    shoppingCart.addLineItem( 'monitor', 200, 25, shoppingCart.country );
-    shoppingCart.addLineItem( 'course', 100, 10, shoppingCart.country );
-    shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
-    assert.actual = shoppingCart.totalAmount;
+    shoppingCart.addLineItem( {
+      productName: 'computer',
+      price: 1000,
+      quantity: 1,
+      country: shoppingCart.client.country,
+      amount: 0,
+      taxes: 0
+    } );
+    shoppingCart.addLineItem( {
+      productName: 'monitor',
+      price: 200,
+      quantity: 25,
+      country: shoppingCart.client.country,
+      amount: 0,
+      taxes: 0
+    } );
+    shoppingCart.addLineItem( {
+      productName: 'course',
+      price: 100,
+      quantity: 10,
+      country: shoppingCart.client.country,
+      amount: 0,
+      taxes: 0
+    } );
+    shoppingCart.calculateCheckOut( {
+      paymentMethod: 'PayPal',
+      paymentId: 'x-le/159',
+      shippingAddress: 'One Street',
+      billingAddress: 'Corp. Building'
+    } );
+    assert.actual = shoppingCart.legalAmounts.total;
     assert.expected = 6615;
     expect( assert.actual ).toEqual( assert.expected );
   } );
@@ -29,8 +55,13 @@ describe( `As a customer, I want to check out, so I can pay and get the products
     should: 'have an invoice number'
   };
   test( `given ${assert.given} should ${assert.should}`, () => {
-    shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
-    assert.actual = shoppingCart.invoiceNumber;
+    shoppingCart.calculateCheckOut( {
+      paymentMethod: 'PayPal',
+      paymentId: 'x-le/159',
+      shippingAddress: 'One Street',
+      billingAddress: 'Corp. Building'
+    } );
+    assert.actual = shoppingCart.legalAmounts.invoiceNumber;
     assert.expected = 0;
     expect( assert.actual ).toBeGreaterThan( assert.expected );
   } );

@@ -10,8 +10,13 @@ describe( `As a warehouse employee, I want to process pending orders, so I can s
   let assert : Assert;
 
   const shoppingCart = mocks.newShoppingCart;
-  shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
-  const shipmentFilePath = mocks.shipmentFilePath( shoppingCart.invoiceNumber );
+  shoppingCart.calculateCheckOut( {
+    paymentMethod: 'PayPal',
+    paymentId: 'x-le/159',
+    shippingAddress: 'One Street',
+    billingAddress: 'Corp. Building'
+  } );
+  const shipmentFilePath = mocks.shipmentFilePath( shoppingCart.legalAmounts.invoiceNumber );
 
   assert = {
     given: 'an pending order',

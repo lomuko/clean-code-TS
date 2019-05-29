@@ -14,8 +14,20 @@ describe( `As a shop owner, I want to have my product stock refilled, so I can c
   };
   test( `given ${assert.given} should ${assert.should}`, () => {
     const shoppingCart = mocks.newShoppingCart;
-    shoppingCart.addLineItem( 'monitor', 200, 40, shoppingCart.country );
-    shoppingCart.calculateCheckOut( 'PayPal', 'x-le/159', 'One Street', 'Corp. Building' );
+    shoppingCart.addLineItem( {
+      productName: 'monitor',
+      price: 200,
+      quantity: 40,
+      country: shoppingCart.client.country,
+      amount: 0,
+      taxes: 0
+    } );
+    shoppingCart.calculateCheckOut( {
+      paymentMethod: 'PayPal',
+      paymentId: 'x-le/159',
+      shippingAddress: 'One Street',
+      billingAddress: 'Corp. Building'
+    } );
 
     assert.actual = mocks.theWarehouse.productCatalog[0].stock;
     assert.expected = mocks.theWarehouse.productCatalog[0].minimumStock;
