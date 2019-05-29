@@ -1,7 +1,7 @@
-import * as path from 'path';
 import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { FileManager } from './file-manager';
 import { CountryConfiguration } from './models/country-configuration';
+import { PathManager } from './path-manager';
 import { Printer } from './printer';
 import { ShoppingCart } from './shopping-cart';
 import { TemplateManager } from './template-manager';
@@ -9,11 +9,12 @@ import { TemplateManager } from './template-manager';
 export class DocumentManager {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private readonly logFileName = `log.txt`;
-  private readonly emailFolder = path.join( __dirname, '..', 'data', 'email' );
   private readonly invoicePrefix = `invoice-`;
   private readonly orderPrefix = `order-`;
   private readonly templateManager = new TemplateManager();
   private readonly fileManager = new FileManager();
+  private readonly pathManager = new PathManager();
+  private readonly emailFolder = this.pathManager.emailFolder;
 
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.templateManager.getInvoiceTemplate( shoppingCart );
@@ -57,7 +58,7 @@ export class DocumentManager {
   private getOrderFileName( customerCountry : string, shoppingCart : ShoppingCart ) {
     const warehouseEmailAddress = this.getWarehouseAddressByCountry( customerCountry );
     const orderFileName = `${this.orderPrefix}${shoppingCart.legalAmounts.invoiceNumber}_${warehouseEmailAddress}.txt`;
-    const fileName = path.join( this.emailFolder, orderFileName );
+    const fileName = this.pathManager.join( this.emailFolder, orderFileName );
     return fileName;
   }
 
@@ -71,7 +72,7 @@ export class DocumentManager {
 
   private getInvoiceFileName( emailAddress : string ) {
     const invoiceFileName = `${this.invoicePrefix}${emailAddress}.txt`;
-    const fileName = path.join( this.emailFolder, invoiceFileName );
+    const fileName = this.pathManager.join( this.emailFolder, invoiceFileName );
     return fileName;
   }
 }

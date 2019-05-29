@@ -1,8 +1,8 @@
-import * as path from 'path';
 import { PRODUCT_CATALOG } from './config/product-catalog';
 import { FileManager } from './file-manager';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
+import { PathManager } from './path-manager';
 import { Printer } from './printer';
 
 export class WarehouseAdministrator {
@@ -12,6 +12,7 @@ export class WarehouseAdministrator {
   private readonly orderPrefix = `order-`;
   private readonly restockPrefix = `restock-`;
   private readonly fileManager = new FileManager();
+  private readonly pathManager = new PathManager();
   public stock : any[] = [];
 
   private static findProductByName( productName : string ) {
@@ -37,7 +38,7 @@ export class WarehouseAdministrator {
   }
 
   private getOrdersFolder() {
-    return path.join( __dirname, '..', 'data', 'email' );
+    return this.pathManager.emailFolder;
   }
 
   private processOrdesFolder( ordersFolder : string ) {
@@ -54,12 +55,15 @@ export class WarehouseAdministrator {
 
   private processOrder( orderFileName : string, ordersFolder : string ) {
     const shippmentFileName = orderFileName.replace( this.orderPrefix, this.shipmentPrefix );
-    this.fileManager.renameFile( path.join( ordersFolder, orderFileName ), path.join( ordersFolder, shippmentFileName ) );
+    this.fileManager.renameFile(
+      this.pathManager.join( ordersFolder, orderFileName ),
+      this.pathManager.join( ordersFolder, shippmentFileName )
+    );
     Printer.printContentToFile( { fileName: this.logFileName, textContent: 'processed: ' + orderFileName } );
   }
 
   private isAnOrderFile( orderFileName : string ) {
-    return path.basename( orderFileName ).startsWith( this.orderPrefix );
+    return this.pathManager.baseName( orderFileName ).startsWith( this.orderPrefix );
   }
 
   private getRealPurchasedQuantity( purchasedProduct : Product, quantity : number ) {

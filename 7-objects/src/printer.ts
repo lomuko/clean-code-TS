@@ -1,11 +1,12 @@
-import * as path from 'path';
 import { FileManager } from './file-manager';
 import { FileToPrint } from './models/file-to-print';
+import { PathManager } from './path-manager';
 
 export class Printer {
-  private static readonly dataFolder = path.join( __dirname, '..', 'data' );
-  private static readonly printFolder = path.join( Printer.dataFolder, 'print' );
   private static readonly fileManager = new FileManager();
+  private static readonly pathManager = new PathManager();
+  private static readonly dataFolder = Printer.pathManager.dataFolder;
+  private static readonly printFolder = Printer.pathManager.printFolder;
   public static printContentToFile( fileToPrint : FileToPrint ) {
     fileToPrint.textContent += '\n';
     Printer.ensurePrintFolder();
@@ -26,6 +27,6 @@ export class Printer {
   }
 
   private static getPrintFilePath( fileName : string ) {
-    return path.join( Printer.printFolder, fileName );
+    return Printer.pathManager.join( Printer.printFolder, fileName );
   }
 }

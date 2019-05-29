@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { DocumentManager } from './document-manager';
@@ -9,6 +8,7 @@ import { CountryConfiguration } from './models/country-configuration';
 import { LegalAmounts } from './models/legal-amounts';
 import { LineItem } from './models/line-item';
 import { PaymentConfiguration } from './models/payment-configuration';
+import { PathManager } from './path-manager';
 import { TaxCalculator } from './tax-calculator';
 import { TemplateManager } from './template-manager';
 import { WarehouseAdministrator } from './warehouse-administrator';
@@ -18,6 +18,7 @@ export class ShoppingCart {
   private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
   private readonly fileManager = new FileManager();
+  private readonly pathManager = new PathManager();
   private readonly shoppingPrefix : string = `shopping-`;
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
   public lineItems : LineItem[] = [];
@@ -41,7 +42,7 @@ export class ShoppingCart {
   }
 
   public saveToStorage() {
-    this.fileManager.ensureFolder( this.dataFolder() );
+    this.fileManager.ensureFolder( this.pathManager.dataFolder );
     const shoppingFilePath = this.getShoppingFilePath();
     this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( this.lineItems ) } );
   }
@@ -79,7 +80,7 @@ export class ShoppingCart {
 
   private getShoppingFilePath() {
     const shoppingFileName = `${this.shoppingPrefix}${this.client.name}.json`;
-    const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
+    const shoppingFilePath = this.pathManager.join( this.pathManager.dataFolder, shoppingFileName );
     return shoppingFilePath;
   }
 
@@ -108,7 +109,7 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
+    const invoiceNumberFileName = this.pathManager.join( this.pathManager.dataFolder, this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
     this.legalAmounts.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
@@ -208,9 +209,5 @@ export class ShoppingCart {
   private sendOrderToWarehouse() {
     const orderMessage = this.templateManager.getOrderTemplate( this );
     this.documentManager.emailOrder( this, orderMessage, this.client.country );
-  }
-
-  private dataFolder() {
-    return path.join( __dirname, '..', 'data' );
   }
 }
