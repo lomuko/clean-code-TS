@@ -7,6 +7,7 @@ export class Printer {
   private static readonly pathManager = new PathManager();
   private static readonly dataFolder = Printer.pathManager.dataFolder;
   private static readonly printFolder = Printer.pathManager.printFolder;
+
   public static printContentToFile( fileToPrint : FileToPrint ) {
     fileToPrint.textContent += '\n';
     Printer.ensurePrintFolder();

@@ -1,5 +1,6 @@
 import { PRODUCT_CATALOG } from './config/product-catalog';
 import { FileManager } from './file-manager';
+import { Logger } from './logger';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
 import { PathManager } from './path-manager';
@@ -7,12 +8,12 @@ import { Printer } from './printer';
 
 export class WarehouseAdministrator {
   public static productCatalog : Product[] = PRODUCT_CATALOG;
-  private readonly logFileName = `log.txt`;
   private readonly shipmentPrefix = `shipment-`;
   private readonly orderPrefix = `order-`;
   private readonly restockPrefix = `restock-`;
   private readonly fileManager = new FileManager();
   private readonly pathManager = new PathManager();
+  private readonly logger = new Logger();
   public stock : any[] = [];
 
   private static findProductByName( productName : string ) {
@@ -59,7 +60,7 @@ export class WarehouseAdministrator {
       this.pathManager.join( ordersFolder, orderFileName ),
       this.pathManager.join( ordersFolder, shippmentFileName )
     );
-    Printer.printContentToFile( { fileName: this.logFileName, textContent: 'processed: ' + orderFileName } );
+    this.logger.print( 'processed: ' + orderFileName );
   }
 
   private isAnOrderFile( orderFileName : string ) {
@@ -69,7 +70,7 @@ export class WarehouseAdministrator {
   private getRealPurchasedQuantity( purchasedProduct : Product, quantity : number ) {
     let realPurchasedQuantity = quantity;
     if ( this.isNotEnouht( purchasedProduct, quantity ) ) {
-      Printer.printContentToFile( { fileName: this.logFileName, textContent: 'not have enough: ' + purchasedProduct.name } );
+      this.logger.print( 'not have enough: ' + purchasedProduct.name );
       realPurchasedQuantity = purchasedProduct.stock;
     }
     return realPurchasedQuantity;

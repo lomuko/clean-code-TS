@@ -1,5 +1,6 @@
 import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { FileManager } from './file-manager';
+import { Logger } from './logger';
 import { CountryConfiguration } from './models/country-configuration';
 import { PathManager } from './path-manager';
 import { Printer } from './printer';
@@ -8,25 +9,20 @@ import { TemplateManager } from './template-manager';
 
 export class DocumentManager {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
-  private readonly logFileName = `log.txt`;
+
   private readonly invoicePrefix = `invoice-`;
   private readonly orderPrefix = `order-`;
   private readonly templateManager = new TemplateManager();
   private readonly fileManager = new FileManager();
   private readonly pathManager = new PathManager();
+  private readonly logger = new Logger();
   private readonly emailFolder = this.pathManager.emailFolder;
 
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.templateManager.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
     this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
-    this.printLog( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
-  }
-
-  public printLog( logContent : string ) {
-    if ( this.hasContent( logContent ) ) {
-      Printer.printContentToFile( { fileName: this.logFileName, textContent: logContent } );
-    }
+    this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
   public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
@@ -34,7 +30,7 @@ export class DocumentManager {
     this.fileManager.ensureFolder( this.emailFolder );
     const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
     this.fileManager.writeFile( { path: orderFileName, content: orderMessageTemplate } );
-    this.printLog( 'Sent Order: ' + shoppingCart.legalAmounts.invoiceNumber );
+    this.logger.print( 'Sent Order: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
   public emailInvoice( emailAddress : string, invoiceContent : string ) {

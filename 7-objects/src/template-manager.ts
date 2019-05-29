@@ -12,6 +12,17 @@ export class TemplateManager {
     return orderTemplate;
   }
 
+  public getOrderMessageTemplate( orderContent : string ) {
+    const orderMessageTemplate = `
+    ---
+    Serve this order ASAP.
+    ---
+    ${orderContent}
+    Regards, the shop.acme.com
+    ---`;
+    return orderMessageTemplate;
+  }
+
   public getInvoiceTemplate( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = `
     LEGAL INVOICE FROM acme!
@@ -30,17 +41,6 @@ export class TemplateManager {
     Total Amount: #${shoppingCart.legalAmounts.total + shoppingCart.legalAmounts.taxes}Euros
     `;
     return invoiceTemplate;
-  }
-
-  public getOrderMessageTemplate( orderContent : string ) {
-    const orderMessageTemplate = `
-    ---
-    Serve this order ASAP.
-    ---
-    ${orderContent}
-    Regards, the shop.acme.com
-    ---`;
-    return orderMessageTemplate;
   }
 
   public getInvoiceMessageTemplate( invoiceContent : string ) {
