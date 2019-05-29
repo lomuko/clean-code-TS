@@ -25,7 +25,8 @@ export class DocumentManager {
     this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
-  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+  public emailOrder( shoppingCart : ShoppingCart, customerCountry : string ) {
+    const orderContent = this.templateManager.getOrderTemplate( shoppingCart );
     const orderMessageTemplate = this.templateManager.getOrderMessageTemplate( orderContent );
     this.fileManager.ensureFolder( this.emailFolder );
     const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );

@@ -10,11 +10,10 @@ import { LineItem } from './models/line-item';
 import { PaymentConfiguration } from './models/payment-configuration';
 import { PathManager } from './path-manager';
 import { TaxCalculator } from './tax-calculator';
-import { TemplateManager } from './template-manager';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCart {
-  constructor( public client : Client ) { }
+  constructor( private client : Client ) { }
   private static countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private static paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
   private readonly fileManager = new FileManager();
@@ -31,7 +30,6 @@ export class ShoppingCart {
   private legalAmounts : LegalAmounts = { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 };
 
   private documentManager : DocumentManager = new DocumentManager();
-  private templateManager : TemplateManager = new TemplateManager();
 
   public addLineItem( purchasedItem : LineItem ) {
     this.lineItems.push( purchasedItem );
@@ -207,7 +205,6 @@ export class ShoppingCart {
   }
 
   private sendOrderToWarehouse() {
-    const orderMessage = this.templateManager.getOrderTemplate( this );
-    this.documentManager.emailOrder( this, orderMessage, this.client.country );
+    this.documentManager.emailOrder( this, this.client.country );
   }
 }
