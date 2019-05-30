@@ -26,7 +26,7 @@ export class DocumentManager {
     Total Amount: #${shoppingCart.totalAmount + shoppingCart.taxesAmount}Euros
     `;
     this.printDocument( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.email, invoiceTemplate );
+    this.sendEmailInvoice( shoppingCart.email, invoiceTemplate );
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
 
@@ -84,7 +84,7 @@ export class DocumentManager {
     return 'warehouse@acme.com';
   }
 
-  public emailInvoice( emailAddress : string, invoiceContent : string ) {
+  public sendEmailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = `
     ---
     See attached invoice.
