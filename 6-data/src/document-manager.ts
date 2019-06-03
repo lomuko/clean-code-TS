@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
+import { COUNTRY_CONFIGURATIONS } from './database/config/country-configurations';
 import { CountryConfiguration } from './models/country-configuration';
 import { Printer } from './printer';
 import { ShoppingCart } from './shopping-cart';
