@@ -1,4 +1,4 @@
-import { CountryConfiguration } from '../models/country-configuration';
+import { CountryConfiguration } from '../../models/country-configuration';
 export const COUNTRY_CONFIGURATIONS : CountryConfiguration[] = [
   {
     countryName: '*default*',
