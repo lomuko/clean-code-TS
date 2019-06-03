@@ -1,5 +1,5 @@
-import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
-import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
+import { COUNTRY_CONFIGURATIONS } from './database/country-configurations';
+import { PAYMENTS_CONFIGURATIONS } from './database/payments-configurations';
 import { CountryConfiguration } from './models/country-configuration';
 import { PaymentConfiguration } from './models/payment-configuration';
 import { ShippingCost } from './models/shipping-cost';

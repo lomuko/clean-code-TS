@@ -1,4 +1,4 @@
-import { LOCAL_TAXES_TREE } from './config/local-taxes-tree';
+import { LOCAL_TAXES_TREE } from './database/local-taxes-tree';
 import { CountryTaxNode } from './models/country-tax-node';
 import { RegionTaxNode } from './models/region-tax-node';
 import { TaxBaseInfo } from './models/tax-base-info';

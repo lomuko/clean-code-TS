@@ -1,4 +1,4 @@
-import { PRODUCT_CATALOG } from './config/product-catalog';
+import { PRODUCT_CATALOG } from './database/product-catalog';
 import { FileManager } from './file-manager';
 import { Logger } from './logger';
 import { LineItem } from './models/line-item';

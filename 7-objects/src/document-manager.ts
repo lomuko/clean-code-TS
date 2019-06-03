@@ -1,4 +1,4 @@
-import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
+import { COUNTRY_CONFIGURATIONS } from './database/country-configurations';
 import { FileManager } from './file-manager';
 import { Logger } from './logger';
 import { CountryConfiguration } from './models/country-configuration';
