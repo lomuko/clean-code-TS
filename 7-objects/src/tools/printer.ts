@@ -1,15 +1,17 @@
 import { FileToPrint } from '../models/file-to-print';
 import { FileManager } from '../vendor/file-manager';
 import { PathManager } from '../vendor/path-manager';
+import { Checker } from './checker';
 
 export class Printer {
   private static readonly fileManager = new FileManager();
   private static readonly pathManager = new PathManager();
+  private static readonly checker = new Checker();
   private static readonly dataFolder = Printer.pathManager.dataFolder;
   private static readonly printFolder = Printer.pathManager.printFolder;
 
   public static printContentToFile( fileToPrint : FileToPrint ) {
-    if ( Printer.hasContent( fileToPrint.textContent ) ) {
+    if ( Printer.checker.hasStringContent( fileToPrint.textContent ) ) {
       fileToPrint.textContent += '\n';
       Printer.ensurePrintFolder();
       Printer.appendOrCreateFile( fileToPrint );
@@ -31,8 +33,5 @@ export class Printer {
 
   private static getPrintFilePath( fileName : string ) {
     return Printer.pathManager.join( Printer.printFolder, fileName );
-  }
-  private static hasContent( content : string ) {
-    return content !== null && content.length > 0;
   }
 }

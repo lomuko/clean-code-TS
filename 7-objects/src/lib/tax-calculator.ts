@@ -42,7 +42,7 @@ export class TaxCalculator {
     }
   }
 
-  private static getCountryVAT( countryTaxNode : CountryTaxNode, regionName : string ) {
+  private static getCountryVAT( countryTaxNode : CountryTaxNode, regionName : string ) : number {
     let regionTaxNode : RegionTaxNode | undefined = countryTaxNode.regionTaxes.find(
       ( regionTaxNode : RegionTaxNode ) => regionTaxNode.regionName === regionName
     );

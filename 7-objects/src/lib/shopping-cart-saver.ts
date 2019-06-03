@@ -1,4 +1,5 @@
 import { ShoppingCart } from '../models/shopping-cart';
+import { Checker } from '../tools/checker';
 import { FileManager } from '../vendor/file-manager';
 import { PathManager } from '../vendor/path-manager';
 
@@ -7,6 +8,7 @@ export class ShoppingCartSaver {
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
   private readonly pathManager = new PathManager();
   private readonly fileManager = new FileManager();
+  private readonly checker = new Checker();
 
   public loadFromStorage( shoppingCart : ShoppingCart ) {
     const shoppingFilePath = this.getShoppingFilePath( shoppingCart );
@@ -50,14 +52,10 @@ export class ShoppingCartSaver {
   private getLinesFromFile( shoppingFilePath : string, defaultValue : any ) {
     const fileContent = { path: shoppingFilePath, content: '' };
     this.fileManager.readFile( fileContent );
-    if ( this.hasContent( fileContent ) > 0 ) {
+    if ( this.checker.hasStringContent( fileContent.content ) ) {
       return JSON.parse( fileContent.content );
     } else {
       return defaultValue;
     }
-  }
-
-  private hasContent( fileContent : { path : string; content : string } ) {
-    return fileContent.content.length;
   }
 }
