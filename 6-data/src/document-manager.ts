@@ -15,7 +15,7 @@ export class DocumentManager {
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
+    this.sendEmailInvoice( shoppingCart.client.email, invoiceTemplate );
     this.printLog( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
@@ -71,7 +71,7 @@ export class DocumentManager {
     return content !== null && content.length > 0;
   }
 
-  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+  public sendemailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
     const orderMessageTemplate = this.getOrderMessageTemplate( orderContent );
     this.ensureEmailFolder();
     const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
@@ -87,9 +87,13 @@ export class DocumentManager {
   }
 
   private writeDocument( fileName : string, content : string ) {
-    if ( !fs.existsSync( fileName ) ) {
+    if ( this.notExistFile( fileName ) ) {
       fs.writeFileSync( fileName, content );
     }
+  }
+
+  private notExistFile( fileName : string ) {
+    return !fs.existsSync( fileName );
   }
 
   private getOrderMessageTemplate( orderContent : string ) {
@@ -111,7 +115,7 @@ export class DocumentManager {
     return countryConfig.warehouseAddress;
   }
 
-  public emailInvoice( emailAddress : string, invoiceContent : string ) {
+  public sendEmailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = this.getInvoiceMessageTemplate( invoiceContent );
     this.ensureEmailFolder();
     const invliceFileName = this.getInvoiceFileName( emailAddress );
@@ -137,8 +141,12 @@ export class DocumentManager {
   }
 
   private ensureEmailFolder() {
-    if ( !fs.existsSync( this.emailFolder ) ) {
+    if ( this.notExistsFolder() ) {
       fs.mkdirSync( this.emailFolder );
     }
+  }
+
+  private notExistsFolder() {
+    return !fs.existsSync( this.emailFolder );
   }
 }
