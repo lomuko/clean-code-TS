@@ -58,7 +58,7 @@ export class DocumentManager {
     }
   }
 
-  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+  public sendeEmailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
     const warehouse = this.getWarehouseAddressByCountry( customerCountry );
     const orderMessageTemplate = `
     ---

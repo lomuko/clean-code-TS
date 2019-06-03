@@ -13,11 +13,11 @@ export class DocumentManager {
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.email, invoiceTemplate );
+    this.sendEmailInvoice( shoppingCart.email, invoiceTemplate );
     this.printLog( 'Sent Invoice: ' + shoppingCart.invoiceNumber );
   }
 
-  public emailInvoice( emailAddress : string, invoiceContent : string ) {
+  public sendEmailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = this.getInvoiceMessageTemplate( invoiceContent );
     this.ensureEmailFolder();
     const invliceFileName = this.getInvoiceFileName( emailAddress );
@@ -41,7 +41,7 @@ export class DocumentManager {
     }
   }
 
-  public emailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
+  public sendEmailOrder( shoppingCart : ShoppingCart, orderContent : string, customerCountry : string ) {
     const orderMessageTemplate = this.getOrderMessageTemplate( orderContent );
     this.ensureEmailFolder();
     const orderFileName = this.getOrderFileName( customerCountry, shoppingCart );
@@ -92,9 +92,13 @@ export class DocumentManager {
   }
 
   private writeDocument( fileName : string, content : string ) {
-    if ( !fs.existsSync( fileName ) ) {
+    if ( this.notExistsFile( fileName ) ) {
       fs.writeFileSync( fileName, content );
     }
+  }
+
+  private notExistsFile( fileName : string ) {
+    return !fs.existsSync( fileName );
   }
 
   private getOrderMessageTemplate( orderContent : string ) {
@@ -135,8 +139,12 @@ export class DocumentManager {
   }
 
   private ensureEmailFolder() {
-    if ( !fs.existsSync( this.emailFolder ) ) {
+    if ( this.notExistsFolder( this.emailFolder ) ) {
       fs.mkdirSync( this.emailFolder );
     }
+  }
+
+  private notExistsFolder( folderName : string ) {
+    return !fs.existsSync( folderName );
   }
 }

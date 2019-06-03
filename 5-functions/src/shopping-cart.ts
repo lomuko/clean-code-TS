@@ -53,43 +53,6 @@ export class ShoppingCart {
     this.ensureDeleteFile( shoppingFilePath );
   }
 
-  private ensureWriteFile( filePath : string, fileContent : string ) {
-    if ( !fs.existsSync( filePath ) ) {
-      fs.writeFileSync( filePath, fileContent );
-    }
-  }
-
-  private getShoppingFilePath() {
-    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
-    const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
-    return shoppingFilePath;
-  }
-
-  private ensureDataFolder() {
-    if ( !fs.existsSync( this.dataFolder() ) ) {
-      fs.mkdirSync( this.dataFolder() );
-    }
-  }
-
-  private ensureReadFile( shoppingFilePath : string, defaultValue : any ) {
-    if ( fs.existsSync( shoppingFilePath ) ) {
-      try {
-        const file = fs.readFileSync( shoppingFilePath, 'utf8' );
-        return JSON.parse( file );
-      } catch ( error ) {
-        return defaultValue;
-      }
-    } else {
-      return defaultValue;
-    }
-  }
-
-  private ensureDeleteFile( filePath : string ) {
-    if ( fs.existsSync( filePath ) ) {
-      fs.unlinkSync( filePath );
-    }
-  }
-
   public calculateCheckOut( paymentMethod : string, paymentId : string, shippingAddress : string, billingAddress? : string ) {
     this.setCheckOutData( shippingAddress, billingAddress, paymentMethod, paymentId );
     this.calculateTotalAmount();
@@ -104,6 +67,55 @@ export class ShoppingCart {
 
   public sendInvoiceToCustomer() {
     this.documentManager.sendInvoice( this );
+  }
+
+  private ensureWriteFile( filePath : string, fileContent : string ) {
+    if ( this.notExistFile( filePath ) ) {
+      fs.writeFileSync( filePath, fileContent );
+    }
+  }
+
+  private notExistFile( filePath : string ) {
+    return !fs.existsSync( filePath );
+  }
+
+  private getShoppingFilePath() {
+    const shoppingFileName = `${this.shoppingPrefix}${this.clientName}.json`;
+    const shoppingFilePath = path.join( this.getDataFolder(), shoppingFileName );
+    return shoppingFilePath;
+  }
+
+  private ensureDataFolder() {
+    if ( this.notExistsFolder() ) {
+      fs.mkdirSync( this.getDataFolder() );
+    }
+  }
+
+  private notExistsFolder() {
+    return !fs.existsSync( this.getDataFolder() );
+  }
+
+  private ensureReadFile( shoppingFilePath : string, defaultValue : any ) {
+    if ( this.existsFile( shoppingFilePath ) ) {
+      try {
+        const file = fs.readFileSync( shoppingFilePath, 'utf8' );
+        return JSON.parse( file );
+      } catch ( error ) {
+        return defaultValue;
+      }
+    } else {
+      return defaultValue;
+    }
+  }
+
+  private existsFile( shoppingFilePath : string ) {
+    return fs.existsSync( shoppingFilePath );
+  }
+
+  private ensureDeleteFile( filePath : string ) {
+    if ( this.existsFile( filePath ) ) {
+      fs.unlinkSync( filePath );
+    }
   }
 
   private setCheckOutData(
@@ -133,7 +145,7 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
+    const invoiceNumberFileName = path.join( this.getDataFolder(), this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
     this.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
@@ -145,7 +157,7 @@ export class ShoppingCart {
 
   private readLastInvoiceNumber( invoiceNumberFileName : string ) {
     let lastInvoiceNumber = 0;
-    if ( fs.existsSync( invoiceNumberFileName ) ) {
+    if ( this.existsFile( invoiceNumberFileName ) ) {
       try {
         const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
         lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
@@ -181,14 +193,22 @@ export class ShoppingCart {
   }
 
   private calculateShippingCosts() {
-    if ( this.totalAmount < 100 ) {
+    if ( this.isSmallOrder() ) {
       this.calculateShippingSmallOrders();
-    } else if ( this.totalAmount < 1000 ) {
+    } else if ( this.isMediumOrder() ) {
       this.calculateShippingMediumOrders();
     } else {
       this.calculateShippingBigOrders();
     }
     this.totalAmount += this.shippingCost;
+  }
+
+  private isMediumOrder() {
+    return this.totalAmount < 1000;
+  }
+
+  private isSmallOrder() {
+    return this.totalAmount < 100;
   }
 
   private calculateShippingSmallOrders() {
@@ -270,10 +290,10 @@ export class ShoppingCart {
 
   private sendOrderToWarehouse() {
     const orderMessage = this.documentManager.getOrderTemplate( this );
-    this.documentManager.emailOrder( this, orderMessage, this.country );
+    this.documentManager.sendEmailOrder( this, orderMessage, this.country );
   }
 
-  private dataFolder() {
+  private getDataFolder() {
     return path.join( __dirname, '..', 'data' );
   }
 }
