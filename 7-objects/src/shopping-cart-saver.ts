@@ -50,10 +50,14 @@ export class ShoppingCartSaver {
   private getLinesFromFile( shoppingFilePath : string, defaultValue : any ) {
     const fileContent = { path: shoppingFilePath, content: '' };
     this.fileManager.readFile( fileContent );
-    if ( fileContent.content.length > 0 ) {
+    if ( this.hasContent( fileContent ) > 0 ) {
       return JSON.parse( fileContent.content );
     } else {
       return defaultValue;
     }
+  }
+
+  private hasContent( fileContent : { path : string; content : string } ) {
+    return fileContent.content.length;
   }
 }

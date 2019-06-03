@@ -2,6 +2,7 @@ import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
 import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
 import { CountryConfiguration } from './models/country-configuration';
 import { PaymentConfiguration } from './models/payment-configuration';
+import { ShippingCost } from './models/shipping-cost';
 import { ShoppingCart } from './models/shopping-cart';
 
 export class CheckOutCalculator {
@@ -19,7 +20,7 @@ export class CheckOutCalculator {
       countryConfiguration = this.countryConfigurations[0];
     }
     countryConfiguration.shippingCost.forEach( shippingCost => {
-      if ( this.shoppingCart.legalAmounts.total < shippingCost.upTo ) {
+      if ( this.hasShippingCost( shippingCost ) ) {
         const shippingCostAmount = this.shoppingCart.legalAmounts.total * shippingCost.factor + shippingCost.plus;
         this.shoppingCart.legalAmounts.total += shippingCostAmount;
         return;
@@ -40,6 +41,10 @@ export class CheckOutCalculator {
     if ( this.hasDiscount() ) {
       this.shoppingCart.legalAmounts.total *= this.discountFactor;
     }
+  }
+
+  private hasShippingCost( shippingCost : ShippingCost ) {
+    return this.shoppingCart.legalAmounts.total < shippingCost.upTo;
   }
 
   private hasDiscount() {

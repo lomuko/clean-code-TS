@@ -30,11 +30,11 @@ export class DocumentManager {
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.templateManager.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
+    this.sendEmailInvoice( shoppingCart.client.email, invoiceTemplate );
     this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
-  private emailInvoice( emailAddress : string, invoiceContent : string ) {
+  private sendEmailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = this.templateManager.getInvoiceMessageTemplate( invoiceContent );
     this.fileManager.ensureFolder( this.emailFolder );
     const invoiceFileName = this.getInvoiceFileName( emailAddress );
