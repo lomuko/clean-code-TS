@@ -2,11 +2,13 @@ import { LOCAL_TAXES_TREE } from '../database/config/local-taxes-tree';
 import { CountryTaxNode } from '../models/country-tax-node';
 import { RegionTaxNode } from '../models/region-tax-node';
 import { TaxBaseInfo } from '../models/tax-base-info';
+import { Checker } from '../tools/checker';
 
 export class TaxCalculator {
   private static readonly decimalPlaces : number = 2;
   private static readonly taxExemptRegion : string = 'St Pierre';
   private static readonly localTaxesTree : CountryTaxNode[] = LOCAL_TAXES_TREE;
+  private static readonly checker = new Checker();
 
   public static calculateTax( taxBaseInfo : TaxBaseInfo ) {
     if ( TaxCalculator.isTaxExempt( taxBaseInfo ) ) {
@@ -32,24 +34,19 @@ export class TaxCalculator {
   }
 
   private static getLocalVAT( taxBaseInfo : TaxBaseInfo ) {
-    let countryTaxNode : CountryTaxNode | undefined = TaxCalculator.localTaxesTree.find(
-      ( countryTaxNode : CountryTaxNode ) => countryTaxNode.countryName === taxBaseInfo.country
+    const countryTaxNode = TaxCalculator.checker.findSafe(
+      TaxCalculator.localTaxesTree,
+      ( countryTaxNode : CountryTaxNode ) => countryTaxNode.name === taxBaseInfo.country
     );
-    if ( countryTaxNode !== undefined ) {
-      return TaxCalculator.getCountryVAT( countryTaxNode, taxBaseInfo.region );
-    } else {
-      return 0;
-    }
+    return TaxCalculator.getCountryVAT( countryTaxNode, taxBaseInfo.region );
   }
 
   private static getCountryVAT( countryTaxNode : CountryTaxNode, regionName : string ) : number {
-    let regionTaxNode : RegionTaxNode | undefined = countryTaxNode.regionTaxes.find(
-      ( regionTaxNode : RegionTaxNode ) => regionTaxNode.regionName === regionName
+    const regionTaxNode = TaxCalculator.checker.findSafe(
+      TaxCalculator.localTaxesTree,
+      ( regionTaxNode : RegionTaxNode ) => regionTaxNode.name === regionName,
+      countryTaxNode
     );
-    if ( regionTaxNode !== undefined ) {
-      return regionTaxNode.regionVAT;
-    } else {
-      return countryTaxNode.countryVAT;
-    }
+    return regionTaxNode.localVAT;
   }
 }

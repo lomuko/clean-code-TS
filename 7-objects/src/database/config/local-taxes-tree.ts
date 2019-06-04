@@ -2,32 +2,42 @@ import { CountryTaxNode } from '../../models/country-tax-node';
 
 export const LOCAL_TAXES_TREE : CountryTaxNode[] = [
   {
-    countryName: 'Spain',
-    countryVAT: 21,
+    name: '*default*',
+    localVAT: 0,
     regionTaxes: [
       {
-        regionName: 'Canary Islands',
-        regionVAT: 7
+        name: '*default*',
+        localVAT: 0
       }
     ]
   },
   {
-    countryName: 'Portugal',
-    countryVAT: 23,
+    name: 'Spain',
+    localVAT: 21,
     regionTaxes: [
       {
-        regionName: 'Madeira',
-        regionVAT: 22
+        name: 'Canary Islands',
+        localVAT: 7
+      }
+    ]
+  },
+  {
+    name: 'Portugal',
+    localVAT: 23,
+    regionTaxes: [
+      {
+        name: 'Madeira',
+        localVAT: 22
       },
       {
-        regionName: 'Azores',
-        regionVAT: 18
+        name: 'Azores',
+        localVAT: 18
       }
     ]
   },
   {
-    countryName: 'France',
-    countryVAT: 20,
+    name: 'France',
+    localVAT: 20,
     regionTaxes: []
   }
 ];

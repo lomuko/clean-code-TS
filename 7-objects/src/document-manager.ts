@@ -2,6 +2,7 @@ import { COUNTRY_CONFIGURATIONS } from './database/config/country-configurations
 import { TemplateManager } from './lib/template-manager';
 import { CountryConfiguration } from './models/country-configuration';
 import { ShoppingCart } from './models/shopping-cart';
+import { Checker } from './tools/checker';
 import { Logger } from './tools/logger';
 import { Printer } from './tools/printer';
 import { FileManager } from './vendor/file-manager';
@@ -9,7 +10,7 @@ import { PathManager } from './vendor/path-manager';
 
 export class DocumentManager {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
-
+  private readonly checker = new Checker();
   private readonly invoicePrefix = `invoice-`;
   private readonly orderPrefix = `order-`;
   private readonly templateManager = new TemplateManager();
@@ -55,11 +56,11 @@ export class DocumentManager {
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
-    let countryConfig = this.countryConfigurations.find( country => country.countryName === customerCountry );
-    if ( countryConfig === undefined ) {
-      countryConfig = this.countryConfigurations[0];
-    }
-    return countryConfig.warehouseAddress;
+    const countryConfiguration = this.checker.findSafe(
+      this.countryConfigurations,
+      country => country.countryName === customerCountry
+    );
+    return countryConfiguration.warehouseAddress;
   }
 
   private getInvoiceFileName( emailAddress : string ) {
