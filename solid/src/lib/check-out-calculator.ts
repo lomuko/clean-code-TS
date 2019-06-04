@@ -6,7 +6,19 @@ import { ShippingCost } from '../models/shipping-cost';
 import { ShoppingCart } from '../models/shopping-cart';
 import { Checker } from '../tools/checker';
 
-export class CheckOutCalculator {
+export interface ICalculateCheckOut {
+  calculateShippingCosts() : void;
+  applyPaymentMethodExtra( payment : string ) : void;
+  applyDiscount() : void;
+}
+
+export class CalculateCheckOutFactory {
+  public static createCalculatorFor( shoppingCart : ShoppingCart ) : ICalculateCheckOut {
+    return new CheckOutCalculator( shoppingCart );
+  }
+}
+
+export class CheckOutCalculator implements ICalculateCheckOut {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
   private readonly paymentsConfigurations : PaymentConfiguration[] = PAYMENTS_CONFIGURATIONS;
   private readonly discountFactor = 0.9;

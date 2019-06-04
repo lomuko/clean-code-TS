@@ -15,11 +15,13 @@ export class ShoppingCartSaver {
     const shoppingFilePath = this.getShoppingFilePath( shoppingCart );
     shoppingCart.lineItems = this.getLinesFromFile( shoppingFilePath, [] );
   }
+
   public saveToStorage( shoppingCart : ShoppingCart ) {
     this.fileManager.ensureFolder( this.pathManager.dataFolder );
     const shoppingFilePath = this.getShoppingFilePath( shoppingCart );
     this.fileManager.writeFile( { path: shoppingFilePath, content: JSON.stringify( shoppingCart.lineItems ) } );
   }
+
   public deleteFromStorage( shoppingCart : ShoppingCart ) {
     const shoppingFilePath = this.getShoppingFilePath( shoppingCart );
     this.fileManager.deleteFile( shoppingFilePath );

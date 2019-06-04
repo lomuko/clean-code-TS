@@ -3,6 +3,7 @@
 ## WarehouseAdministrator
 
 - extraer responsabilidad de procesar pedidos a OrderProcessor
+- _shopping cart saver... sin invoiceNumber read write_
 
 # OCP
 
@@ -25,5 +26,11 @@
 
 # DIP
 
-## Logger
+## CheckOutCalculator
+
+- La factoría puede darnos distintas calculadoras según varíen las funcionalidades y tengamos más implementaciones
+
+# SOLID
+
+## ShoppingCartSaver
 

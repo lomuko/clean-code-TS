@@ -1,5 +1,5 @@
 import { DocumentManager } from './document-manager';
-import { CheckOutCalculator } from './lib/check-out-calculator';
+import { CalculateCheckOutFactory, ICalculateCheckOut } from './lib/check-out-calculator';
 import { ShoppingCartSaver } from './lib/shopping-cart-saver';
 import { TaxCalculator } from './lib/tax-calculator';
 import { CheckOut } from './models/check-out';
@@ -21,12 +21,12 @@ export class ShoppingCartManager {
       },
       legalAmounts: { total: 0, shippingCost: 0, taxes: 0, invoiceNumber: 0 }
     };
-    this.checkOutCalculator = new CheckOutCalculator( this.shoppingCart );
+    this.checkOutCalculator = CalculateCheckOutFactory.createCalculatorFor( this.shoppingCart );
   }
   private readonly shoppingCart : ShoppingCart;
   private readonly shoppingCartSaver = new ShoppingCartSaver();
   private readonly documentManager : DocumentManager = new DocumentManager();
-  private readonly checkOutCalculator : CheckOutCalculator;
+  private readonly checkOutCalculator : ICalculateCheckOut;
 
   public addLineItem( purchasedItem : LineItem ) {
     this.shoppingCart.lineItems.push( purchasedItem );
