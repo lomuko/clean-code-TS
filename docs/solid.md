@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## Principios sólidos para buenos finales
+## Principios sólidos para finales flexibles
 
 > "Orienta tu código para un uso futuro,
 
@@ -28,17 +28,17 @@ class: impact
 
 ### Rigidez
 
-**Un cambio afecta a muchas partes**
+**Un cambio afecta a muchas partes.**
 Al cambiar un objeto hay que cambiar otros muchos.
 
 ### Fragilidad
 
-**Las errores saltan en lugares inesperados**
+**Las errores saltan en lugares inesperados.**
 Los cambios en un objeto tienen efectos en otros muchos.
 
 ### Inmovilidad
 
-**No se puede reutilizar el código fuera de su entorno**
+**No se puede reutilizar el código fuera de su entorno.**
 Los cambios en un objeto dependen de otros muchos.
 
 ---
@@ -49,35 +49,35 @@ Los cambios en un objeto dependen de otros muchos.
 
 ### S : Single responsibility principle
 
-**Principio de responsabilidad única**
+**Principio de responsabilidad única.**
 Un objeto solo debería tener una única responsabilidad, o razón para cambiar.
 
 --
 
 ### O : Open/closed principle
 
-**Principio de abierto/cerrado**
+**Principio de abierto/cerrado.**
 Las entidades de software deben estar abiertas para su extensión, pero cerradas para su modificación.
 
 --
 
 ### L : Liskov substitution principle
 
-**Principio de sustitución de Liskov**
+**Principio de sustitución de Liskov.**
 Los objetos deberían ser reemplazables por subtipos sin alterar el funcionamiento del programa.
 
 ---
 
 ### I : Interface segregation principle
 
-**Principio de segregación de la interfaz**
+**Principio de segregación de la interfaz.**
 Muchas interfaces específicas son mejores que una interfaz de propósito general.​
 
 --
 
 ### D : Dependency inversion principle
 
-**Principio de inversión de la dependencia**
+**Principio de inversión de la dependencia.**
 Depender de abstracciones, no de implementaciones concretas. Resolver en ejecución usando la Inyección de Dependencias.
 
 --

@@ -1,4 +1,4 @@
-title: Bad smells
+title: Bad Good
 class: animation-fade
 layout: true
 
@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## Malos olores
+## Malos olores y Buenas prácticas
 
 > "El código huele.".
 >
