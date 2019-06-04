@@ -30,7 +30,12 @@
 
 - La factoría puede darnos distintas calculadoras según varíen las funcionalidades y tengamos más implementaciones
 
+- ShoppingCartManager depende ahora de una abstracción, y no de una implementación de menor nivel
+
+
 # SOLID
+
+_Caso de estudio completo_
 
 ## ShoppingCartSaver
 
