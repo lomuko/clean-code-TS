@@ -1,3 +1,4 @@
+import { IHasContent } from '../models/i-has-content';
 import { ShoppingCart } from '../models/shopping-cart';
 import { Checker } from '../tools/checker';
 import { FileManager } from '../vendor/file-manager';
@@ -8,7 +9,7 @@ export class ShoppingCartSaver {
   private readonly lastinvoiceFileName : string = `lastinvoice.txt`;
   private readonly pathManager = new PathManager();
   private readonly fileManager = new FileManager();
-  private readonly checker = new Checker();
+  private readonly checker : IHasContent = new Checker();
 
   public loadFromStorage( shoppingCart : ShoppingCart ) {
     const shoppingFilePath = this.getShoppingFilePath( shoppingCart );

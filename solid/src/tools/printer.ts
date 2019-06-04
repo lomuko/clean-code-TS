@@ -1,12 +1,13 @@
 import { FileToPrint } from '../models/file-to-print';
+import { IHasContent } from '../models/i-has-content';
 import { FileManager } from '../vendor/file-manager';
 import { PathManager } from '../vendor/path-manager';
-import { Checker } from './checker';
+import { StringChecker } from './string-checker';
 
 export class Printer {
   private static readonly fileManager = new FileManager();
   private static readonly pathManager = new PathManager();
-  private static readonly checker = new Checker();
+  private static readonly checker : IHasContent = new StringChecker();
   private static readonly dataFolder = Printer.pathManager.dataFolder;
   private static readonly printFolder = Printer.pathManager.printFolder;
 

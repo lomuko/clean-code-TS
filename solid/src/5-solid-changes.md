@@ -21,6 +21,9 @@
 
 ## Checker
 
+- Podemos tener una clase que implementa varias interfaces, mientras permitimos que otros obtengan sólo lo que necesitan con implementaciones granulares
+
 # DIP
 
 ## Logger
+
