@@ -96,6 +96,38 @@ Un objeto debe asumir lo menos posible acerca de cualquier otro.
 ---
 
 
+## Otros principios para un final feliz
+
+###  POLA: Principle Of Least Astonishment
+
+- No me sorprendas, no me hagas pensar
+
+###  YAGNI: You aren't gonna need it
+
+- Implementa cosas cuando las necesites, no cuando preveas que las necesitas
+
+### HP: Hollywood principle
+
+- No nos llames, ya te llamaremos. Inversión del control.
+
+
+### TDA: Tell don’t ask principle
+
+- Decirle a los objetos lo que quieres que haga (método con datos propios), no consultar un objeto y actuar con sus datos después
+
+### CQS: Command–query separation
+
+- Cada método debe ser un comando que realice una acción o una consulta que devuelva datos, **pero no ambos**.
+
+### CoC: Convention over configuration
+
+- Establecer y cumplir convenios que minimicen la cantidad de decisiones necesarias.
+
+### Composite reuse principle
+
+- Mejor componer que heredar.
+
+
 - [<- Vuelta al índice ](./)
 
 - [Repo](https://github.com/AcademiaBinaria/CleanCode)
