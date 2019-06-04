@@ -24,6 +24,12 @@ class: impact
 
 ---
 
+[Arquitectura de software] (https://medium.com/@albertobasalo71/la-arquitectura-del-software-y-el-tiempo-dc7f55c23bce)
+
+Evoluciona en función del tiempo de mantenimiento esperado.
+
+---
+
 ## Obstáculos para el cambio
 
 ### Rigidez
