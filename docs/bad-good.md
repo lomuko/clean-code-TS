@@ -16,7 +16,7 @@ class: impact
 
 ## Malos olores y Buenas prácticas
 
-> "El código huele.".
+> "El código huele."
 >
 > -- **Martin Fowler**.
 
@@ -26,21 +26,21 @@ class: impact
 
 ### Método largo.
 
-- Los métodos pequeños siempre son mejores (nombres fáciles, comprensión, menos código duplicado).
+- Los métodos pequeños siempre son mejores (nombres documentan reglas, comprensión más fácil, menos código duplicado).
 
 ### Clase grande.
 
 - Demasiadas variables de instancia o métodos. Viola el principio de "responsabilidad única".
 
-### Obsesión por los primitivos.
-
-- Uso excesivo de valores primitivos en lugar de una mejor abstracción en una clase, una interfaz o una estructura separada.
-
----
-
 ### Lista larga de parámetros ( in / out / ref).
 
 - Propio del estilo procedimental en lugar de orientado a objetos. Puede ser que el método haga **demasiadas** cosas.
+
+---
+
+### Obsesión por los primitivos.
+
+- Uso excesivo de valores primitivos en lugar de una mejor abstracción en una clase, una interfaz o una estructura separada.
 
 ### Grupos de datos no agrupados.
 
@@ -48,15 +48,11 @@ class: impact
 
 ---
 
-## Abusones de objetos
+## Uso indebido de objetos
 
-### Switch statements.
+### Switch vs Open/close.
 
 - Se puede sustituir mediante datos de configuración y polimorfismo.
-
-### Campos temporales.
-
-- Sólo tienen valor en determinadas circunstancias.
 
 ### Renuncio a la herencia.
 
@@ -72,11 +68,11 @@ class: impact
 
 ### Cambio divergente.
 
-- Una clase se cambia comúnmente de diferentes maneras o por diferentes razones.
+- Una clase que se cambia de diferentes maneras o por diferentes razones.
 
 ### Cirugía con escopeta
 
-- Un cambio requiere cambios en muchas clases. Difícil encontrarlos, fácil perderse.
+- Un cambio que requiere cambios en muchas clases. Difícil encontrarlos, fácil olvidarse.
 
 ### Complejidad ciclomática.
 
@@ -102,9 +98,7 @@ class: impact
 
 - Si una clase delega todo su trabajo a otra clase, ¿por qué existe?.
 
-
 ---
-
 
 ## Otros principios para un final feliz
 
@@ -120,7 +114,7 @@ class: impact
 
 - No nos llames, ya te llamaremos. Inversión del control.
 
-### TDA: Tell don’t ask principle.
+### TDA: Tell don’t ask.
 
 - Decirle a los objetos lo que quieres que hagan (método con datos propios), no consultarles y actuar con sus datos después.
 
@@ -136,7 +130,7 @@ class: impact
 
 ### La Ley de Demeter (LoD)
 
-- Un objeto debe asumir lo menos posible acerca de cualquier otro.
+- Un objeto debe asumir lo menos posible acerca de cualquier otro. _Antiglobalización_.
 
 ### Composite reuse principle
 
