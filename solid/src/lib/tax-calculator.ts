@@ -1,5 +1,6 @@
 import { LOCAL_TAXES_TREE } from '../database/config/local-taxes-tree';
 import { CountryTaxNode } from '../models/country-tax-node';
+import { LocalTaxnode } from '../models/local-tax-node';
 import { RegionTaxNode } from '../models/region-tax-node';
 import { TaxBaseInfo } from '../models/tax-base-info';
 import { Checker } from '../tools/checker';
@@ -34,7 +35,7 @@ export class TaxCalculator {
   }
 
   private static getLocalVAT( taxBaseInfo : TaxBaseInfo ) {
-    const countryTaxNode = TaxCalculator.checker.findSafe(
+    const countryTaxNode : CountryTaxNode = TaxCalculator.checker.findSafe(
       TaxCalculator.localTaxesTree,
       ( countryTaxNode : CountryTaxNode ) => countryTaxNode.name === taxBaseInfo.country
     );
@@ -42,7 +43,7 @@ export class TaxCalculator {
   }
 
   private static getCountryVAT( countryTaxNode : CountryTaxNode, regionName : string ) : number {
-    const regionTaxNode = TaxCalculator.checker.findSafe(
+    const regionTaxNode : LocalTaxnode = TaxCalculator.checker.findSafe(
       TaxCalculator.localTaxesTree,
       ( regionTaxNode : RegionTaxNode ) => regionTaxNode.name === regionName,
       countryTaxNode

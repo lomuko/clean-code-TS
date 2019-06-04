@@ -13,7 +13,7 @@
 
 # LSP
 
-- _¿ countryNode, regionNode ?_
+- CountryTaxNode, RegionTaxNode extienden a LocalTaxNode y se usan en TaxCalculator
 
 ##
 

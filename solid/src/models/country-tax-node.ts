@@ -1,6 +1,5 @@
+import { LocalTaxnode } from './local-tax-node';
 import { RegionTaxNode } from './region-tax-node';
-export interface CountryTaxNode {
-  name : string;
-  localVAT : number;
+export interface CountryTaxNode extends LocalTaxnode {
   regionTaxes : RegionTaxNode[];
 }
