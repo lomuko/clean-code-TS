@@ -1,8 +1,8 @@
 import { PRODUCT_CATALOG } from './database/product-catalog';
+import { Logger } from './helper/logger';
+import { Printer } from './helper/printer';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
-import { Logger } from './tools/logger';
-import { Printer } from './tools/printer';
 
 export class WarehouseAdministrator {
   private static productCatalog : Product[] = PRODUCT_CATALOG;

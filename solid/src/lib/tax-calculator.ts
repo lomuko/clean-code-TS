@@ -1,9 +1,9 @@
 import { LOCAL_TAXES_TREE } from '../database/config/local-taxes-tree';
+import { Checker } from '../helper/checker';
 import { CountryTaxNode } from '../models/country-tax-node';
 import { LocalTaxnode } from '../models/local-tax-node';
 import { RegionTaxNode } from '../models/region-tax-node';
 import { TaxBaseInfo } from '../models/tax-base-info';
-import { Checker } from '../tools/checker';
 
 export class TaxCalculator {
   private static readonly decimalPlaces : number = 2;

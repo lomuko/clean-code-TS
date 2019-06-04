@@ -1,9 +1,9 @@
+import { Logger } from '../helper/logger';
+import { Printer } from '../helper/printer';
 import { FileManager } from '../import/file-manager';
 import { PathManager } from '../import/path-manager';
 import { IDocumentSender } from '../models/i-document-sender';
 import { ShoppingCart } from '../models/shopping-cart';
-import { Logger } from '../tools/logger';
-import { Printer } from '../tools/printer';
 import { TemplateManager } from './template-manager';
 
 export class InvoiceSender implements IDocumentSender {

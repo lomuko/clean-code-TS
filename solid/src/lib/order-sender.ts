@@ -1,11 +1,11 @@
 import { COUNTRY_CONFIGURATIONS } from '../database/config/country-configurations';
+import { Checker } from '../helper/checker';
+import { Logger } from '../helper/logger';
 import { FileManager } from '../import/file-manager';
 import { PathManager } from '../import/path-manager';
 import { CountryConfiguration } from '../models/country-configuration';
 import { IDocumentSender } from '../models/i-document-sender';
 import { ShoppingCart } from '../models/shopping-cart';
-import { Checker } from '../tools/checker';
-import { Logger } from '../tools/logger';
 import { TemplateManager } from './template-manager';
 
 export class OrderSender implements IDocumentSender {

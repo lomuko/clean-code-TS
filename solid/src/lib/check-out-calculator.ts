@@ -1,10 +1,10 @@
 import { COUNTRY_CONFIGURATIONS } from '../database/config/country-configurations';
 import { PAYMENTS_CONFIGURATIONS } from '../database/config/payments-configurations';
+import { Checker } from '../helper/checker';
 import { CountryConfiguration } from '../models/country-configuration';
 import { PaymentConfiguration } from '../models/payment-configuration';
 import { ShippingCost } from '../models/shipping-cost';
 import { ShoppingCart } from '../models/shopping-cart';
-import { Checker } from '../tools/checker';
 
 export interface ICalculateCheckOut {
   calculateShippingCosts() : void;

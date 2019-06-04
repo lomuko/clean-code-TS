@@ -1,7 +1,7 @@
 import { DOCUMENT_TYPES } from './database/config/document-types';
+import { Checker } from './helper/checker';
 import { DocumentType } from './models/document-type';
 import { ShoppingCart } from './models/shopping-cart';
-import { Checker } from './tools/checker';
 
 export class DocumentManager {
   private readonly checker = new Checker();
