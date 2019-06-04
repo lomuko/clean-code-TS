@@ -24,24 +24,23 @@ class: impact
 
 ##  Huele a humo
 
-### Método largo
-Los métodos pequeños siempre son mejores (nombres fáciles, comprensión, menos código duplicado)
+### Método largo.
+Los métodos pequeños siempre son mejores (nombres fáciles, comprensión, menos código duplicado).
 
-### Clase grande
-Demasiadas variables de instancia o métodos
-Violando el principio de "responsabilidad única"
+### Clase grande.
+Demasiadas variables de instancia o métodos.
+Violando el principio de "responsabilidad única".
 
-### Obsesión por los primitivos (campos básicos sobre utilizados)
-Uso excesivo de valores primitivos, en lugar de una mejor abstracción
-Se puede extraer en clase separada con validación encapsulada.
+### Obsesión por los primitivos.
+Uso excesivo de valores primitivos en lugar de una mejor abstracción en una clase, interfaz o estructura separada.
 
 ---
 
-## Lista larga de parámetros ( in / out / ref)
+### Lista larga de parámetros ( in / out / ref).
 Puede indicar el estilo de procedimental en lugar de orientado a objetos
-Puede ser que el método haga demasiadas cosas.
+Puede ser que el método haga **demasiadas** cosas.
 
-## Grupos de datos no agrupados
+### Grupos de datos no agrupados.
 Un conjunto de datos que siempre aparecen juntos, pero no se organizan juntos en ninguna clase o estructura.
 
 
