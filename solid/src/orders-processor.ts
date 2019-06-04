@@ -1,6 +1,6 @@
+import { FileManager } from './import/file-manager';
+import { PathManager } from './import/path-manager';
 import { Logger } from './tools/logger';
-import { FileManager } from './vendor/file-manager';
-import { PathManager } from './vendor/path-manager';
 
 export class OrdersProcessor {
   private readonly pathManager = new PathManager();

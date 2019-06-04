@@ -1,7 +1,7 @@
+import { FileManager } from '../import/file-manager';
+import { PathManager } from '../import/path-manager';
 import { FileToPrint } from '../models/file-to-print';
 import { IHasContent } from '../models/i-has-content';
-import { FileManager } from '../vendor/file-manager';
-import { PathManager } from '../vendor/path-manager';
 import { StringChecker } from './string-checker';
 
 export class Printer {

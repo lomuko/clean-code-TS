@@ -1,6 +1,6 @@
+import { FileManager } from '../import/file-manager';
+import { PathManager } from '../import/path-manager';
 import { FileToPrint } from '../models/file-to-print';
-import { FileManager } from '../vendor/file-manager';
-import { PathManager } from '../vendor/path-manager';
 import { Checker } from './checker';
 
 export class Printer {

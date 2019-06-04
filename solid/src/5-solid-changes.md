@@ -3,7 +3,7 @@
 ## WarehouseAdministrator
 
 - extraer responsabilidad de procesar pedidos a OrderProcessor
-- _shopping cart saver... sin invoiceNumber read write_
+
 
 # OCP
 
@@ -38,4 +38,3 @@
 _Caso de estudio completo_
 
 ## ShoppingCartSaver
-

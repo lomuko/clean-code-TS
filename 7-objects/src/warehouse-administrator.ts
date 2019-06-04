@@ -1,10 +1,10 @@
 import { PRODUCT_CATALOG } from './database/product-catalog';
+import { FileManager } from './import/file-manager';
+import { PathManager } from './import/path-manager';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
 import { Logger } from './tools/logger';
 import { Printer } from './tools/printer';
-import { FileManager } from './vendor/file-manager';
-import { PathManager } from './vendor/path-manager';
 
 export class WarehouseAdministrator {
   private static productCatalog : Product[] = PRODUCT_CATALOG;

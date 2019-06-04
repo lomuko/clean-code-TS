@@ -1,12 +1,12 @@
 import { COUNTRY_CONFIGURATIONS } from './database/config/country-configurations';
+import { FileManager } from './import/file-manager';
+import { PathManager } from './import/path-manager';
 import { TemplateManager } from './lib/template-manager';
 import { CountryConfiguration } from './models/country-configuration';
 import { ShoppingCart } from './models/shopping-cart';
 import { Checker } from './tools/checker';
 import { Logger } from './tools/logger';
 import { Printer } from './tools/printer';
-import { FileManager } from './vendor/file-manager';
-import { PathManager } from './vendor/path-manager';
 
 export class DocumentManager {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;

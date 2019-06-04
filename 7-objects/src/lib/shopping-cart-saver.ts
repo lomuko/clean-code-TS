@@ -1,7 +1,7 @@
+import { FileManager } from '../import/file-manager';
+import { PathManager } from '../import/path-manager';
 import { ShoppingCart } from '../models/shopping-cart';
 import { Checker } from '../tools/checker';
-import { FileManager } from '../vendor/file-manager';
-import { PathManager } from '../vendor/path-manager';
 
 export class ShoppingCartSaver {
   private readonly shoppingPrefix : string = `shopping-`;
