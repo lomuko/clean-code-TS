@@ -32,7 +32,7 @@ class: impact
 
 - Demasiadas variables de instancia o métodos. Viola el principio de "responsabilidad única".
 
-### Lista larga de parámetros ( in / out / ref).
+### Lista larga de parámetros.
 
 - Propio del estilo procedimental en lugar de orientado a objetos. Puede ser que el método haga **demasiadas** cosas.
 
@@ -50,7 +50,7 @@ class: impact
 
 ## Uso indebido de objetos
 
-### Switch vs Open/close.
+### Switch vs Open/Close.
 
 - Se puede sustituir mediante datos de configuración y polimorfismo.
 
@@ -130,13 +130,15 @@ class: impact
 
 ### La Ley de Demeter (LoD)
 
-- Un objeto debe asumir lo menos posible acerca de cualquier otro. _Antiglobalización_.
+- Un objeto debe asumir lo menos posible acerca de cualquier otro. _Antiglobalización!_.
 
 ### Composite reuse principle
 
 - Mejor componer que heredar.
 
 ---
+
+## Estos mandamientos se resumen en dos:
 
 ### DRY: Don't repeat yourself.
 
