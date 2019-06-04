@@ -2,21 +2,10 @@ import { COUNTRY_CONFIGURATIONS } from '../database/config/country-configuration
 import { PAYMENTS_CONFIGURATIONS } from '../database/config/payments-configurations';
 import { Checker } from '../helper/checker';
 import { CountryConfiguration } from '../models/country-configuration';
+import { ICalculateCheckOut } from '../models/i-calculate-check-out';
 import { PaymentConfiguration } from '../models/payment-configuration';
 import { ShippingCost } from '../models/shipping-cost';
 import { ShoppingCart } from '../models/shopping-cart';
-
-export interface ICalculateCheckOut {
-  calculateShippingCosts() : void;
-  applyPaymentMethodExtra( payment : string ) : void;
-  applyDiscount() : void;
-}
-
-export class CalculateCheckOutFactory {
-  public static createCalculatorFor( shoppingCart : ShoppingCart ) : ICalculateCheckOut {
-    return new CheckOutCalculator( shoppingCart );
-  }
-}
 
 export class CheckOutCalculator implements ICalculateCheckOut {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;

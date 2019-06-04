@@ -1,9 +1,10 @@
 import { DocumentManager } from './document-manager';
-import { CalculateCheckOutFactory, ICalculateCheckOut } from './lib/check-out-calculator';
+import { CalculateCheckOutFactory } from './lib/calculate-check-out-factory';
 import { ShoppingCartSaver } from './lib/shopping-cart-saver';
 import { TaxCalculator } from './lib/tax-calculator';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
+import { ICalculateCheckOut } from './models/i-calculate-check-out';
 import { LineItem } from './models/line-item';
 import { ShoppingCart } from './models/shopping-cart';
 import { WarehouseAdministrator } from './warehouse-administrator';
