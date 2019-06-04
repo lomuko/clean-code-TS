@@ -61,7 +61,7 @@ export class ShoppingCartManager {
   }
 
   public sendInvoiceToCustomer() {
-    this.documentManager.sendInvoice( this.shoppingCart );
+    this.documentManager.send( this.shoppingCart, 'invoice' );
   }
 
   private setCheckOut( checkOut : CheckOut ) {
@@ -111,6 +111,6 @@ export class ShoppingCartManager {
   }
 
   private sendOrderToWarehouse() {
-    this.documentManager.sendOrder( this.shoppingCart );
+    this.documentManager.send( this.shoppingCart, 'order' );
   }
 }
