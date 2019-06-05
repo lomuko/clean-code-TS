@@ -81,7 +81,7 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 
 ---
 
-## 8- EXTRA [Bibliografía y prácticas](https://academiabinaria.github.io/clean-code-TS/a-extra.html)
+## 8- EXTRA [Bibliografía y prácticas](https://academiabinaria.github.io/clean-code-TS/8-extra.html)
 
 - Consejos y trucos
 - Programación Orientada a objetos
@@ -89,7 +89,7 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 - Fragmentos
 
 
-## 9- ARTISAN [Artesanía del software](https://academiabinaria.github.io/clean-code-TS/d-end.html)
+## 9- ARTISAN [Artesanía del software](https://academiabinaria.github.io/clean-code-TS/9-artisan.html)
 
 - Manifiesto ágil
 - Manifiesto artesano
