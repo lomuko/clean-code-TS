@@ -97,18 +97,22 @@ export class ShoppingCart {
 
     this.setInvoiceNumber();
     const orderMessage = this.documentManager.getOrderMessage( this );
-    this.documentManager.emailOrder( this, orderMessage, this.country );
+    this.documentManager.sendEmailOrder( this, orderMessage, this.country );
     this.deleteFromStorage();
   }
 
   private setInvoiceNumber() {
     const invoiceNumberFileName = path.join( path.join( __dirname, '..', 'data' ), this.lastinvoiceFileName );
     let lastInvoiceNumber = 0;
-    if ( fs.existsSync( invoiceNumberFileName ) ) {
+    if ( this.existsInvoiceNumbersFile( invoiceNumberFileName ) ) {
       lastInvoiceNumber = this.readLastInvoiceFromFile( invoiceNumberFileName, lastInvoiceNumber );
     }
     this.invoiceNumber = lastInvoiceNumber + 1;
     fs.writeFileSync( invoiceNumberFileName, this.invoiceNumber );
+  }
+
+  private existsInvoiceNumbersFile( invoiceNumberFileName : string ) {
+    return fs.existsSync( invoiceNumberFileName );
   }
 
   private readLastInvoiceFromFile( invoiceNumberFileName : string, lastInvoiceNumber : number ) {
@@ -122,9 +126,13 @@ export class ShoppingCart {
   }
 
   private applyPaymentMethodExtra( payment : string ) {
-    if ( payment === this.paymentMethodExtra ) {
+    if ( this.hasPaymentMethodExtra( payment ) ) {
       this.totalAmount = this.totalAmount * 1.05;
     }
+  }
+
+  private hasPaymentMethodExtra( payment : string ) {
+    return payment === this.paymentMethodExtra;
   }
 
   private applyDiscount() {
@@ -143,14 +151,22 @@ export class ShoppingCart {
   }
 
   private calculateShippingCosts() {
-    if ( this.totalAmount < 100 ) {
+    if ( this.isSmallOrder() ) {
       this.calculateShippingSmallOrders();
-    } else if ( this.totalAmount < 1000 ) {
+    } else if ( this.isMediumOrder() ) {
       this.calculateShippingMediumOrders();
     } else {
       this.calculateShippingBigOrders();
     }
     this.totalAmount += this.shippingCost;
+  }
+
+  private isMediumOrder() {
+    return this.totalAmount < 1000;
+  }
+
+  private isSmallOrder() {
+    return this.totalAmount < 100;
   }
 
   private calculateShippingSmallOrders() {

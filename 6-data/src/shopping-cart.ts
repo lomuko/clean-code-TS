@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
-import { PAYMENTS_CONFIGURATIONS } from './config/payments-configurations';
+import { COUNTRY_CONFIGURATIONS } from './database/config/country-configurations';
+import { PAYMENTS_CONFIGURATIONS } from './database/config/payments-configurations';
 import { DocumentManager } from './document-manager';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
@@ -10,6 +10,7 @@ import { FileContent } from './models/file-content';
 import { LegalAmounts } from './models/legal-amounts';
 import { LineItem } from './models/line-item';
 import { PaymentConfiguration } from './models/payment-configuration';
+import { ShippingCost } from './models/shipping-cost';
 import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
@@ -45,21 +46,29 @@ export class ShoppingCart {
   }
 
   private ensureWriteFile( fileContent : FileContent ) {
-    if ( !fs.existsSync( fileContent.path ) ) {
+    if ( this.notExistsFile( fileContent ) ) {
       fs.writeFileSync( fileContent.path, fileContent.content );
     }
   }
 
+  private notExistsFile( fileContent : FileContent ) {
+    return !fs.existsSync( fileContent.path );
+  }
+
   private getShoppingFilePath() {
     const shoppingFileName = `${this.shoppingPrefix}${this.client.name}.json`;
-    const shoppingFilePath = path.join( this.dataFolder(), shoppingFileName );
+    const shoppingFilePath = path.join( this.getDataFolder(), shoppingFileName );
     return shoppingFilePath;
   }
 
   private ensureDataFolder() {
-    if ( !fs.existsSync( this.dataFolder() ) ) {
-      fs.mkdirSync( this.dataFolder() );
+    if ( this.notExistsFolder() ) {
+      fs.mkdirSync( this.getDataFolder() );
     }
+  }
+
+  private notExistsFolder() {
+    return !fs.existsSync( this.getDataFolder() );
   }
 
   public loadFromStorage() {
@@ -86,9 +95,13 @@ export class ShoppingCart {
   }
 
   private ensureDeleteFile( filePath : string ) {
-    if ( fs.existsSync( filePath ) ) {
+    if ( this.existsFile( filePath ) ) {
       fs.unlinkSync( filePath );
     }
+  }
+
+  private existsFile( filePath : string ) {
+    return fs.existsSync( filePath );
   }
 
   public calculateCheckOut( checkOut : CheckOut ) {
@@ -124,7 +137,7 @@ export class ShoppingCart {
   }
 
   private setInvoiceNumber() {
-    const invoiceNumberFileName = path.join( this.dataFolder(), this.lastinvoiceFileName );
+    const invoiceNumberFileName = path.join( this.getDataFolder(), this.lastinvoiceFileName );
     const lastInvoiceNumber = this.readLastInvoiceNumber( invoiceNumberFileName );
     this.legalAmounts.invoiceNumber = lastInvoiceNumber + 1;
     this.writeLastInvoiceNumber( invoiceNumberFileName );
@@ -136,7 +149,7 @@ export class ShoppingCart {
 
   private readLastInvoiceNumber( invoiceNumberFileName : string ) {
     let lastInvoiceNumber = 0;
-    if ( fs.existsSync( invoiceNumberFileName ) ) {
+    if ( this.existsFile( invoiceNumberFileName ) ) {
       try {
         const savedInvoiceNumber = fs.readFileSync( invoiceNumberFileName, 'utf8' );
         lastInvoiceNumber = Number.parseInt( savedInvoiceNumber );
@@ -182,12 +195,16 @@ export class ShoppingCart {
       countryConfiguration = ShoppingCart.countryConfigurations[0];
     }
     countryConfiguration.shippingCost.forEach( shippingCost => {
-      if ( this.legalAmounts.total < shippingCost.upTo ) {
+      if ( this.hasShippingCost( shippingCost ) ) {
         const shippingCostAmount = this.legalAmounts.total * shippingCost.factor + shippingCost.plus;
         this.legalAmounts.total += shippingCostAmount;
         return;
       }
     } );
+  }
+
+  private hasShippingCost( shippingCost : ShippingCost ) {
+    return this.legalAmounts.total < shippingCost.upTo;
   }
 
   private calculateTotalAmount() {
@@ -224,14 +241,14 @@ export class ShoppingCart {
 
   private sendOrderToWarehouse() {
     const orderMessage = this.documentManager.getOrderTemplate( this );
-    this.documentManager.emailOrder( this, orderMessage, this.client.country );
+    this.documentManager.sendemailOrder( this, orderMessage, this.client.country );
   }
 
   public sendInvoiceToCustomer() {
     this.documentManager.sendInvoice( this );
   }
 
-  private dataFolder() {
+  private getDataFolder() {
     return path.join( __dirname, '..', 'data' );
   }
 }

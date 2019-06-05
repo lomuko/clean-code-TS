@@ -163,7 +163,7 @@ export class ShoppingCart {
     // send packing list to courier
     const order = this.documentManager.getOrderMessage( this );
     // send by email
-    this.documentManager.emailOrder( this, order, this.country );
+    this.documentManager.sendeEmailOrder( this, order, this.country );
   }
 
   public sendInvoiceToCustomer() {

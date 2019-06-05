@@ -17,9 +17,13 @@ export class Printer {
   }
 
   private static ensureFolder( dataFolder : string ) {
-    if ( !fs.existsSync( dataFolder ) ) {
+    if ( Printer.notExistsFolder( dataFolder ) ) {
       fs.mkdirSync( dataFolder );
     }
+  }
+
+  private static notExistsFolder( dataFolder : string ) {
+    return !fs.existsSync( dataFolder );
   }
 
   private static appendOrCreateFile( fileToPrint : FileToPrint ) {

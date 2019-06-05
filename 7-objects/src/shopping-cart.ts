@@ -1,11 +1,11 @@
-import { CheckOutCalculator } from './check-out-calculator';
 import { DocumentManager } from './document-manager';
+import { CheckOutCalculator } from './lib/check-out-calculator';
+import { ShoppingCartSaver } from './lib/shopping-cart-saver';
+import { TaxCalculator } from './lib/tax-calculator';
 import { CheckOut } from './models/check-out';
 import { Client } from './models/client';
 import { LineItem } from './models/line-item';
 import { ShoppingCart } from './models/shopping-cart';
-import { ShoppingCartSaver } from './shopping-cart-saver';
-import { TaxCalculator } from './tax-calculator';
 import { WarehouseAdministrator } from './warehouse-administrator';
 
 export class ShoppingCartManager {

@@ -1,10 +1,10 @@
-import { PRODUCT_CATALOG } from './config/product-catalog';
-import { FileManager } from './file-manager';
-import { Logger } from './logger';
+import { PRODUCT_CATALOG } from './database/product-catalog';
+import { Logger } from './helper/logger';
+import { Printer } from './helper/printer';
+import { FileManager } from './import/file-manager';
+import { PathManager } from './import/path-manager';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
-import { PathManager } from './path-manager';
-import { Printer } from './printer';
 
 export class WarehouseAdministrator {
   private static productCatalog : Product[] = PRODUCT_CATALOG;

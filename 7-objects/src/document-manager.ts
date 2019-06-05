@@ -1,15 +1,16 @@
-import { COUNTRY_CONFIGURATIONS } from './config/country-configurations';
-import { FileManager } from './file-manager';
-import { Logger } from './logger';
+import { COUNTRY_CONFIGURATIONS } from './database/config/country-configurations';
+import { Checker } from './helper/checker';
+import { Logger } from './helper/logger';
+import { Printer } from './helper/printer';
+import { FileManager } from './import/file-manager';
+import { PathManager } from './import/path-manager';
+import { TemplateManager } from './lib/template-manager';
 import { CountryConfiguration } from './models/country-configuration';
 import { ShoppingCart } from './models/shopping-cart';
-import { PathManager } from './path-manager';
-import { Printer } from './printer';
-import { TemplateManager } from './template-manager';
 
 export class DocumentManager {
   private readonly countryConfigurations : CountryConfiguration[] = COUNTRY_CONFIGURATIONS;
-
+  private readonly checker = new Checker();
   private readonly invoicePrefix = `invoice-`;
   private readonly orderPrefix = `order-`;
   private readonly templateManager = new TemplateManager();
@@ -30,11 +31,11 @@ export class DocumentManager {
   public sendInvoice( shoppingCart : ShoppingCart ) {
     const invoiceTemplate = this.templateManager.getInvoiceTemplate( shoppingCart );
     this.printInvoice( shoppingCart, invoiceTemplate );
-    this.emailInvoice( shoppingCart.client.email, invoiceTemplate );
+    this.sendEmailInvoice( shoppingCart.client.email, invoiceTemplate );
     this.logger.print( 'Sent Invoice: ' + shoppingCart.legalAmounts.invoiceNumber );
   }
 
-  private emailInvoice( emailAddress : string, invoiceContent : string ) {
+  private sendEmailInvoice( emailAddress : string, invoiceContent : string ) {
     const invoiceMessageTemplate = this.templateManager.getInvoiceMessageTemplate( invoiceContent );
     this.fileManager.ensureFolder( this.emailFolder );
     const invoiceFileName = this.getInvoiceFileName( emailAddress );
@@ -55,11 +56,11 @@ export class DocumentManager {
   }
 
   private getWarehouseAddressByCountry( customerCountry : string ) {
-    let countryConfig = this.countryConfigurations.find( country => country.countryName === customerCountry );
-    if ( countryConfig === undefined ) {
-      countryConfig = this.countryConfigurations[0];
-    }
-    return countryConfig.warehouseAddress;
+    const countryConfiguration = this.checker.findSafe(
+      this.countryConfigurations,
+      country => country.countryName === customerCountry
+    );
+    return countryConfiguration.warehouseAddress;
   }
 
   private getInvoiceFileName( emailAddress : string ) {

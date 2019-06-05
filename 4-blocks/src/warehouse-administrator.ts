@@ -38,9 +38,13 @@ export class WarehouseAdministrator {
 
   public processOrders() {
     const ordersFolder = path.join( __dirname, '..', 'data', 'email' );
-    if ( fs.existsSync( ordersFolder ) ) {
+    if ( this.existsOrdersFolder( ordersFolder ) ) {
       this.processOrdersFolder( ordersFolder );
     }
+  }
+
+  private existsOrdersFolder( ordersFolder : string ) {
+    return fs.existsSync( ordersFolder );
   }
 
   private processOrdersFolder( ordersFolder : string ) {

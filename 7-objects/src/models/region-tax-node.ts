@@ -1,4 +1,4 @@
 export interface RegionTaxNode {
-  regionName : string;
-  regionVAT : number;
+  name : string;
+  localVAT : number;
 }

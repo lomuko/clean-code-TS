@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { PRODUCT_CATALOG } from './config/product-catalog';
+import { PRODUCT_CATALOG } from './database/product-catalog';
 import { LineItem } from './models/line-item';
 import { Product } from './models/product';
 import { Printer } from './printer';
@@ -40,11 +40,15 @@ export class WarehouseAdministrator {
   }
 
   private processOrdesFolder( ordersFolder : string ) {
-    if ( fs.existsSync( ordersFolder ) ) {
+    if ( this.existsFolder( ordersFolder ) ) {
       fs.readdirSync( ordersFolder ).forEach( fileName => {
         this.processFileInOrderFolder( fileName, ordersFolder );
       } );
     }
+  }
+
+  private existsFolder( ordersFolder : string ) {
+    return fs.existsSync( ordersFolder );
   }
 
   private processFileInOrderFolder( fileName : string, ordersFolder : string ) {

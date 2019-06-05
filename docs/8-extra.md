@@ -53,6 +53,8 @@ class: impact
 
 ### Consejos y trucos
 
+[Naming Conventions](https://medium.com/free-code-camp/javascript-naming-conventions-dos-and-don-ts-99c0e2fdd78a)
+
 [10 buenas prácticas para código más legible](https://dev.to/gonedark/10-practices-for-readable-code-143a)
 
 [Refactoring GURÚ. Incluye La biblia de los patrones de diseño](https://refactoring.guru/)
