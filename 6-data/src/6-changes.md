@@ -5,5 +5,5 @@
 - tipos para comunicación pública entre objetos
 - tipos para constructores
 - tipos internos
-- tipos no mu grandes
+- tipos no muy grandes
 
