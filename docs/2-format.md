@@ -34,11 +34,8 @@ class: impact
 
   - **Orden** de las variables o propiedades
   - **Orden** de las funciones o métodos
-
         - público -> privado
-
         - newsletter
-
   - **Tamaño** del fichero
 
 --

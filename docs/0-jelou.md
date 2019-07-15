@@ -48,7 +48,7 @@ class: impact
 
 ---
 
-[Proyecto Heredado...](https://github.com/benbyford/game-of-life-js)
+[Proyecto Heredado...](https://github.com/AcademiaBinaria/clean-code-TS/tree/master/0-jelou/src)
 
 --
 

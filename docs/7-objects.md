@@ -40,7 +40,7 @@ class: impact
 
 --
 
-# _Interfaces_ mejor que herencia
+# _Interfaces_ mejor que ~~herencia~~
 
 ---
 
@@ -49,15 +49,15 @@ class: impact
 
 ### Responsabilidad
 
-- Reduce la cantidad de métodos públicos
+- Reduce la cantidad de métodos públicos.
 
-- Decanta métodos privados hacia clases de capas inferiores
+- Decanta métodos privados hacia clases de capas inferiores.
 
 ### Cohesión
 
-- Haz que tus métodos usen tus propiedades, no las de otros
+- Haz que tus métodos usen tus propiedades, no las de otros.
 
-- Haz que tus propiedades sean usadas por tus métodos, no por otros
+- Haz que tus propiedades sean usadas por tus métodos, no por otros.
 
 ---
 

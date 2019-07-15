@@ -36,21 +36,21 @@ class: impact
 
 --
 
-#### Extrema
+#### Absurda
 
 - Implementar e invocar **una función para cada bloque**.
 - _Podría_ dar lugar a funciones de una sola instrucción.
 
 --
 
-#### Razonable
+#### Extrema
 
 - Una función para cada bloque **si hay más de una instrucción**.
 - _Daría_ lugar a bloques de una sola instrucción.
 
 --
 
-#### Mínima
+#### Razonable
 
 - Una función para cada bloque **si hay más de 4 instrucciones**.
 - _Daría_ lugar a bloques pequeños.

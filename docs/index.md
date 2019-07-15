@@ -98,20 +98,6 @@ Las **técnicas de código limpio** ayudan a escribir programas sencillos de ent
 
 ---
 
-## SOLID [Principios sólidos para finales flexibles](./solid.html)
-
-- Obstáculos para el cambio
-- Principios SOLID
-
-
-## BAD-GOOD [Malos olores y Buenas prácticas](./bad-good.html)
-
-- El código huele
-- Otros principios para un final feliz
-
-
----
-
 ## 8- EXTRA [¿Errores?, Bibliografía y consejos](./8-extra.html)
 
 - ¿errores?

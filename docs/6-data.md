@@ -40,7 +40,7 @@ class: impact
 
 --
 
-# _Composición_ mejor que herencia
+# _Composición_ mejor que ~~herencia~~
 
 ---
 

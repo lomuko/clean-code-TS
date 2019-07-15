@@ -52,8 +52,8 @@ describe('sum()', async assert => {
   assert({
     given: 'no arguments',
     should: 'return 0',
-    actual: sum(),
-    expected: 0
+    expected: 0,
+    actual: sum()
   });
 });
 ```
