@@ -59,7 +59,7 @@ export function cleanCheckOuts() {
 }
 
 function rimraf( dirPath : string ) {
-  if ( fs.existsSync( dirPath ) ) {¡
+  if ( fs.existsSync( dirPath ) ) {
     fs.readdirSync( dirPath ).forEach( function ( entry ) {
       var entryPath = path.join( dirPath, entry );
       if ( fs.lstatSync( entryPath ).isDirectory() ) {
