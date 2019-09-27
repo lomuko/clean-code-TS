@@ -52,6 +52,10 @@ class: impact
 
 ---
 
+![La métrica real del buen código](./assets/clean-code_wtf.jpg)
+
+---
+
 ## 0- JELOU [Un ejemplo que huele mal.](./0-jelou.html)
 
 - Cualquier código de más de una semana es heredado
@@ -100,19 +104,15 @@ class: impact
 
 ---
 
-## 8- EXTRA [¿Errores?, Bibliografía y consejos](./8-extra.html)
+## 8- EXTRA [¿Errores?, Futuro sólido](./8-extra.html)
 
 - ¿errores?
-- Bibliografía y consejos
+- Principios SOLID
 
 ## 9- ARTISAN [Artesanía del software](./9-artisan.html)
 
 - Manifiesto ágil
 - Manifiesto artesano
-
----
-
-![La métrica real del buen código](./assets/clean-code_wtf.jpg)
 
 ---
 
