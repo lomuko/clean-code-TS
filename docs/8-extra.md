@@ -14,7 +14,7 @@ class: impact
 
 # {{title}}
 
-## ¿Errores?, Bibliografía y consejos
+## ¿Errores? Futuro sólido
 
 > "Si la depuración es el proceso de eliminar errores, entonces la programación debe ser el proceso de ponerlos".
 >
@@ -51,32 +51,17 @@ class: impact
 
 ---
 
-### Consejos y trucos
+[Limpiar es refactorizar: en resumen... ](https://twitter.com/LlewellynFalco/status/633363986273189888)
 
-[Naming Conventions](https://medium.com/free-code-camp/javascript-naming-conventions-dos-and-don-ts-99c0e2fdd78a)
+---
 
-[10 buenas prácticas para código más legible](https://dev.to/gonedark/10-practices-for-readable-code-143a)
-
-[Refactoring GURÚ. Incluye La biblia de los patrones de diseño](https://refactoring.guru/)
-
-[Malos olores comunes en el código](https://dev.to/apium_hub/code-smells-that-are-found-the-most-aal)
-
-[4 consejos fundamentales de código limpio](https://engineering.videoblocks.com/these-four-clean-code-tips-will-dramatically-improve-your-engineering-teams-productivity-b5bd121dd150)
-
-[Refactorizar en JS](https://medium.com/@amartinezaguilar6/aprendiendo-a-refactorizar-en-javascript-consejos-y-pautas-4452bcb6890c)
-
-[Video: 10 consejos de Código Limpio](https://www.youtube.com/watch?v=UjhX2sVf0eg)
-
-[Buenos mensajes de error](https://uxplanet.org/how-to-write-good-error-messages-858e4551cd4)
-
-[Funciones Arrow, cuándo y cuándo no](https://codeburst.io/javascript-arrow-functions-how-why-when-and-when-not-to-use-them-fb8c2de9dbdc)
-
+![SOLID](./assets/solid.jpg)
 
 ---
 
 > "Es mucho más fácil hablar de código que escribir código".
 >
-> -- _John O'Nolan_.
+> -- **John O'Nolan**.
 
 ---
 
@@ -84,12 +69,13 @@ class: impact
 
 ---
 
-## Ejemplos y prácticas propuestas
+> “Las prisas pasan, la mierda queda.”
+>
+> -- **Programador anónimo**
 
-- [Algoritmos y estructuras de datos](https://github.com/trekhleb/javascript-algorithms)
-- [Más algoritmos...](https://github.com/mgechev/javascript-algorithms)
-- [Code snippets](https://30secondsofcode.org/)
-- [Game of Life](https://editor.p5js.org/p5/sketches/B1Yl4eJQOm)
+---
+
+![Horse evolution](./assets/horse_evolution.jpg)
 
 ---
 

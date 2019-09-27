@@ -44,9 +44,74 @@ class: impact
 
 ---
 
+```typescript
+class Client{
+  private name: string;
+  private address: Address;
+  private legalAdress: Address;
+  constructor (){}
+}
+class Provider{
+  private name: string;
+  private address: Address;
+  private legalAdress: Address;
+  private paymentInfo: Payment;
+  constructor (){}
+}
+class Employee{
+  private name: string;
+  private address: Address;
+  private paymentInfo: Payment;
+  constructor (){}
+}
+```
+
+---
+
 ## Usar estructuras para evitar _if_ y _switch_
 
 - [Contra el switch](https://dev.to/jckuhl/a-case-against-switches-13pd)
+
+---
+
+```typescript
+function getClientIcon(client){
+  if(client.isVIP){
+    return 'vip.jpg';
+  } else {
+    return 'standard.jpg';
+  }
+}
+
+const clientIcons = {
+  'true': 'vip.jpg',
+  'false': 'standard.jpg'
+}
+function getClientIcon(client){
+  return clientIcons[client.isVIP];
+}
+```
+
+---
+
+
+```typescript
+function getClientDiscount(client, amount){
+  if( amount > 50){
+    return amount * 2;
+  } else {
+    return amount + 3;
+  }
+}
+
+const clientDiscount = {
+  'true': x => x * 2,
+  'false': x => x + 3
+}
+function getClientDiscount(client, amount){
+  return clientDiscount[amount>50](amount);
+}
+```
 
 ---
 

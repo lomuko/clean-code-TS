@@ -61,6 +61,11 @@ class: impact
 > - No sólo respondo al cambio, también **agrego valor**
 
 ---
+## Quieres ser este?
+
+![No quiero](./assets/no_artisan.png)
+
+---
 
 > "Voy a hacer un buen trabajo.
 >

@@ -24,6 +24,9 @@ class: impact
 
 ### Limpiar requiere cambiar por dentro sin cambiar por fuera
 
+
+[Adding a feature to a legacy codebase](https://twitter.com/cassidoo/status/1151265157709889536)
+
 - Necesitamos pruebas para limpiar **tranquilos**.
 - Haz algún tipo de prueba, pero **¡haz pruebas!**.
 - En _front_, mejor empieza por **integración**.

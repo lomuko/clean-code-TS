@@ -44,6 +44,30 @@ class: impact
 
 ---
 
+```typescript
+interface Validator{
+  isValid;
+  validate(target)
+}
+class ClientController implements Validator, Persister{
+  public isValid;
+  private client;
+  constructor (client){}
+  public validate(){}
+  public save(){}
+  public generateInvoice(invoice){}
+}
+class ProviderController implements Validator, Persister{
+  public isValid;
+  private provider;
+  constructor (provider){}
+  public validate(){}
+  public save(){}
+  public payInvoice(invoice){}
+}
+```
+
+---
 ## El tamaño y el pudor
 
 
