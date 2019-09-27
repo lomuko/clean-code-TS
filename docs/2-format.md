@@ -22,6 +22,20 @@ class: impact
 
 ---
 
+## Belleza
+
+> Algo que agrada a tus sentidos.
+
+- Cualidad subjetiva.
+
+- Características objetivas.
+
+  - Sencillez.
+  - Armonía.
+  - Repetición.
+
+---
+
 - Belleza **horizontal**
 
   - Sangría en **bloques**
@@ -36,7 +50,6 @@ class: impact
   - **Orden** de las funciones o métodos
         - público -> privado
         - newsletter
-  - **Tamaño** del fichero
 
 --
 

@@ -34,39 +34,71 @@ class: impact
 
 ---
 
-### Reglas
+### Sustantivos
 
---
-
-#### Sustantivos para variables / propiedades
+#### Para variables / propiedades
 
 - Vocabulario de **entidades y propiedades** de negocio
 
---
-
-##### Verbos concretos en flags
-
-- is, has, get, set, can, must, do
-
-
-#### Sustantivos o roles para clases
+#### Para roles o clases
 
 - manager, presenter, interactor, validator, mapper
 
+> Palabras completas y descriptivas
+
+```typescript
+class Invoice{
+  number;
+  date;
+  client;
+}
+class InvoiceValidator{}
+```
+
 ---
 
-#### Verbos para funciones / métodos
+### Verbos
+
+#### Cortos y concretos en flags
+
+- is, has, get, set, can, must, do
+
+#### Obligatorios en funciones / métodos
 
 - Vocabulario para **relaciones y acciones** comunes
 
-  - is, has, get, set, can, must, do
-  - create, read, update, delete
-  - select, insert, update, delete
-  - get, post, put, delete
+> Clarifica mediante sustantivos, adverbios, preposiciones
 
---
+```typescript
+class Client{
+  hasPendingOrders: boolean;
+  getPendingOrders(){}
+  getOrdersByStatus(orderStatus){}
+}
+```
 
-    - Procurar usar verbo y sustantivo
+---
+
+![wtf-naming](./assets/naming.png)
+
+---
+
+### Reduce WTF!
+
+- **No magic numbers**
+- **No magic strings**
+
+```typescript
+const minimumAge = 18;
+const allowedMessage = "Welcome";
+const deniedMessage = "Go home";
+
+if(yourAge >= minimumAge){
+  console.log(allowedMessage);
+} else {
+  console.log(deniedMessage);
+}
+```
 
 ---
 
@@ -81,15 +113,6 @@ class: impact
 
 - No me sorprendas
 - No me hagas pensar
-
---
-
-- **No magic numbers**
-- **No magic strings**
-
----
-
-![wtf-naming](./assets/naming.png)
 
 ---
 

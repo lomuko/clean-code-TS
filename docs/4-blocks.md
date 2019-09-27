@@ -24,36 +24,75 @@ class: impact
 
 ### Objetivo
 
-- _Reducir_ el numero de instrucciones por bloque a 4
-- _Reducir_ el anidamiento a 2 niveles
-- _Reducir_ la complejidad ciclomática (ideal: 4 - máxima:8)
-
-> Afecta a los `if/else` a los `for` a los `switch`...
+- _Reducir_ a **2 o menos niveles de anidamiento**
+- _Reducir_ a **4 o menos instrucciones por bloque**
+- _Reducir_ a **8 o menos la complejidad ciclomática**
 
 ---
 
-### Reglas
+```javascript
+// life init grid
+function life() {
+  // touch each grid coord
+  for (var x = 0; x < gridWidth; x++) {
+    for (var y = 0; y < gridHeight; y++) {
+      // counts alive or dead for neighbours
+      var count = countNearby(x, y);
+      if (grid[x][y] == 0) {
+        if (count == 3) {
+          // life is born
+          gridNext[x][y] = 1;
+        }
+      } else {
+        if (count < 2 || count > 3) {
+          // underpopulation & overpopulation
+          gridNext[x][y] = 0;
+        } else {
+          gridNext[x][y] = 1;
+        }
+      }
+    }
+  }
+  // replace old grid with new population grid
+  grid = gridNext;
+}
+```
+---
 
---
+> Afecta a los `if/else` a los `for` a los `switch`...
 
-#### Absurda
 
-- Implementar e invocar **una función para cada bloque**.
-- _Podría_ dar lugar a funciones de una sola instrucción.
+> Obliga a extraer código a funciones
 
---
 
-#### Extrema
+> Obliga a nombrar las nuevas funciones
 
-- Una función para cada bloque **si hay más de una instrucción**.
-- _Daría_ lugar a bloques de una sola instrucción.
 
---
-
-#### Razonable
-
-- Una función para cada bloque **si hay más de 4 instrucciones**.
-- _Daría_ lugar a bloques pequeños.
+---
+``` javascript
+function generateNextCellState() {
+  for (let column = INIT_COLUMN; column < COLUMNS; column++) {
+    for (let row = INIT_ROW; row < ROWS; row++) {
+      generateFromCell(column, row);
+    }
+  }
+  cloneToCurrentBoard(board, nextStateBoard);
+}
+function generateFromCell(column, row) {
+  const lifeAround = countLifeAround(column, row);
+  if (board[column][row] == DEAD) {
+    generateFromDeadCell(lifeAround, column, row);
+  } else {
+    generateFromLivingCell(lifeAround, column, row);
+  }
+}
+function generateFromDeadCell(lifeAround, column, row) {
+  if (lifeAround == REPRODUCTION_POPULATION) {
+    nextStateBoard[column][row] = ALIVE;
+  }
+}
+...
+```
 
 ---
 
@@ -66,6 +105,7 @@ class: impact
 #### Muchas más funciones... y muchos menos comentarios
 
 > Sin comentarios dentro de bloques
+
 ---
 
 > "Cada vez que escribas un comentario, debes sentirlo como un fallo de tu capacidad de expresión"

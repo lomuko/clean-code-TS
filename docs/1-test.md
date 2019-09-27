@@ -24,9 +24,9 @@ class: impact
 
 ### Limpiar requiere cambiar por dentro sin cambiar por fuera
 
-- Necesitamos **pruebas** para limpiar tranquilos.
-- Haz algún tipo de prueba, pero hazla!.
-- En _front_, mejor pruebas de **integración**.
+- Necesitamos pruebas para limpiar **tranquilos**.
+- Haz algún tipo de prueba, pero **¡haz pruebas!**.
+- En _front_, mejor empieza por **integración**.
 
 >"[Write tests. Not too many. Mostly integration.](https://kentcdodds.com/blog/write-tests)"
 >
@@ -41,10 +41,10 @@ class: impact
 
 ## Método RITE
 
-- Readable : legible
-- Isolated/Integrated : aislado/integrado
-- Thorough: completo
-- Explicit: explícito
+- **R**eadable : legible
+- **I**solated/Integrated : aislado/integrado
+- **T**horough: completo
+- **E**xplicit: explícito
 
 
 ```javascript
@@ -60,9 +60,13 @@ describe('sum()', async assert => {
 
 ---
 
-### Si funciona, y tienes pruebas, tócalo
+### Si funciona...
+
 
 ![No siempre pruebo mi código... pero cuando lo hago, es en producción](./assets/test-production.jpeg)
+
+![Los hombres de verdad prueban en producción](./assets/real-test.jpg)
+
 
 ---
 
@@ -73,6 +77,8 @@ describe('sum()', async assert => {
 > - ¿Por qué tienen miedo de romperlo?
 >
 > + Porque no tienen pruebas.
+>
+> - Si funciona, y tienes pruebas, tócalo.
 >
 > -- **Robert C. Martin**
 

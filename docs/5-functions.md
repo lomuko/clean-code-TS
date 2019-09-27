@@ -31,32 +31,62 @@ class: impact
 
 ---
 
-### Estilos
+## Estilo funcional:
 
-- Si **NO** usas _P.O.O._, entonces usa **funciones puras**:
+- predecibles
+- sin dependencias del entorno
+- sin efectos secundarios en el entorno
 
-    - predecibles
-    - sin dependencias del entorno
-    - sin efectos secundarios en el entorno
+```javascript
+var theString = 'gloabal dependency';
+function appendStringGlobal(toBeAdded){
+    return theString + toBeAdded;
+}
+function appendStringMutation(toBeAdded){
+    original = original + toBeAdded;
+}
+function appendStringPlus(original, toBeAdded){
+    conole.log('I need a console to work');
+    return original + toBeAdded;
+}
+function appendString(original, toBeAdded){
+    return original + toBeAdded;
+}
+```
 
---
-
-- Si usas _P.O.O._, entonces:
-
-    - ## cuantos menos argumentos mejor.
-
-        - especialmente evita argumentos _flag_ usando múltiples funciones específicas
-
-    - ## delega en funciones privadas
-
-        - las instrucciones de las funciones públicas deberían ser llamadas a funciones privadas
 
 ---
 
-- En todo caso retornando datos; nunca errores.
+## Métodos en _P.O.O._:
+
+- ### cuantos menos argumentos mejor.
+
+    - especialmente evita argumentos _flag_ usando múltiples funciones específicas
+
+- ### delega en funciones privadas
+
+    - las instrucciones de las funciones públicas deberían ser llamadas a funciones privadas
+
+- ### retornando datos; nunca errores.
 
     - los errores tienen su propio flujo mediante `try-catch throw`
     - Si el lenguaje no lo permite, usar convenio tipo `(err, data)`.
+---
+
+```typescript
+class InvoiceGenerator{
+    private client;
+    private paymentMethod;
+
+    constructor (client){}
+
+    public addLine(line){}
+    public addPaymentMethod(paymentMethod){}
+
+    private validateUnits(lineUnits){}
+    private validatePaymentMethod(){}
+}
+```
 
 ---
 

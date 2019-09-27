@@ -40,12 +40,6 @@ class: impact
 
     - El código heredado huele mal.
 
---
-
-- El código heredado hay que **mantenerlo**.
-
-    - El código heredado hay que **entenderlo** para mantenerlo.
-
 ---
 
 [Proyecto Heredado...](https://github.com/AcademiaBinaria/clean-code-TS/tree/master/0-jelou/src)
@@ -56,25 +50,27 @@ class: impact
 
 ---
 
-### Principios de mejora
+### Cinco Principios de mejora
 
-- Mostrar la **intención** y ocultar los detalles.
+1. Mostrar la **intención** y ocultar los detalles.
 
-- **Evitar** la globalización y el acoplamiento.
+2. **Evitar** la globalización y el acoplamiento.
 
-- Separar **responsabilidades**.
+3. Separar **responsabilidades**.
 
-- Don't Repeat Yourself **(DRY)**
+4. Don't Repeat Yourself **(DRY)**
 
-- Keep It Simple, (*not*) Stupid **(KISS)**
+--
+
+5. Keep It Simple, (*not*) Stupid **(KISS)**
 
 ---
 
-> El tiempo dedicado a la lectura frente a la escritura es superior a 10 a 1.
+> El tiempo dedicado a la lectura es muy superior al de escritura.
 
-> Leemos código antiguo para escribir un nuevo código.
+> Leemos código antiguo para escribir código nuevo.
 
-> Facilitar la lectura hace que sea más fácil de escribir.
+> Facilitar la lectura facilita la escritura.
 >
 > -- **Robert C. Martin**
 

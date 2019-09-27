@@ -24,13 +24,15 @@ class: impact
 
 ## Introducción
 
-**Programar es expresar procesos con detalle en un lenguaje no ambiguo.** Un lenguaje se usa para comunicar, si se habla es para ser escuchado, si se escribe es para ser leído.
+1. Programar es expresar procesos con detalle en un **lenguaje no ambiguo.**
 
-Escribir programas para ser leídos, entendidos y mejorados es un difícil arte y una obligación ineludible.
+2. Un lenguaje se usa para **comunicar**, si se habla es para ser escuchado, si se escribe es para ser leído.
 
-También es una ciencia que se puede aprender y practicar.
+3. Escribir programas para ser leídos, entendidos y mejorados es un **difícil pero necesario**.
 
-Las **técnicas de código limpio** ayudan a escribir programas sencillos de entender, que aportan valor y que pueden evolucionar.
+4. También es una ciencia que se puede **aprender y practicar**.
+
+5. Las **técnicas de código limpio** ayudan a escribir programas sencillos de entender, que aportan valor y que pueden evolucionar.
 
 ---
 
